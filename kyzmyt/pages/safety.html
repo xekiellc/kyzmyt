@@ -3,93 +3,472 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kyzmyt — Safety</title>
-  <link rel="stylesheet" href="/css/design-system.css" />
+  <title>Your Safety — Kyzmyt</title>
+  <meta name="description" content="How Kyzmyt protects you — mandatory background checks, ID verification, date check-ins, and reporting. Safety built into every layer." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
-    .safety-page { min-height: 100vh; background: var(--navy); }
-    .safety-header { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .safety-logo { font-family: var(--font-display); font-size: 24px; color: white; font-weight: 600; }
-    .safety-logo span { color: var(--copper); }
-    .safety-content { padding: 32px 20px; max-width: 680px; margin: 0 auto; }
-    .safety-hero { text-align: center; margin-bottom: 48px; }
-    .safety-icon { font-size: 52px; margin-bottom: 16px; }
-    .safety-title { font-family: var(--font-display); font-size: 42px; color: white; margin-bottom: 12px; }
-    .safety-sub { font-size: 15px; color: rgba(255,255,255,0.6); max-width: 400px; margin: 0 auto; line-height: 1.7; }
-    .safety-pillar { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-xl); padding: 24px; margin-bottom: 16px; }
-    .pillar-icon { font-size: 32px; margin-bottom: 12px; }
-    .pillar-title { font-family: var(--font-display); font-size: 24px; color: white; margin-bottom: 8px; }
-    .pillar-body { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.7; }
-    .tamper-box { background: rgba(184,115,51,0.1); border: 1px solid rgba(184,115,51,0.3); border-radius: var(--radius-lg); padding: 20px; margin-top: 16px; }
-    .tamper-title { font-size: 13px; font-weight: 500; color: var(--copper); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
-    .tamper-body { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.6; }
-    .cta-section { text-align: center; margin-top: 48px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); }
-    .cta-title { font-family: var(--font-display); font-size: 28px; color: white; margin-bottom: 12px; }
-    .cta-sub { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 24px; }
+    :root {
+      --navy: #0A1628;
+      --copper: #B87333;
+      --copper-light: #d4924d;
+      --cream: #FAF8F5;
+      --cream-dark: #F0EDE8;
+      --text: #1a2a40;
+      --text-muted: #5a6a7a;
+      --border: rgba(184,115,51,0.2);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+    }
+    nav {
+      background: var(--navy);
+      padding: 1.2rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+    }
+    .nav-logo span { color: var(--copper); }
+    .nav-back {
+      color: var(--copper);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .safety-bar {
+      background: var(--copper);
+      color: var(--navy);
+      text-align: center;
+      padding: 0.9rem 2rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .safety-bar a { color: var(--navy); font-weight: 600; text-decoration: underline; }
+    .hero {
+      background: var(--navy);
+      padding: 4rem 2rem 3.5rem;
+      text-align: center;
+      position: relative;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--copper), transparent);
+    }
+    .hero-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 500;
+      color: var(--cream);
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: rgba(250,248,245,0.65);
+      max-width: 540px;
+      margin: 0 auto;
+      font-weight: 300;
+    }
+    .container { max-width: 860px; margin: 0 auto; padding: 3.5rem 2rem 5rem; }
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+    .pillar {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem 1.75rem;
+      border-top: 3px solid var(--copper);
+      box-shadow: 0 2px 16px rgba(10,22,40,0.06);
+    }
+    .pillar-icon { font-size: 1.8rem; margin-bottom: 1rem; display: block; }
+    .pillar h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.6rem;
+    }
+    .pillar p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; }
+    .section { margin-bottom: 3.5rem; }
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 0.4rem;
+    }
+    .section h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+    .section p { font-size: 0.95rem; color: var(--text); margin-bottom: 1rem; }
+    .steps { list-style: none; margin: 1.5rem 0; }
+    .steps li { display: flex; gap: 1.25rem; margin-bottom: 1.5rem; align-items: flex-start; }
+    .step-num {
+      flex-shrink: 0;
+      width: 2.2rem;
+      height: 2.2rem;
+      background: var(--navy);
+      color: var(--copper);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .step-content h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.25rem;
+    }
+    .step-content p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0; }
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .tip { background: white; border-radius: 8px; padding: 1.25rem; border-left: 3px solid var(--copper); }
+    .tip h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.35rem;
+    }
+    .tip p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0; }
+    .compare { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+    .compare th {
+      background: var(--navy);
+      color: var(--cream);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 400;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .compare td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--cream-dark); vertical-align: middle; }
+    .compare tr:last-child td { border-bottom: none; }
+    .compare tr:nth-child(even) td { background: rgba(250,248,245,0.6); }
+    .check { color: var(--copper); font-weight: 600; }
+    .x { color: #ccc; }
+    .divider {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 3rem 0;
+    }
+    .emergency {
+      background: var(--navy);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .emergency h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+    }
+    .emergency p {
+      font-size: 0.9rem;
+      color: rgba(250,248,245,0.6);
+      margin-bottom: 1.5rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta-email {
+      display: inline-block;
+      background: var(--copper);
+      color: var(--navy);
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.9rem 2.5rem;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .cta-email:hover { background: var(--copper-light); transform: translateY(-1px); }
+    footer {
+      background: var(--navy);
+      padding: 2rem;
+      text-align: center;
+      color: rgba(250,248,245,0.4);
+      font-size: 0.8rem;
+      border-top: 1px solid rgba(184,115,51,0.15);
+    }
+    footer a { color: var(--copper); text-decoration: none; }
   </style>
 </head>
 <body>
-<div class="safety-page">
-  <div class="safety-header">
-    <a href="/" class="safety-logo">Kyzm<span>yt</span></a>
-  </div>
-  <div class="safety-content">
-    <div class="safety-hero">
-      <div class="safety-icon">🛡️</div>
-      <h1 class="safety-title">Safety isn't a feature. It's the foundation.</h1>
-      <p class="safety-sub">Every decision we make starts with safety. Here's exactly how we protect our members.</p>
-    </div>
 
-    <div class="safety-pillar">
-      <div class="pillar-icon">🪪</div>
-      <div class="pillar-title">Identity verification — everyone, no exceptions</div>
-      <div class="pillar-body">Every Kyzmyt member completes government ID verification and a liveness selfie before they can interact with the platform. This is powered by Stripe Identity — the same technology used by financial institutions. You cannot join without it. Period.</div>
-      <div class="tamper-box">
-        <div class="tamper-title">What we check</div>
-        <div class="tamper-body">Government-issued ID (driver's license or passport) + real-time selfie comparison. Stripe's AI confirms the photo matches and the document is genuine. Results are sent directly to our database — users cannot interfere with the result.</div>
-      </div>
-    </div>
+<nav>
+  <a href="../index.html" class="nav-logo">KYZM<span>✶</span>T</a>
+  <a href="../index.html" class="nav-back">← Back to Kyzmyt</a>
+</nav>
 
-    <div class="safety-pillar">
-      <div class="pillar-icon">🔍</div>
-      <div class="pillar-title">Criminal background checks — tamper-proof by design</div>
-      <div class="pillar-body">Every member pays for and passes a real criminal background check powered by Checkr. We check national criminal records, the sex offender registry in all 50 states, felony and misdemeanor history, and the global watchlist.</div>
-      <div class="tamper-box">
-        <div class="tamper-title">Why it's tamper-proof</div>
-        <div class="tamper-body">Results travel directly from Checkr's servers to our database via a secure, signed webhook. No user or admin can alter the result. A background check badge on a profile means Checkr confirmed clear — not that someone claimed they were clear.</div>
-      </div>
-    </div>
-
-    <div class="safety-pillar">
-      <div class="pillar-icon">📍</div>
-      <div class="pillar-title">Date check-in — an industry first</div>
-      <div class="pillar-body">Before any first date, members can set a safety check-in time and designate a trusted contact. At the check-in time, we text the member. If they don't respond within 15 minutes, we automatically alert their trusted contact with a message and their last known location. This feature is free for all verified members.</div>
-    </div>
-
-    <div class="safety-pillar">
-      <div class="pillar-icon">🚨</div>
-      <div class="pillar-title">Human-reviewed reports within 24 hours</div>
-      <div class="pillar-body">Every report submitted on our platform is reviewed by a human moderator within 24 hours. We take reports seriously. Bans are permanent. We do not give bad actors second chances.</div>
-    </div>
-
-    <div class="safety-pillar">
-      <div class="pillar-icon">🤖</div>
-      <div class="pillar-title">AI photo verification</div>
-      <div class="pillar-body">Profile photos are analyzed for deepfake indicators and catfish patterns. Photos that fail verification do not appear on the platform. Your main photo is also compared against your ID selfie for consistency.</div>
-    </div>
-
-    <div class="safety-pillar">
-      <div class="pillar-icon">🔇</div>
-      <div class="pillar-title">Block and report — one tap, no questions</div>
-      <div class="pillar-body">You can block any member instantly from any conversation. Blocked users cannot see your profile or contact you in any way. Reports go directly to our moderation queue with no visible indication to the reported person that a report was filed.</div>
-    </div>
-
-    <div class="cta-section">
-      <div class="cta-title">Safe by design.<br/>Not by promise.</div>
-      <div class="cta-sub">We built Kyzmyt because people deserve to know who they're meeting. If you have safety concerns about a member or an interaction, contact us immediately.</div>
-      <a href="mailto:safety@kyzmyt.com" class="btn btn-copper btn-lg">safety@kyzmyt.com</a>
-    </div>
-
-  </div>
+<div class="safety-bar">
+  In immediate danger? Call 911. &nbsp;·&nbsp; Safety concern about a member? <a href="mailto:safety@kyzmyt.com">safety@kyzmyt.com</a>
 </div>
+
+<div class="hero">
+  <div class="hero-label">Member Safety</div>
+  <h1>Safety at Every Layer</h1>
+  <p class="hero-sub">Kyzmyt was built from the ground up so that every person you meet is verified — for real. Not optional. Not a selfie filter. Actually verified.</p>
+</div>
+
+<div class="container">
+
+  <div class="pillars">
+    <div class="pillar">
+      <span class="pillar-icon">🪪</span>
+      <h3>Government ID Verified</h3>
+      <p>Every member submits a government-issued photo ID and liveness check via Stripe Identity before accessing the platform. No exceptions.</p>
+    </div>
+    <div class="pillar">
+      <span class="pillar-icon">🔍</span>
+      <h3>Background Checked</h3>
+      <p>Every member undergoes a national criminal background check and sex offender registry screening via Checkr. Results are tamper-proof by architecture.</p>
+    </div>
+    <div class="pillar">
+      <span class="pillar-icon">✶</span>
+      <h3>Date Check-In System</h3>
+      <p>Going on a date? Set a check-in. If you don't confirm you're safe, your emergency contact gets an automatic SMS alert. Industry first.</p>
+    </div>
+    <div class="pillar">
+      <span class="pillar-icon">🛡</span>
+      <h3>Report. We Act.</h3>
+      <p>Every report goes directly to our safety team. Harassment, threats, and scam attempts are met with immediate bans — no warnings, no second chances.</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-label">Verification Process</div>
+    <h2>How We Verify Every Member</h2>
+    <p>Kyzmyt's verification process is mandatory, sequential, and tamper-proof. Here's what happens before anyone can interact with you:</p>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Account Creation</h4>
+          <p>You create an account with your real name and email. No interaction features are available yet.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>ID Verification ($5)</h4>
+          <p>You submit a government-issued photo ID and complete a liveness check via Stripe Identity. Cost: $5 one-time, non-refundable.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Background Check ($30)</h4>
+          <p>Checkr runs a national criminal background check and sex offender registry screening. Results are delivered directly from Checkr to our database via a cryptographically signed webhook — no human can intercept or alter them. Cost: $30 one-time, non-refundable.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Verified Status Granted</h4>
+          <p>Once both checks pass, your profile receives a verified badge. You can now discover, match, and message other verified members.</p>
+        </div>
+      </li>
+    </ol>
+    <p style="font-size:0.85rem;color:var(--text-muted);">Background check results are permanent and unalterable — not even Kyzmyt administrators can modify them. If a check does not pass, the account cannot access interactive features and may be denied entirely.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-label">Date Safety</div>
+    <h2>The Date Check-In System</h2>
+    <p>You've matched, you've chatted, and now you're going on a real-world date. Kyzmyt's check-in system has your back.</p>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Set Your Check-In</h4>
+          <p>From the Messages screen, start a date check-in before your date begins. Enter your phone number and designate a trusted emergency contact.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Go On Your Date</h4>
+          <p>Kyzmyt's system monitors your check-in status in the background.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Check In When Safe</h4>
+          <p>After your date, open the app and confirm you're safe. Takes five seconds.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Alert if You Don't</h4>
+          <p>If your check-in goes unconfirmed past the window, your emergency contact receives an automatic SMS alert. You can also text "SAFE" to resolve it remotely.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-label">Your Responsibility Too</div>
+    <h2>Meeting Safely in Person</h2>
+    <p>Even on a verified platform, your personal safety habits matter. These practices apply to every first meeting:</p>
+    <div class="tips-grid">
+      <div class="tip">
+        <h4>Meet in Public</h4>
+        <p>Always choose a well-populated public location for first meetings — coffee shops, restaurants, parks.</p>
+      </div>
+      <div class="tip">
+        <h4>Tell Someone</h4>
+        <p>Let a friend or family member know where you're going, who you're meeting, and when you expect to be back.</p>
+      </div>
+      <div class="tip">
+        <h4>Your Own Ride</h4>
+        <p>Drive yourself or arrange your own transportation. Don't get in a car with someone you just met.</p>
+      </div>
+      <div class="tip">
+        <h4>Use Check-In</h4>
+        <p>Set a date check-in before every first meeting. It takes 30 seconds and gives you a safety net.</p>
+      </div>
+      <div class="tip">
+        <h4>Trust Your Gut</h4>
+        <p>If something feels wrong — it probably is. Leave without explanation. Your comfort comes first.</p>
+      </div>
+      <div class="tip">
+        <h4>Keep Details Private</h4>
+        <p>Don't share your home address, workplace, or daily routine until you know someone well.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-label">Why Kyzmyt is Different</div>
+    <h2>Safety vs. Other Platforms</h2>
+    <table class="compare">
+      <thead>
+        <tr><th>Safety Feature</th><th>Tinder</th><th>Bumble</th><th>eHarmony</th><th>Kyzmyt</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Background checks</td><td class="x">Optional</td><td class="x">Optional</td><td class="x">None</td><td class="check">Mandatory — every member</td></tr>
+        <tr><td>Government ID verification</td><td class="x">Selfie only</td><td class="x">Selfie only</td><td class="x">None</td><td class="check">Gov ID + liveness check</td></tr>
+        <tr><td>Tamper-proof results</td><td class="x">No</td><td class="x">No</td><td class="x">No</td><td class="check">Yes — Checkr webhook direct to DB</td></tr>
+        <tr><td>Date check-in system</td><td class="x">No</td><td class="x">No</td><td class="x">No</td><td class="check">Yes — SMS alert if overdue</td></tr>
+        <tr><td>Verified member badge</td><td class="x">No</td><td class="x">Partial</td><td class="x">No</td><td class="check">Every member — no exceptions</td></tr>
+        <tr><td>Post-date safety rating</td><td class="x">No</td><td class="x">No</td><td class="x">No</td><td class="check">Yes — private, anonymous</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-label">Report a Concern</div>
+    <h2>Reporting and Our Response</h2>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Report In-App or by Email</h4>
+          <p>Use the flag icon on any profile or message to report in-app. For urgent safety concerns, email <a href="mailto:safety@kyzmyt.com" style="color:var(--copper)">safety@kyzmyt.com</a> directly.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>We Review — Fast</h4>
+          <p>Safety reports are reviewed on a priority basis. Severe violations result in immediate account suspension pending review.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>We Act — Zero Tolerance</h4>
+          <p>Harassment, threats, and romance scam attempts are met with immediate permanent bans. We will cooperate with law enforcement on matters involving criminal behavior.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>You're Protected</h4>
+          <p>The reporting member's identity is never revealed to the person being reported. You will receive a confirmation email when your report has been reviewed.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="emergency">
+    <h2>Safety Concern Right Now?</h2>
+    <p>If you are in immediate danger, call 911. For urgent platform safety issues, reach our safety team directly.</p>
+    <a href="mailto:safety@kyzmyt.com" class="cta-email">safety@kyzmyt.com</a>
+  </div>
+
+</div>
+
+<footer>
+  <p>&copy; 2026 KYZMYT, LLC. All rights reserved. &nbsp;✶&nbsp;
+    <a href="terms.html">Terms</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy</a> &nbsp;·&nbsp;
+    <a href="safety.html">Safety</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a>
+  </p>
+</footer>
+
 </body>
 </html>
