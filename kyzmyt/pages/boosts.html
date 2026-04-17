@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9WSYHBGQZZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9WSYHBGQZZ');
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boosts & Super Connects — Kyzmyt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0A1628;
+      --copper: #B87333;
+      --copper-light: #d4924d;
+      --cream: #FAF8F5;
+      --cream-dark: #F0EDE8;
+      --text: #1a2a40;
+      --text-muted: #5a6a7a;
+      --border: rgba(184,115,51,0.2);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+    }
+    nav {
+      background: var(--navy);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+    }
+    .nav-logo span { color: var(--copper); }
+    .nav-back {
+      color: var(--copper);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .hero {
+      background: var(--navy);
+      padding: 3.5rem 2rem 3rem;
+      text-align: center;
+      position: relative;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--copper), transparent);
+    }
+    .hero-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 0.75rem;
+    }
+    .hero-sub {
+      font-size: 0.95rem;
+      color: rgba(250,248,245,0.55);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .container { max-width: 860px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+    .stat {
+      flex: 1;
+      min-width: 140px;
+      background: white;
+      border-radius: 10px;
+      padding: 1.25rem;
+      border-top: 2px solid var(--copper);
+      box-shadow: 0 2px 12px rgba(10,22,40,0.06);
+      text-align: center;
+    }
+    .stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--navy);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .stat-label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Section headers */
+    .section-header { margin-bottom: 1.5rem; }
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 0.3rem;
+    }
+    .section-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    /* Product grid */
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 3rem;
+    }
+    .product {
+      background: white;
+      border-radius: 14px;
+      padding: 1.75rem 1.5rem;
+      border: 1.5px solid var(--cream-dark);
+      box-shadow: 0 2px 12px rgba(10,22,40,0.05);
+      transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+      position: relative;
+    }
+    .product:hover { border-color: var(--copper); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(10,22,40,0.1); }
+    .product.featured { border-color: var(--copper); }
+    .product-badge {
+      position: absolute;
+      top: -0.6rem;
+      left: 1.25rem;
+      background: var(--copper);
+      color: var(--navy);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.75rem;
+      border-radius: 50px;
+    }
+    .product-icon { font-size: 1.75rem; margin-bottom: 0.75rem; display: block; }
+    .product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.35rem;
+    }
+    .product-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.6; }
+    .product-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+    .product-price span { font-size: 0.9rem; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-weight: 300; }
+    .buy-btn {
+      width: 100%;
+      background: var(--navy);
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .buy-btn:hover { background: var(--copper); }
+
+    /* Referral section */
+    .referral-box {
+      background: var(--navy);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .referral-text { flex: 1; min-width: 200px; }
+    .referral-text h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+    }
+    .referral-text p { font-size: 0.88rem; color: rgba(250,248,245,0.6); }
+    .referral-code-box { flex-shrink: 0; }
+    .code-display {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(184,115,51,0.3);
+      border-radius: 10px;
+      padding: 0.75rem 1.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--copper);
+      letter-spacing: 0.1em;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .copy-btn {
+      width: 100%;
+      background: var(--copper);
+      color: var(--navy);
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .copy-btn:hover { background: var(--copper-light); }
+
+    .divider {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 3rem 0;
+    }
+    footer {
+      background: var(--navy);
+      padding: 2rem;
+      text-align: center;
+      color: rgba(250,248,245,0.4);
+      font-size: 0.8rem;
+      border-top: 1px solid rgba(184,115,51,0.15);
+    }
+    footer a { color: var(--copper); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="app.html" class="nav-logo">KYZM<span>✶</span>T</a>
+  <a href="app.html" class="nav-back">← Discover</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">Boosts & Super Connects</div>
+  <h1>Stand Out. Connect First.</h1>
+  <p class="hero-sub">Boost your visibility or skip the line with a Super Connect — a direct signal that you're genuinely interested.</p>
+</div>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-value" id="boostCount">0</div>
+      <div class="stat-label">Active Boosts</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="superCount">0</div>
+      <div class="stat-label">Super Connects Left</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="referralCount">0</div>
+      <div class="stat-label">Referrals Sent</div>
+    </div>
+  </div>
+
+  <!-- Boosts -->
+  <div class="section-header">
+    <div class="section-label">Profile Boosts</div>
+    <h2>Get Seen by More People</h2>
+  </div>
+
+  <div class="products">
+    <div class="product">
+      <span class="product-icon">⚡</span>
+      <div class="product-name">1-Hour Boost</div>
+      <p class="product-desc">Jump to the top of the discovery feed for a full hour. Perfect for a quick visibility spike.</p>
+      <div class="product-price">$2.99 <span>one-time</span></div>
+      <button class="buy-btn" onclick="purchase('boost_1hr')">Get Boost</button>
+    </div>
+    <div class="product featured">
+      <div class="product-badge">Most Popular</div>
+      <span class="product-icon">🔥</span>
+      <div class="product-name">3-Hour Boost</div>
+      <p class="product-desc">Three hours at the top — ideal for evenings and weekends when activity peaks.</p>
+      <div class="product-price">$5.99 <span>one-time</span></div>
+      <button class="buy-btn" onclick="purchase('boost_3hr')">Get Boost</button>
+    </div>
+    <div class="product">
+      <span class="product-icon">✨</span>
+      <div class="product-name">24-Hour Boost</div>
+      <p class="product-desc">A full day of elevated visibility. Maximum exposure across the entire verified community.</p>
+      <div class="product-price">$14.99 <span>one-time</span></div>
+      <button class="buy-btn" onclick="purchase('boost_24hr')">Get Boost</button>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Super Connects -->
+  <div class="section-header">
+    <div class="section-label">Super Connects</div>
+    <h2>Skip the Line. Make It Count.</h2>
+  </div>
+
+  <div class="products">
+    <div class="product">
+      <span class="product-icon">✶</span>
+      <div class="product-name">5 Super Connects</div>
+      <p class="product-desc">Send a Super Connect to signal serious interest. It bypasses the queue and goes straight to their inbox.</p>
+      <div class="product-price">$4.99 <span>one-time</span></div>
+      <button class="buy-btn" onclick="purchase('super_5')">Get Super Connects</button>
+    </div>
+    <div class="product featured">
+      <div class="product-badge">Best Value</div>
+      <span class="product-icon">✶✶</span>
+      <div class="product-name">15 Super Connects</div>
+      <p class="product-desc">Stock up and save. Fifteen Super Connects to use whenever you feel that spark.</p>
+      <div class="product-price">$9.99 <span>one-time</span></div>
+      <button class="buy-btn" onclick="purchase('super_15')">Get Super Connects</button>
+    </div>
+    <div class="product">
+      <span class="product-icon">🌟</span>
+      <div class="product-name">7-Day Spotlight</div>
+      <p class="product-desc">Featured placement across the platform for a full week. The ultimate visibility package.</p>
+      <div class="product-price">$19.99 <span>one-time</span></div>
+      <button class="buy-btn" onclick="purchase('spotlight_7day')">Get Spotlight</button>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Referral -->
+  <div class="referral-box">
+    <div class="referral-text">
+      <h3>✶ Invite Someone. Earn Boosts.</h3>
+      <p>Share your referral code with someone who deserves a verified dating experience. When they join and verify, you earn a free boost.</p>
+    </div>
+    <div class="referral-code-box">
+      <div class="code-display" id="referralCode">KYZMYT</div>
+      <button class="copy-btn" onclick="copyCode()">Copy Code</button>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>&copy; 2026 KYZMYT, LLC. All rights reserved. &nbsp;✶&nbsp;
+    <a href="terms.html">Terms</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy</a>
+  </p>
+</footer>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  import { getSupabaseConfig } from '../js/supabase.js';
+
+  const { url, anonKey } = getSupabaseConfig();
+  const supabase = createClient(url, anonKey);
+
+  // Load user stats
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) { window.location.href = 'login.html'; }
+
+  // Load referral code
+  const { data: referral } = await supabase
+    .from('referrals')
+    .select('code')
+    .eq('user_id', user.id)
+    .single();
+
+  if (referral) {
+    document.getElementById('referralCode').textContent = referral.code;
+  }
+
+  // Load boost/super connect balance
+  const { data: balance } = await supabase
+    .from('super_connect_balance')
+    .select('balance')
+    .eq('user_id', user.id)
+    .single();
+
+  if (balance) {
+    document.getElementById('superCount').textContent = balance.balance || 0;
+  }
+
+  window.purchase = async (product) => {
+    const res = await fetch('/.netlify/functions/purchase-boost', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product, userId: user.id })
+    });
+    const { url } = await res.json();
+    if (url) window.location.href = url;
+  };
+
+  window.copyCode = () => {
+    const code = document.getElementById('referralCode').textContent;
+    navigator.clipboard.writeText(code);
+    document.querySelector('.copy-btn').textContent = 'Copied!';
+    setTimeout(() => { document.querySelector('.copy-btn').textContent = 'Copy Code'; }, 2000);
+  };
+</script>
+
+</body>
+</html>
