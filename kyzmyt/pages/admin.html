@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kyzmyt Admin Dashboard</title>
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <style>
+    .admin-page { min-height: 100vh; background: var(--navy); }
+    .admin-header { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
+    .admin-logo { font-family: var(--font-display); font-size: 22px; color: white; }
+    .admin-logo span { color: var(--copper); }
+    .admin-content { padding: 20px; max-width: 960px; margin: 0 auto; }
+    .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+    .stat-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: 16px; }
+    .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: rgba(255,255,255,0.4); margin-bottom: 6px; }
+    .stat-value { font-family: var(--font-display); font-size: 36px; font-weight: 600; color: white; }
+    .stat-change { font-size: 12px; color: var(--copper); margin-top: 4px; }
+    .admin-tabs { display: flex; gap: 4px; background: rgba(255,255,255,0.05); border-radius: var(--radius-full); padding: 4px; margin-bottom: 20px; overflow-x: auto; }
+    .admin-tab { flex: 1; padding: 8px 12px; border-radius: var(--radius-full); font-size: 12px; font-weight: 500; text-align: center; cursor: pointer; color: rgba(255,255,255,0.5); white-space: nowrap; transition: all 0.2s; min-width: 80px; }
+    .admin-tab.active { background: var(--copper); color: white; }
+    .admin-card { background: var(--white); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 12px; }
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table th { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; padding: 8px; text-align: left; border-bottom: 1px solid var(--border); }
+    .admin-table td { padding: 12px 8px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .report-card { background: var(--white); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 10px; border-left: 4px solid var(--warning); }
+    .report-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .report-reporter { font-size: 12px; color: var(--text-muted); }
+    .report-reason { font-size: 14px; color: var(--navy); font-weight: 500; }
+    .report-time { font-size: 11px; color: var(--text-muted); }
+    .report-actions { display: flex; gap: 6px; margin-top: 10px; }
+    .revenue-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .revenue-label { color: var(--text-secondary); }
+    .revenue-value { font-weight: 500; color: var(--navy); }
+    .password-gate { position: fixed; inset: 0; background: var(--navy); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 24px; }
+    .password-card { background: white; border-radius: var(--radius-xl); padding: 32px; max-width: 360px; width: 100%; text-align: center; }
+  </style>
+</head>
+<body>
+
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Password gate -->
+<div id="password-gate" class="password-gate">
+  <div class="password-card">
+    <div style="font-family:var(--font-display);font-size:32px;color:var(--navy);margin-bottom:8px">Kyzm<span style="color:var(--copper)">yt</span></div>
+    <div style="font-size:14px;color:var(--text-secondary);margin-bottom:24px">Admin access only</div>
+    <input type="password" id="admin-password" class="form-input" placeholder="Admin password" style="margin-bottom:12px" />
+    <button class="btn btn-navy btn-full" style="background:var(--navy);color:white" onclick="checkAdminPassword()">Enter Dashboard</button>
+  </div>
+</div>
+
+<div id="admin-app" class="admin-page hidden">
+  <div class="admin-header">
+    <div class="admin-logo">Kyzm<span>yt</span> Admin</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.4)" id="admin-last-refresh">Loading...</div>
+  </div>
+
+  <div class="admin-content">
+
+    <!-- Stats -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Members</div>
+        <div class="stat-value" id="stat-members">—</div>
+        <div class="stat-change" id="stat-members-change">loading...</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Verified Members</div>
+        <div class="stat-value" id="stat-verified">—</div>
+        <div class="stat-change">Background cleared</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Subscribers</div>
+        <div class="stat-value" id="stat-subscribers">—</div>
+        <div class="stat-change" id="stat-mrr">MRR loading...</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Matches Made</div>
+        <div class="stat-value" id="stat-matches">—</div>
+        <div class="stat-change">Total kyzmyt moments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending Reports</div>
+        <div class="stat-value" id="stat-reports" style="color:#ff6b6b">—</div>
+        <div class="stat-change" style="color:rgba(255,255,255,0.3)">Review within 24h</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">BG Checks Pending</div>
+        <div class="stat-value" id="stat-bg-pending">—</div>
+        <div class="stat-change" style="color:rgba(255,255,255,0.3)">Awaiting Checkr</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="admin-tabs">
+      <div class="admin-tab active" onclick="showAdminTab('reports', this)">Reports</div>
+      <div class="admin-tab" onclick="showAdminTab('members', this)">Members</div>
+      <div class="admin-tab" onclick="showAdminTab('verifications', this)">Verifications</div>
+      <div class="admin-tab" onclick="showAdminTab('revenue', this)">Revenue</div>
+      <div class="admin-tab" onclick="showAdminTab('safety', this)">Safety</div>
+    </div>
+
+    <!-- Reports tab -->
+    <div id="tab-reports">
+      <div id="reports-container">
+        <div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3)">
+          <div class="spinner" style="margin:0 auto 12px;border-top-color:white"></div>
+          Loading reports...
+        </div>
+      </div>
+    </div>
+
+    <!-- Members tab -->
+    <div id="tab-members" class="hidden">
+      <div class="admin-card">
+        <div style="display:flex;gap:12px;margin-bottom:16px">
+          <input type="text" class="form-input" id="member-search" placeholder="Search by name or email..." style="flex:1" oninput="searchMembers()" />
+          <select class="form-input form-select" id="member-filter" onchange="searchMembers()" style="width:140px">
+            <option value="">All members</option>
+            <option value="verified">Verified only</option>
+            <option value="pending">BG pending</option>
+            <option value="banned">Banned</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="admin-table" id="members-table">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Age</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="members-tbody">
+              <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verifications tab -->
+    <div id="tab-verifications" class="hidden">
+      <div class="admin-card">
+        <div style="overflow-x:auto">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>ID Verified</th>
+                <th>Background</th>
+                <th>Financial</th>
+                <th>Completed</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="verif-tbody">
+              <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue tab -->
+    <div id="tab-revenue" class="hidden">
+      <div class="admin-card">
+        <div style="font-family:var(--font-display);font-size:20px;color:var(--navy);margin-bottom:16px">Revenue overview</div>
+        <div class="revenue-row"><span class="revenue-label">Monthly subscription revenue (MRR)</span><span class="revenue-value" id="rev-mrr">Loading...</span></div>
+        <div class="revenue-row"><span class="revenue-label">Background check revenue (MTD)</span><span class="revenue-value" id="rev-bg">Loading...</span></div>
+        <div class="revenue-row"><span class="revenue-label">ID verification revenue (MTD)</span><span class="revenue-value" id="rev-id">Loading...</span></div>
+        <div class="revenue-row"><span class="revenue-label">Financial badge revenue (MTD)</span><span class="revenue-value" id="rev-fin">Loading...</span></div>
+        <div class="revenue-row" style="border-bottom:none"><span class="revenue-label">Total this month</span><span class="revenue-value" id="rev-total" style="color:var(--copper);font-size:18px">Loading...</span></div>
+      </div>
+    </div>
+
+    <!-- Safety tab -->
+    <div id="tab-safety" class="hidden">
+      <div class="admin-card" style="margin-bottom:12px">
+        <div style="font-family:var(--font-display);font-size:20px;color:var(--navy);margin-bottom:14px">Date check-in alerts</div>
+        <div id="checkin-alerts">
+          <div style="font-size:13px;color:var(--text-muted)">No active alerts</div>
+        </div>
+      </div>
+      <div class="admin-card">
+        <div style="font-family:var(--font-display);font-size:20px;color:var(--navy);margin-bottom:14px">Blocked users</div>
+        <div id="blocks-list">
+          <div style="font-size:13px;color:var(--text-muted)">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { supabase, showToast, formatRelativeTime } from '/js/supabase.js';
+
+const ADMIN_PASSWORD = 'KyzmytAdmin2026!';
+
+window.checkAdminPassword = function() {
+  const pw = document.getElementById('admin-password').value;
+  if (pw === ADMIN_PASSWORD) {
+    document.getElementById('password-gate').style.display = 'none';
+    document.getElementById('admin-app').classList.remove('hidden');
+    loadDashboard();
+  } else {
+    showToast('Incorrect password', 'error');
+  }
+};
+
+document.getElementById('admin-password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkAdminPassword();
+});
+
+async function loadDashboard() {
+  document.getElementById('admin-last-refresh').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+
+  const [members, verified, matches, reports, bgPending, subscribers] = await Promise.all([
+    supabase.from('profiles').select('id', { count: 'exact' }),
+    supabase.from('verifications').select('id', { count: 'exact' }).eq('background_clear', true),
+    supabase.from('matches').select('id', { count: 'exact' }),
+    supabase.from('reports').select('id', { count: 'exact' }).eq('status', 'pending'),
+    supabase.from('verifications').select('id', { count: 'exact' }).eq('background_status', 'pending'),
+    supabase.from('subscriptions').select('id', { count: 'exact' }).eq('status', 'active')
+  ]);
+
+  document.getElementById('stat-members').textContent = members.count || 0;
+  document.getElementById('stat-verified').textContent = verified.count || 0;
+  document.getElementById('stat-matches').textContent = matches.count || 0;
+  document.getElementById('stat-reports').textContent = reports.count || 0;
+  document.getElementById('stat-bg-pending').textContent = bgPending.count || 0;
+  document.getElementById('stat-subscribers').textContent = subscribers.count || 0;
+  document.getElementById('stat-mrr').textContent = `$${((subscribers.count || 0) * 29).toLocaleString()}/mo`;
+
+  // Revenue
+  document.getElementById('rev-mrr').textContent = `$${((subscribers.count || 0) * 29).toLocaleString()}`;
+  document.getElementById('rev-total').textContent = `$${((subscribers.count || 0) * 29 + (verified.count || 0) * 30).toLocaleString()}`;
+
+  await loadReports();
+  await loadMembers();
+  await loadVerifications();
+  loadCheckinAlerts();
+}
+
+async function loadReports() {
+  const { data: reports } = await supabase
+    .from('reports')
+    .select('*, reporter:reporter_id(display_name), reported:reported_id(display_name)')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false });
+
+  const container = document.getElementById('reports-container');
+  if (!reports?.length) {
+    container.innerHTML = '<div class="admin-card" style="text-align:center;padding:32px;color:var(--text-muted)">No pending reports. All clear. ✓</div>';
+    return;
+  }
+
+  container.innerHTML = reports.map(r => `
+    <div class="report-card">
+      <div class="report-header">
+        <div>
+          <div class="report-reporter">Reported by: ${r.reporter?.display_name || 'Member'}</div>
+          <div class="report-reason">${r.reason}</div>
+        </div>
+        <div class="report-time">${formatRelativeTime(r.created_at)}</div>
+      </div>
+      <div style="font-size:13px;color:var(--text-secondary)">Against: <strong>${r.reported?.display_name || 'Member'}</strong></div>
+      <div class="report-actions">
+        <button class="btn btn-sm btn-copper" onclick="reviewReport('${r.id}', 'warn')">Warn User</button>
+        <button class="btn btn-sm btn-danger" onclick="reviewReport('${r.id}', 'ban')">Ban User</button>
+        <button class="btn btn-sm btn-outline" onclick="reviewReport('${r.id}', 'dismiss')">Dismiss</button>
+      </div>
+    </div>`).join('');
+}
+
+async function loadMembers(search = '', filter = '') {
+  let query = supabase.from('profiles').select('*, verifications(*)').order('created_at', { ascending: false }).limit(50);
+  if (search) query = query.ilike('display_name', `%${search}%`);
+  if (filter === 'verified') query = query.eq('is_verified', true);
+  if (filter === 'banned') query = query.not('ban_reason', 'is', null);
+
+  const { data: members } = await query;
+  const tbody = document.getElementById('members-tbody');
+  if (!members?.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">No members found</td></tr>'; return; }
+
+  tbody.innerHTML = members.map(m => `
+    <tr>
+      <td>
+        <div style="font-weight:500">${m.display_name || '—'}</div>
+        <div style="font-size:11px;color:var(--text-muted)">${m.user_id}</div>
+      </td>
+      <td>${m.age || '—'}</td>
+      <td>${m.city || m.zipcode || '—'}</td>
+      <td>
+        ${m.is_verified ? '<span class="badge badge-verified">Verified</span>' : '<span class="badge badge-pending">Pending</span>'}
+        ${m.ban_reason ? '<span class="badge" style="background:var(--danger-bg);color:var(--danger)">Banned</span>' : ''}
+      </td>
+      <td style="font-size:11px">${formatRelativeTime(m.created_at)}</td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-sm btn-outline" onclick="viewMember('${m.user_id}')">View</button>
+          ${!m.ban_reason ? `<button class="btn btn-sm btn-danger" onclick="banMember('${m.user_id}')">Ban</button>` : `<button class="btn btn-sm btn-outline" onclick="unbanMember('${m.user_id}')">Unban</button>`}
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+async function loadVerifications() {
+  const { data: verifs } = await supabase.from('verifications').select('*, profiles(display_name)').order('created_at', { ascending: false }).limit(50);
+  const tbody = document.getElementById('verif-tbody');
+  if (!verifs?.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">None yet</td></tr>'; return; }
+
+  tbody.innerHTML = verifs.map(v => `
+    <tr>
+      <td>${v.profiles?.display_name || v.user_id?.slice(0, 8)}</td>
+      <td>${v.id_verified ? '✓' : '✗'}</td>
+      <td><span class="badge ${v.background_clear === true ? 'badge-verified' : v.background_clear === false ? '' : 'badge-pending'}">${v.background_status || 'not started'}</span></td>
+      <td>${v.financial_verified ? '✓' : '—'}</td>
+      <td style="font-size:11px">${v.background_completed_at ? formatRelativeTime(v.background_completed_at) : '—'}</td>
+      <td><button class="btn btn-sm btn-outline" onclick="viewVerification('${v.user_id}')">Details</button></td>
+    </tr>`).join('');
+}
+
+async function loadCheckinAlerts() {
+  const { data: alerts } = await supabase.from('date_checkins').select('*, profiles(display_name)').eq('alerted', true).eq('resolved', false);
+  const container = document.getElementById('checkin-alerts');
+  if (!alerts?.length) { container.innerHTML = '<div style="font-size:13px;color:var(--text-muted)">No active safety alerts ✓</div>'; return; }
+  container.innerHTML = alerts.map(a => `
+    <div style="background:var(--danger-bg);border-radius:var(--radius-md);padding:12px;margin-bottom:8px">
+      <div style="font-weight:500;color:var(--danger);margin-bottom:4px">🚨 Alert: ${a.profiles?.display_name}</div>
+      <div style="font-size:12px;color:var(--text-secondary)">Check-in time: ${new Date(a.checkin_time).toLocaleString()}</div>
+      <div style="font-size:12px;color:var(--text-secondary)">Alert sent: ${formatRelativeTime(a.alerted_at)}</div>
+      <button class="btn btn-sm btn-danger" style="margin-top:8px" onclick="resolveAlert('${a.id}')">Mark Resolved</button>
+    </div>`).join('');
+}
+
+window.reviewReport = async function(reportId, action) {
+  if (action === 'dismiss') {
+    await supabase.from('reports').update({ status: 'dismissed', reviewed_at: new Date().toISOString() }).eq('id', reportId);
+    showToast('Report dismissed', 'success');
+  } else if (action === 'warn') {
+    await supabase.from('reports').update({ status: 'actioned', reviewed_at: new Date().toISOString() }).eq('id', reportId);
+    showToast('User warned', 'success');
+  } else if (action === 'ban') {
+    const { data: report } = await supabase.from('reports').select('reported_id, reason').eq('id', reportId).single();
+    await supabase.from('profiles').update({ ban_reason: report.reason, banned_at: new Date().toISOString(), is_visible: false }).eq('user_id', report.reported_id);
+    await supabase.from('reports').update({ status: 'actioned', reviewed_at: new Date().toISOString() }).eq('id', reportId);
+    showToast('User banned', 'success');
+  }
+  await loadReports();
+};
+
+window.banMember = async function(userId) {
+  const reason = prompt('Reason for ban:');
+  if (!reason) return;
+  await supabase.from('profiles').update({ ban_reason: reason, banned_at: new Date().toISOString(), is_visible: false }).eq('user_id', userId);
+  showToast('Member banned', 'success');
+  loadMembers();
+};
+
+window.unbanMember = async function(userId) {
+  await supabase.from('profiles').update({ ban_reason: null, banned_at: null }).eq('user_id', userId);
+  showToast('Member unbanned', 'success');
+  loadMembers();
+};
+
+window.resolveAlert = async function(id) {
+  await supabase.from('date_checkins').update({ resolved: true }).eq('id', id);
+  showToast('Alert resolved', 'success');
+  loadCheckinAlerts();
+};
+
+window.viewMember = (id) => showToast(`Member ID: ${id}`, '');
+window.viewVerification = (id) => showToast(`Verification for: ${id}`, '');
+
+window.showAdminTab = function(tab, el) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.add('hidden'));
+  document.getElementById(`tab-${tab}`).classList.remove('hidden');
+  if (tab === 'members') loadMembers();
+  if (tab === 'verifications') loadVerifications();
+  if (tab === 'safety') loadCheckinAlerts();
+};
+
+window.searchMembers = function() {
+  const search = document.getElementById('member-search').value;
+  const filter = document.getElementById('member-filter').value;
+  loadMembers(search, filter);
+};
+</script>
+
+</body>
+</html>

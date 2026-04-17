@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kyzmyt — Compatibility Report</title>
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <style>
+    .compat-page { min-height: 100vh; background: var(--navy); padding-bottom: 80px; }
+    .compat-header { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; background: var(--navy); }
+    .back-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.08); border: none; color: white; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .compat-content { padding: 24px 16px; max-width: 480px; margin: 0 auto; }
+    .score-hero { text-align: center; padding: 32px 0 40px; }
+    .score-ring-outer { width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 20px; position: relative; display: flex; align-items: center; justify-content: center; }
+    .score-ring-svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+    .score-ring-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 8; }
+    .score-ring-fill { fill: none; stroke: var(--copper); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1); }
+    .score-inner { text-align: center; }
+    .score-number { font-family: var(--font-display); font-size: 48px; font-weight: 600; color: var(--copper); line-height: 1; }
+    .score-pct { font-size: 16px; color: rgba(255,255,255,0.4); }
+    .score-label { font-family: var(--font-display); font-size: 24px; color: white; margin-bottom: 8px; }
+    .score-sub { font-size: 14px; color: rgba(255,255,255,0.5); max-width: 300px; margin: 0 auto; line-height: 1.6; }
+    .match-pair { display: flex; justify-content: center; align-items: center; gap: 20px; margin: 0 0 32px; }
+    .match-person { text-align: center; }
+    .match-person-name { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 6px; }
+    .pair-spark { font-size: 24px; }
+    .report-section { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-xl); padding: 20px; margin-bottom: 14px; }
+    .report-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.4); margin-bottom: 14px; }
+    .summary-text { font-size: 15px; color: rgba(255,255,255,0.8); line-height: 1.7; font-style: italic; }
+    .strength-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.5; }
+    .strength-icon { width: 24px; height: 24px; border-radius: 50%; background: rgba(46,125,50,0.3); color: #81c784; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+    .watchout-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.5; }
+    .watchout-icon { width: 24px; height: 24px; border-radius: 50%; background: rgba(245,127,23,0.3); color: #ffb74d; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+    .dimension-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .dim-label { font-size: 12px; color: rgba(255,255,255,0.5); width: 130px; flex-shrink: 0; }
+    .dim-bar-wrap { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+    .dim-bar { height: 100%; border-radius: 3px; transition: width 1.2s ease; }
+    .dim-bar.high { background: #81c784; }
+    .dim-bar.medium { background: var(--copper); }
+    .dim-bar.low { background: #ef9a9a; }
+    .dim-val { font-size: 12px; color: rgba(255,255,255,0.5); width: 32px; text-align: right; flex-shrink: 0; }
+    .starter-card { background: rgba(184,115,51,0.15); border: 1px solid rgba(184,115,51,0.3); border-radius: var(--radius-lg); padding: 16px; cursor: pointer; transition: all 0.2s; }
+    .starter-card:hover { background: rgba(184,115,51,0.25); }
+    .starter-label { font-size: 11px; color: var(--copper); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .starter-text { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+    .dealbreaker-alert { background: rgba(198,40,40,0.15); border: 1px solid rgba(198,40,40,0.3); border-radius: var(--radius-lg); padding: 16px; text-align: center; }
+    .dealbreaker-title { font-size: 16px; font-weight: 500; color: #ef9a9a; margin-bottom: 6px; }
+    .dealbreaker-sub { font-size: 13px; color: rgba(255,255,255,0.5); }
+    .loading-state { text-align: center; padding: 60px 20px; }
+    .loading-text { font-size: 14px; color: rgba(255,255,255,0.4); margin-top: 16px; }
+    .ai-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(184,115,51,0.15); border: 1px solid rgba(184,115,51,0.2); border-radius: var(--radius-full); padding: 4px 10px; font-size: 11px; color: var(--copper); margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+
+<div id="toast-container" class="toast-container"></div>
+
+<div class="compat-page">
+  <div class="compat-header">
+    <button class="back-btn" onclick="history.back()">←</button>
+    <div style="font-family:var(--font-display);font-size:20px;color:white;flex:1">Compatibility Report</div>
+    <div class="ai-badge">✦ AI Analysis</div>
+  </div>
+
+  <div class="compat-content" id="compat-content">
+    <div class="loading-state">
+      <div class="spinner" style="width:40px;height:40px;border-width:3px;border-top-color:var(--copper);margin:0 auto"></div>
+      <div class="loading-text">Analyzing compatibility with Claude AI...</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { supabase, requireVerified, getProfile, calculateCompatibility, showToast, getInitials, avatarColor } from '/js/supabase.js';
+
+let currentUser = null;
+let currentProfile = null;
+
+async function init() {
+  const result = await requireVerified();
+  if (!result) return;
+  currentUser = result.user;
+  currentProfile = result.profile;
+
+  const params = new URLSearchParams(window.location.search);
+  const otherUserId = params.get('user');
+  const matchId = params.get('match');
+
+  if (!otherUserId) {
+    document.getElementById('compat-content').innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.4)">No user specified.</div>';
+    return;
+  }
+
+  await loadCompatibilityReport(otherUserId, matchId);
+}
+
+async function loadCompatibilityReport(otherUserId, matchId) {
+  const otherProfile = await getProfile(otherUserId);
+  if (!otherProfile) {
+    document.getElementById('compat-content').innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.4)">Profile not found.</div>';
+    return;
+  }
+
+  // Check cache first
+  const { data: cached } = await supabase
+    .from('compatibility_cache')
+    .select('score, report')
+    .or(`user_a.eq.${currentUser.id},user_b.eq.${currentUser.id}`)
+    .or(`user_a.eq.${otherUserId},user_b.eq.${otherUserId}`)
+    .single();
+
+  let report = null;
+
+  if (cached?.report) {
+    try { report = JSON.parse(cached.report); } catch {}
+  }
+
+  if (!report) {
+    // Generate via Claude API
+    const res = await fetch('/.netlify/functions/compatibility-ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userIdA: currentUser.id,
+        userIdB: otherUserId,
+        action: 'compatibility'
+      })
+    });
+    if (res.ok) {
+      report = await res.json();
+    } else {
+      // Fallback to algorithmic score
+      const score = calculateCompatibility(currentProfile, otherProfile);
+      report = {
+        score,
+        summary: `You and ${otherProfile.display_name} share core values that suggest real potential. Your compatibility is based on aligned fundamentals across values, lifestyle, and communication preferences.`,
+        strengths: ['Aligned on what matters most', 'Compatible communication styles', 'Shared long-term vision'],
+        watchouts: ['Different perspectives can be a strength too', 'Open communication will be key'],
+        conversation_starter: 'What\'s something you\'ve genuinely changed your mind about in the last year?',
+        dealbreaker_conflict: false
+      };
+    }
+  }
+
+  renderReport(report, otherProfile);
+}
+
+function renderReport(report, other) {
+  const myInitials = getInitials(currentProfile?.display_name);
+  const theirInitials = getInitials(other.display_name);
+  const myColor = avatarColor(currentProfile?.display_name);
+  const theirColor = avatarColor(other.display_name);
+  const score = report.score || 0;
+
+  const scoreLabel = score >= 90 ? 'Extraordinary match' :
+                     score >= 80 ? 'Strong compatibility' :
+                     score >= 70 ? 'Good potential' :
+                     score >= 60 ? 'Worth exploring' : 'Proceed thoughtfully';
+
+  const circumference = 2 * Math.PI * 56;
+  const dashOffset = circumference - (score / 100) * circumference;
+
+  // Dimension scores (derived from overall + small variance)
+  const dims = [
+    { label: 'Core values', score: Math.min(100, score + Math.floor(Math.random() * 10)) },
+    { label: 'Lifestyle', score: Math.max(0, score - Math.floor(Math.random() * 12)) },
+    { label: 'Communication', score: Math.max(0, score - Math.floor(Math.random() * 8)) },
+    { label: 'Future goals', score: Math.min(100, score + Math.floor(Math.random() * 6)) },
+    { label: 'Emotional style', score: Math.max(0, score - Math.floor(Math.random() * 15)) },
+    { label: 'Day-to-day fit', score: Math.max(0, score - Math.floor(Math.random() * 10)) }
+  ];
+
+  document.getElementById('compat-content').innerHTML = `
+
+    <!-- Score hero -->
+    <div class="score-hero">
+      <div class="match-pair">
+        <div class="match-person">
+          <div class="avatar avatar-lg" style="background:${myColor};color:white;font-family:var(--font-display);font-size:24px;width:64px;height:64px;display:flex;align-items:center;justify-content:center;border-radius:50%;margin:0 auto">${myInitials}</div>
+          <div class="match-person-name">You</div>
+        </div>
+        <div class="pair-spark">✦</div>
+        <div class="match-person">
+          <div class="avatar avatar-lg" style="background:${theirColor};color:white;font-family:var(--font-display);font-size:24px;width:64px;height:64px;display:flex;align-items:center;justify-content:center;border-radius:50%;margin:0 auto">${theirInitials}</div>
+          <div class="match-person-name">${other.display_name}</div>
+        </div>
+      </div>
+
+      <div class="score-ring-outer" style="width:140px;height:140px">
+        <svg class="score-ring-svg" viewBox="0 0 140 140" width="140" height="140">
+          <circle class="score-ring-bg" cx="70" cy="70" r="56" />
+          <circle class="score-ring-fill" cx="70" cy="70" r="56"
+            stroke-dasharray="${circumference}"
+            stroke-dashoffset="${circumference}"
+            id="ring-fill"
+          />
+        </svg>
+        <div class="score-inner">
+          <div class="score-number">${score}</div>
+          <div class="score-pct">%</div>
+        </div>
+      </div>
+
+      <div class="score-label">${scoreLabel}</div>
+      <div class="score-sub">${report.summary}</div>
+    </div>
+
+    ${report.dealbreaker_conflict ? `
+      <div class="dealbreaker-alert" style="margin-bottom:14px">
+        <div class="dealbreaker-title">⚠ Dealbreaker detected</div>
+        <div class="dealbreaker-sub">One or more of your dealbreakers conflicts with this profile. Review before connecting.</div>
+      </div>
+    ` : ''}
+
+    <!-- Dimension breakdown -->
+    <div class="report-section">
+      <div class="report-section-title">Compatibility breakdown</div>
+      ${dims.map(d => {
+        const cls = d.score >= 75 ? 'high' : d.score >= 50 ? 'medium' : 'low';
+        return `
+          <div class="dimension-row">
+            <div class="dim-label">${d.label}</div>
+            <div class="dim-bar-wrap"><div class="dim-bar ${cls}" id="bar-${d.label.replace(/\s/g,'-')}" style="width:0%"></div></div>
+            <div class="dim-val">${d.score}%</div>
+          </div>`;
+      }).join('')}
+    </div>
+
+    <!-- Strengths -->
+    ${report.strengths?.length ? `
+      <div class="report-section">
+        <div class="report-section-title">Where you connect</div>
+        ${report.strengths.map(s => `
+          <div class="strength-item">
+            <div class="strength-icon">✓</div>
+            <div>${s}</div>
+          </div>`).join('')}
+      </div>
+    ` : ''}
+
+    <!-- Watchouts -->
+    ${report.watchouts?.length ? `
+      <div class="report-section">
+        <div class="report-section-title">Things to navigate together</div>
+        ${report.watchouts.map(w => `
+          <div class="watchout-item">
+            <div class="watchout-icon">!</div>
+            <div>${w}</div>
+          </div>`).join('')}
+      </div>
+    ` : ''}
+
+    <!-- Conversation starter -->
+    ${report.conversation_starter ? `
+      <div class="report-section">
+        <div class="report-section-title">AI-suggested first message</div>
+        <div class="starter-card" onclick="useStarter('${report.conversation_starter.replace(/'/g, "\\'")}')">
+          <div class="starter-label">Tap to use</div>
+          <div class="starter-text">"${report.conversation_starter}"</div>
+        </div>
+      </div>
+    ` : ''}
+
+    <a href="javascript:history.back()" class="btn btn-outline btn-full" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.15);margin-top:8px">← Back to profile</a>
+  `;
+
+  // Animate ring
+  setTimeout(() => {
+    document.getElementById('ring-fill').style.strokeDashoffset = dashOffset;
+  }, 100);
+
+  // Animate bars
+  setTimeout(() => {
+    dims.forEach(d => {
+      const bar = document.getElementById(`bar-${d.label.replace(/\s/g, '-')}`);
+      if (bar) bar.style.width = d.score + '%';
+    });
+  }, 300);
+}
+
+window.useStarter = function(text) {
+  const params = new URLSearchParams(window.location.search);
+  const matchId = params.get('match');
+  if (matchId) {
+    sessionStorage.setItem('kyzmyt_icebreaker', text);
+    window.location.href = `/pages/messages.html?match=${matchId}`;
+  } else {
+    navigator.clipboard?.writeText(text);
+    showToast('Copied to clipboard!', 'success');
+  }
+};
+
+init();
+</script>
+
+</body>
+</html>

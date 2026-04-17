@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kyzmyt — My Profile</title>
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <style>
+    .profile-page { min-height: 100vh; background: var(--cream); padding-bottom: 80px; }
+    .profile-header { position: sticky; top: 0; z-index: 100; background: var(--white); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+    .profile-content { max-width: 480px; margin: 0 auto; }
+    .profile-hero { background: var(--navy); padding: 32px 20px 24px; text-align: center; position: relative; }
+    .avatar-hero { width: 88px; height: 88px; border-radius: 50%; margin: 0 auto 14px; border: 3px solid rgba(255,255,255,0.15); overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 32px; color: white; cursor: pointer; }
+    .avatar-change { position: absolute; bottom: 0; right: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--copper); display: flex; align-items: center; justify-content: center; font-size: 12px; border: 2px solid white; }
+    .profile-hero-name { font-family: var(--font-display); font-size: 28px; color: var(--white); margin-bottom: 4px; }
+    .profile-hero-sub { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 16px; }
+    .badge-strip-hero { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+    .compat-hint { background: rgba(184,115,51,0.15); border: 1px solid rgba(184,115,51,0.3); border-radius: var(--radius-full); padding: 6px 14px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.7); }
+    .profile-section { background: var(--white); margin-bottom: 8px; }
+    .section-header { padding: 16px 16px 12px; display: flex; justify-content: space-between; align-items: center; }
+    .section-h3 { font-family: var(--font-display); font-size: 20px; color: var(--navy); }
+    .edit-link { font-size: 13px; color: var(--copper); cursor: pointer; }
+    .section-body { padding: 0 16px 16px; }
+    .info-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { font-size: 13px; color: var(--text-muted); }
+    .info-value { font-size: 13px; font-weight: 500; color: var(--navy); text-align: right; max-width: 200px; }
+    .hot-take-display { background: var(--cream-mid); border-left: 3px solid var(--copper); padding: 10px 12px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 13px; color: var(--text-secondary); font-style: italic; margin-bottom: 8px; line-height: 1.5; }
+    .photo-grid-profile { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .photo-thumb { aspect-ratio: 3/4; border-radius: var(--radius-md); overflow: hidden; background: var(--cream-mid); cursor: pointer; position: relative; }
+    .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-thumb .add { display: flex; align-items: center; justify-content: center; height: 100%; font-size: 24px; color: var(--text-muted); border: 2px dashed var(--border-mid); border-radius: var(--radius-md); }
+    .obsession-card { background: var(--copper-pale); border: 1px solid rgba(184,115,51,0.2); border-radius: var(--radius-md); padding: 14px; display: flex; gap: 10px; align-items: flex-start; }
+    .obsession-icon { font-size: 22px; flex-shrink: 0; }
+    .visibility-toggle { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--white); margin-bottom: 8px; }
+    .subscription-card { background: var(--navy); border-radius: var(--radius-lg); padding: 20px; margin: 0 16px 8px; }
+    .sub-tier { font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .sub-name { font-family: var(--font-display); font-size: 22px; color: var(--white); margin-bottom: 12px; }
+    .sub-features { list-style: none; margin-bottom: 16px; }
+    .sub-features li { font-size: 12px; color: rgba(255,255,255,0.7); padding: 3px 0; display: flex; align-items: center; gap: 6px; }
+    .sub-features li::before { content: '✓'; color: var(--copper); }
+    .upgrade-card { background: var(--copper); border-radius: var(--radius-lg); padding: 20px; margin: 0 16px 8px; }
+    .danger-zone { background: var(--white); margin-bottom: 8px; }
+    .edit-modal-content { padding: 0; }
+  </style>
+</head>
+<body>
+
+<div id="toast-container" class="toast-container"></div>
+
+<div class="profile-page">
+  <div class="profile-header">
+    <a href="/pages/app.html" style="font-size:18px;color:var(--navy)">←</a>
+    <div class="app-logo" style="font-family:var(--font-display);font-size:22px;font-weight:600;color:var(--navy)">Kyzm<span style="color:var(--copper)">yt</span></div>
+    <button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button>
+  </div>
+
+  <div class="profile-content">
+
+    <!-- Hero -->
+    <div class="profile-hero">
+      <div style="position:relative;display:inline-block;margin-bottom:14px">
+        <div class="avatar-hero" id="hero-avatar" onclick="triggerAvatarUpload()">?</div>
+        <div class="avatar-change">✎</div>
+      </div>
+      <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)" />
+      <div class="profile-hero-name" id="hero-name">Loading...</div>
+      <div class="profile-hero-sub" id="hero-sub"></div>
+      <div class="badge-strip-hero" id="hero-badges"></div>
+      <div class="compat-hint" id="compat-hint">
+        <span>✦</span> <span id="compat-hint-text">Loading your match data...</span>
+      </div>
+    </div>
+
+    <!-- Visibility -->
+    <div class="visibility-toggle">
+      <div>
+        <div style="font-size:14px;font-weight:500;color:var(--navy)">Profile visibility</div>
+        <div style="font-size:12px;color:var(--text-muted)" id="visibility-status">Visible to verified members</div>
+      </div>
+      <div class="toggle" id="visibility-toggle" onclick="toggleVisibility()">
+        <div class="toggle-thumb"></div>
+      </div>
+    </div>
+
+    <!-- Photos -->
+    <div class="profile-section">
+      <div class="section-header">
+        <div class="section-h3">Photos</div>
+        <div class="edit-link" onclick="openPhotoEdit()">Edit</div>
+      </div>
+      <div class="section-body">
+        <div class="photo-grid-profile" id="photo-grid">
+          <div class="photo-thumb"><div class="add">+</div></div>
+          <div class="photo-thumb"><div class="add">+</div></div>
+          <div class="photo-thumb"><div class="add">+</div></div>
+          <div class="photo-thumb"><div class="add">+</div></div>
+          <div class="photo-thumb"><div class="add">+</div></div>
+          <div class="photo-thumb"><div class="add">+</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bio and obsession -->
+    <div class="profile-section">
+      <div class="section-header">
+        <div class="section-h3">About me</div>
+        <div class="edit-link" onclick="editBio()">Edit</div>
+      </div>
+      <div class="section-body">
+        <div id="bio-display" style="font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:14px">—</div>
+        <div class="obsession-card" id="obsession-card" style="display:none">
+          <div class="obsession-icon">🔥</div>
+          <div>
+            <div style="font-size:11px;font-weight:500;color:var(--copper);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px">Currently obsessed with</div>
+            <div style="font-size:13px;color:var(--text-secondary)" id="obsession-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hot takes -->
+    <div class="profile-section">
+      <div class="section-header">
+        <div class="section-h3">Hot takes</div>
+        <div class="edit-link" onclick="editHotTakes()">Edit</div>
+      </div>
+      <div class="section-body" id="hot-takes-display">
+        <div style="font-size:13px;color:var(--text-muted)">No hot takes yet. Add some spice.</div>
+      </div>
+    </div>
+
+    <!-- Values -->
+    <div class="profile-section">
+      <div class="section-header">
+        <div class="section-h3">My values</div>
+        <div class="edit-link" onclick="editValues()">Edit</div>
+      </div>
+      <div class="section-body">
+        <div class="info-row"><span class="info-label">Politics</span><span class="info-value" id="val-politics">—</span></div>
+        <div class="info-row"><span class="info-label">Religion</span><span class="info-value" id="val-religion">—</span></div>
+        <div class="info-row"><span class="info-label">Love language</span><span class="info-value" id="val-love">—</span></div>
+        <div class="info-row"><span class="info-label">Attachment style</span><span class="info-value" id="val-attach">—</span></div>
+        <div class="info-row"><span class="info-label">Phone</span><span class="info-value" id="val-device">—</span></div>
+        <div class="info-row"><span class="info-label">Status</span><span class="info-value" id="val-status">—</span></div>
+      </div>
+    </div>
+
+    <!-- Dealbreakers -->
+    <div class="profile-section">
+      <div class="section-header">
+        <div class="section-h3">Dealbreakers</div>
+        <div class="edit-link" onclick="editDealbreakers()">Edit</div>
+      </div>
+      <div class="section-body">
+        <div class="flex flex-wrap gap-8" id="dealbreakers-display">
+          <span style="font-size:13px;color:var(--text-muted)">None set</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subscription -->
+    <div id="subscription-section" style="padding:0 0 8px"></div>
+
+    <!-- Verification status -->
+    <div class="profile-section">
+      <div class="section-header"><div class="section-h3">Verification</div></div>
+      <div class="section-body">
+        <div class="info-row">
+          <span class="info-label">ID Verified</span>
+          <span id="verif-id" class="badge">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Background Check</span>
+          <span id="verif-bg" class="badge">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Financial Badge</span>
+          <span id="verif-fin" class="badge">—</span>
+        </div>
+        <a href="/pages/verify.html" class="btn btn-outline btn-full" style="margin-top:8px">Manage Verification</a>
+      </div>
+    </div>
+
+    <!-- Danger zone -->
+    <div class="danger-zone">
+      <div class="section-header"><div class="section-h3" style="color:var(--danger)">Account</div></div>
+      <div class="section-body">
+        <button class="btn btn-outline btn-full" style="margin-bottom:8px;color:var(--danger);border-color:var(--danger)" onclick="deactivateAccount()">Pause my profile</button>
+        <button class="btn btn-ghost btn-full" style="color:var(--text-muted);font-size:13px" onclick="deleteAccount()">Delete account permanently</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Bottom nav -->
+<nav class="nav-bottom">
+  <button class="nav-item" onclick="location.href='/pages/app.html'"><div class="nav-icon">⊙</div><div class="nav-label">Discover</div></button>
+  <button class="nav-item" onclick="location.href='/pages/matches.html'"><div class="nav-icon">♡</div><div class="nav-label">Matches</div></button>
+  <button class="nav-item" onclick="location.href='/pages/messages.html'"><div class="nav-icon">✉</div><div class="nav-label">Messages</div></button>
+  <button class="nav-item" onclick="location.href='/pages/community.html'"><div class="nav-icon">⊕</div><div class="nav-label">Community</div></button>
+  <button class="nav-item active" onclick="location.href='/pages/profile.html'"><div class="nav-icon">◎</div><div class="nav-label">Profile</div></button>
+</nav>
+
+<!-- Edit bio modal -->
+<div id="bio-modal" class="modal-overlay hidden" onclick="closeBioModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:16px">Edit bio</h3>
+    <div class="form-group">
+      <label class="form-label">Bio</label>
+      <textarea class="form-input form-textarea" id="bio-edit" rows="5" maxlength="300"></textarea>
+      <div class="form-hint">Keep it real. 300 characters max.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Currently obsessed with</label>
+      <input type="text" class="form-input" id="obsession-edit" placeholder="What are you into right now?" />
+    </div>
+    <button class="btn btn-copper btn-full btn-lg" onclick="saveBio()">Save</button>
+  </div>
+</div>
+
+<script type="module">
+import { supabase, requireVerified, updateProfile, getVerification, showToast, getInitials, avatarColor, signOut as authSignOut } from '/js/supabase.js';
+
+let currentUser = null;
+let currentProfile = null;
+
+async function init() {
+  const result = await requireVerified();
+  if (!result) return;
+  currentUser = result.user;
+  currentProfile = result.profile;
+  renderProfile(currentProfile);
+  await loadVerifications();
+  await loadSubscription();
+}
+
+function renderProfile(p) {
+  if (!p) return;
+
+  // Hero
+  const heroAvatar = document.getElementById('hero-avatar');
+  heroAvatar.style.background = avatarColor(p.display_name);
+  heroAvatar.textContent = getInitials(p.display_name);
+  document.getElementById('hero-name').textContent = `${p.display_name || 'You'}, ${p.age || ''}`;
+  document.getElementById('hero-sub').textContent = p.status_label?.replace(/_/g, ' ') || 'Kyzmyt member';
+
+  // Badges
+  const badges = [];
+  if (p.is_verified) badges.push('<span class="badge badge-verified">✓ ID Verified</span>');
+  if (p.verifications?.background_clear) badges.push('<span class="badge badge-background">✓ Background Clear</span>');
+  if (p.has_financial_badge) badges.push('<span class="badge badge-financial">✓ Financial</span>');
+  document.getElementById('hero-badges').innerHTML = badges.join('');
+
+  // Compat hint
+  document.getElementById('compat-hint-text').textContent = p.is_visible ? 'Your profile is live and active' : 'Profile paused — not visible';
+
+  // Visibility toggle
+  const toggle = document.getElementById('visibility-toggle');
+  if (p.is_visible) toggle.classList.add('on');
+  document.getElementById('visibility-status').textContent = p.is_visible ? 'Visible to verified members' : 'Hidden — tap to go live';
+
+  // Bio
+  document.getElementById('bio-display').textContent = p.bio || 'No bio yet. Tell people who you are.';
+  if (p.current_obsession) {
+    document.getElementById('obsession-card').style.display = 'flex';
+    document.getElementById('obsession-text').textContent = p.current_obsession;
+  }
+
+  // Hot takes
+  const htContainer = document.getElementById('hot-takes-display');
+  if (p.hot_takes?.length) {
+    htContainer.innerHTML = p.hot_takes.filter(Boolean).map(h => `<div class="hot-take-display">"${h}"</div>`).join('');
+  }
+
+  // Values
+  document.getElementById('val-politics').textContent = p.politics || '—';
+  document.getElementById('val-religion').textContent = p.religion || '—';
+  document.getElementById('val-love').textContent = p.love_language?.replace(/_/g, ' ') || '—';
+  document.getElementById('val-attach').textContent = p.attachment_style || '—';
+  document.getElementById('val-device').textContent = p.device_pref || '—';
+  document.getElementById('val-status').textContent = p.status_label?.replace(/_/g, ' ') || '—';
+
+  // Dealbreakers
+  const dbContainer = document.getElementById('dealbreakers-display');
+  if (p.dealbreakers?.length) {
+    dbContainer.innerHTML = p.dealbreakers.map(d => `<span class="chip">${d.replace(/_/g, ' ')}</span>`).join('');
+  }
+}
+
+async function loadVerifications() {
+  const verif = await getVerification(currentUser.id);
+  if (!verif) return;
+
+  document.getElementById('verif-id').className = `badge ${verif.id_verified ? 'badge-verified' : 'badge-pending'}`;
+  document.getElementById('verif-id').textContent = verif.id_verified ? '✓ Verified' : 'Pending';
+
+  const bgClass = verif.background_clear === true ? 'badge-background' : verif.background_clear === false ? '' : 'badge-pending';
+  const bgText = verif.background_clear === true ? '✓ Clear' : verif.background_status === 'pending' ? '⏳ Pending' : verif.background_clear === false ? '✗ Not clear' : 'Not started';
+  document.getElementById('verif-bg').className = `badge ${bgClass}`;
+  document.getElementById('verif-bg').textContent = bgText;
+
+  document.getElementById('verif-fin').className = `badge ${verif.financial_verified ? 'badge-financial' : 'badge-pending'}`;
+  document.getElementById('verif-fin').textContent = verif.financial_verified ? '✓ Verified' : 'Not added';
+}
+
+async function loadSubscription() {
+  const { data: sub } = await supabase.from('subscriptions').select('*').eq('user_id', currentUser.id).single();
+  const container = document.getElementById('subscription-section');
+
+  if (sub?.status === 'active') {
+    container.innerHTML = `
+      <div class="subscription-card" style="margin:8px 16px">
+        <div class="sub-tier">Current plan</div>
+        <div class="sub-name">${sub.tier === 'concierge' ? 'Concierge' : 'Member'}</div>
+        <ul class="sub-features">
+          <li>Full messaging</li>
+          <li>Appear in searches</li>
+          <li>Compatibility scores</li>
+          <li>Community access</li>
+        </ul>
+        <button class="btn btn-outline btn-full btn-sm" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.2)" onclick="manageSubscription()">Manage plan</button>
+      </div>`;
+  } else {
+    container.innerHTML = `
+      <div class="upgrade-card" style="margin:8px 16px">
+        <div class="sub-tier" style="color:rgba(255,255,255,0.7)">Upgrade to unlock everything</div>
+        <div class="sub-name" style="color:white">Member Plan — $29/mo</div>
+        <ul class="sub-features">
+          <li>Full messaging access</li>
+          <li>Appear in verified searches</li>
+          <li>AI compatibility scores</li>
+          <li>Community forums and events</li>
+          <li>Date safety check-in</li>
+        </ul>
+        <button class="btn btn-full btn-lg" style="background:white;color:var(--copper);font-weight:500" onclick="subscribe()">Subscribe Now</button>
+      </div>`;
+  }
+}
+
+window.toggleVisibility = async function() {
+  const toggle = document.getElementById('visibility-toggle');
+  const newVal = !toggle.classList.contains('on');
+  toggle.classList.toggle('on');
+  document.getElementById('visibility-status').textContent = newVal ? 'Visible to verified members' : 'Hidden — tap to go live';
+  await updateProfile(currentUser.id, { is_visible: newVal });
+  showToast(newVal ? 'Profile is now visible' : 'Profile hidden', 'success');
+};
+
+window.editBio = function() {
+  document.getElementById('bio-edit').value = currentProfile?.bio || '';
+  document.getElementById('obsession-edit').value = currentProfile?.current_obsession || '';
+  document.getElementById('bio-modal').classList.remove('hidden');
+};
+
+window.closeBioModal = (e) => {
+  if (!e || e.target === document.getElementById('bio-modal'))
+    document.getElementById('bio-modal').classList.add('hidden');
+};
+
+window.saveBio = async function() {
+  const bio = document.getElementById('bio-edit').value.slice(0, 300);
+  const obsession = document.getElementById('obsession-edit').value;
+  const { error } = await updateProfile(currentUser.id, { bio, current_obsession: obsession });
+  if (error) { showToast('Error saving', 'error'); return; }
+  currentProfile = { ...currentProfile, bio, current_obsession: obsession };
+  renderProfile(currentProfile);
+  document.getElementById('bio-modal').classList.add('hidden');
+  showToast('Bio saved!', 'success');
+};
+
+window.triggerAvatarUpload = () => document.getElementById('avatar-upload').click();
+window.handleAvatarUpload = async function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const ext = file.name.split('.').pop();
+  const path = `${currentUser.id}/avatar.${ext}`;
+  const { error } = await supabase.storage.from('profile-photos').upload(path, file, { upsert: true });
+  if (error) { showToast('Upload failed', 'error'); return; }
+  const { data: { publicUrl } } = supabase.storage.from('profile-photos').getPublicUrl(path);
+  await updateProfile(currentUser.id, { avatar_url: publicUrl });
+  const heroAvatar = document.getElementById('hero-avatar');
+  heroAvatar.innerHTML = `<img src="${publicUrl}" alt="Profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />`;
+  showToast('Photo updated!', 'success');
+};
+
+window.subscribe = async function() {
+  const res = await fetch('/.netlify/functions/create-subscription', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId: currentUser.id, tier: 'member' })
+  });
+  const { url, error } = await res.json();
+  if (error) { showToast(error, 'error'); return; }
+  window.location.href = url;
+};
+
+window.manageSubscription = async function() {
+  const portal = await fetch('/.netlify/functions/customer-portal', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId: currentUser.id })
+  });
+  const { url } = await portal.json();
+  if (url) window.location.href = url;
+};
+
+window.deactivateAccount = async function() {
+  if (!confirm('Pause your profile? You can reactivate anytime.')) return;
+  await updateProfile(currentUser.id, { is_visible: false });
+  showToast('Profile paused.', 'success');
+};
+
+window.deleteAccount = async function() {
+  if (!prompt('Type DELETE to permanently delete your account:') === 'DELETE') return;
+  // Would call a server function to delete all data
+  showToast('Deletion request submitted. You\'ll receive a confirmation email.', '');
+};
+
+window.signOut = async function() {
+  await authSignOut();
+  window.location.href = '/';
+};
+
+// Stub edit functions
+window.openPhotoEdit = () => showToast('Photo reordering coming soon!', '');
+window.editHotTakes = () => showToast('Open your profile settings to edit hot takes.', '');
+window.editValues = () => showToast('Full edit mode coming in next update.', '');
+window.editDealbreakers = () => showToast('Full edit mode coming in next update.', '');
+
+init();
+</script>
+
+</body>
+</html>

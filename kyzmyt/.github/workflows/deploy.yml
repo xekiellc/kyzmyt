@@ -1,0 +1,54 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install function dependencies
+        working-directory: netlify/functions
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+          fi
+
+      - name: Deploy to Netlify (Preview)
+        if: github.event_name == 'pull_request'
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: '.'
+          netlify-config-path: './netlify.toml'
+          production-deploy: false
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Preview deploy from PR #${{ github.event.number }}"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Deploy to Netlify (Production)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: '.'
+          netlify-config-path: './netlify.toml'
+          production-deploy: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions — ${{ github.sha }}"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

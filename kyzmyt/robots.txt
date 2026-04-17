@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /pages/app.html
+Disallow: /pages/messages.html
+Disallow: /pages/matches.html
+Disallow: /pages/profile.html
+Disallow: /pages/admin.html
+Disallow: /pages/verify.html
+Allow: /
+Allow: /pages/terms.html
+Allow: /pages/privacy.html
+Allow: /pages/safety.html
+
+Sitemap: https://kyzmyt.com/sitemap.xml

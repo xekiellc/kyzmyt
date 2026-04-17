@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kyzmyt — Real People. Verified Lives. Genuine Connections.</title>
+  <meta name="description" content="The only dating platform where every member is background checked, ID verified, and genuinely who they say they are. Find your kyzmyt." />
+  <meta property="og:title" content="Kyzmyt — Find Your Fate" />
+  <meta property="og:description" content="Background checked. ID verified. Catfish free. The dating platform built for people done with the games." />
+  <meta property="og:image" content="/assets/og-image.png" />
+  <meta name="theme-color" content="#0f1e3d" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <style>
+    .hero {
+      min-height: 100vh;
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 60% 40%, rgba(184,115,51,0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 20% 80%, rgba(184,115,51,0.05) 0%, transparent 40%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--copper);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.2s forwards;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 12vw, 80px);
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.05;
+      margin-bottom: 8px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.4s forwards;
+    }
+    .hero-title span { color: var(--copper); }
+    .hero-sub {
+      font-family: var(--font-display);
+      font-size: clamp(16px, 4vw, 22px);
+      color: rgba(255,255,255,0.55);
+      font-style: italic;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.6s forwards;
+    }
+    .hero-desc {
+      font-size: 15px;
+      color: rgba(255,255,255,0.7);
+      max-width: 380px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.8s forwards;
+    }
+    .hero-ctas {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 320px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 1s forwards;
+    }
+    .trust-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 48px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 1.2s forwards;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+    }
+    .trust-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--copper);
+    }
+    .how-section {
+      background: var(--cream);
+      padding: 64px 24px;
+    }
+    .how-inner {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--copper);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 500;
+      color: var(--navy);
+      text-align: center;
+      margin-bottom: 40px;
+      line-height: 1.2;
+    }
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 28px;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 500;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .step-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .diff-section {
+      background: var(--navy);
+      padding: 64px 24px;
+    }
+    .diff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .diff-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-lg);
+      padding: 20px 16px;
+    }
+    .diff-icon {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .diff-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    .diff-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.5;
+    }
+    .testimonial-section {
+      background: var(--cream-mid);
+      padding: 64px 24px;
+    }
+    .testimonial {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 24px 20px;
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .testimonial-text {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-style: italic;
+      color: var(--navy);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .testimonial-author {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .pricing-section {
+      background: var(--cream);
+      padding: 64px 24px;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 480px;
+      margin: 0 auto 32px;
+    }
+    .pricing-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 16px;
+    }
+    .pricing-card.featured {
+      border-color: var(--copper);
+      border-width: 2px;
+    }
+    .pricing-tier {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+    .pricing-price {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .pricing-period {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .pricing-features {
+      list-style: none;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .pricing-features li {
+      padding: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pricing-features li::before {
+      content: '✓';
+      color: var(--copper);
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    .footer {
+      background: var(--navy);
+      padding: 40px 24px;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+    .footer-logo span { color: var(--copper); }
+    .footer-tagline {
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 24px;
+    }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .footer-links a {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+    }
+    .footer-copy {
+      font-size: 12px;
+      color: rgba(255,255,255,0.25);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-eyebrow">The world's first verified dating platform</div>
+  <h1 class="hero-title">Kyzm<span>yt</span></h1>
+  <p class="hero-sub">Some connections are fate. Find yours.</p>
+  <p class="hero-desc">Every member background checked. Every identity verified. Every profile real. Dating the way it was always supposed to be.</p>
+  <div class="hero-ctas">
+    <a href="/pages/signup.html" class="btn btn-copper btn-lg btn-full">Find My Kyzmyt</a>
+    <a href="#how" class="btn btn-outline btn-full" style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.2)">See How It Works</a>
+  </div>
+  <div class="trust-bar">
+    <div class="trust-item"><div class="trust-dot"></div>Background checked</div>
+    <div class="trust-item"><div class="trust-dot"></div>ID verified</div>
+    <div class="trust-item"><div class="trust-dot"></div>Zero bots</div>
+    <div class="trust-item"><div class="trust-dot"></div>Catfish free</div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="how-section" id="how">
+  <div class="how-inner">
+    <div class="section-eyebrow">How it works</div>
+    <h2 class="section-title">Real trust from the very first step</h2>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">Verify your identity</div>
+        <div class="step-desc">Government ID + liveness selfie. We confirm you are who you say you are before anything else.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">Pass your background check</div>
+        <div class="step-desc">Real criminal background check powered by Checkr. Sex offender registry, felony, and misdemeanor history. Results go directly to us — you can't touch them.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">Build your real profile</div>
+        <div class="step-desc">Your status, values, personality, dealbreakers, hot takes, love language. Depth that actually predicts compatibility.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div>
+        <div class="step-title">Meet verified people</div>
+        <div class="step-desc">Every profile you see has cleared the same process. Filter by what actually matters. See your compatibility score on every match.</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px">
+      <a href="/pages/signup.html" class="btn btn-primary btn-lg">Get Started</a>
+    </div>
+  </div>
+</section>
+
+<!-- Differentiators -->
+<section class="diff-section">
+  <div style="max-width:480px;margin:0 auto">
+    <div class="section-eyebrow" style="color:var(--copper)">Why Kyzmyt</div>
+    <h2 class="section-title" style="color:var(--white)">Built different. On purpose.</h2>
+    <div class="diff-grid">
+      <div class="diff-card">
+        <div class="diff-icon">🛡️</div>
+        <div class="diff-title">Background checked</div>
+        <div class="diff-desc">Every single member. No exceptions. No opt-outs.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">🪪</div>
+        <div class="diff-title">ID verified</div>
+        <div class="diff-desc">Government ID + liveness check. Real humans only.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">💡</div>
+        <div class="diff-title">Compatibility AI</div>
+        <div class="diff-desc">Deeper than eHarmony. Built for your actual values.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">🗓️</div>
+        <div class="diff-title">Date safety check-in</div>
+        <div class="diff-desc">Built-in safety system for every date. Industry first.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">🏘️</div>
+        <div class="diff-title">Verified community</div>
+        <div class="diff-desc">Forums, events, group dates. Not just matching.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">⚡</div>
+        <div class="diff-title">Real filters</div>
+        <div class="diff-desc">Politics, religion, lifestyle. Filter what actually matters.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Social proof -->
+<section class="testimonial-section">
+  <div style="max-width:480px;margin:0 auto">
+    <div class="section-eyebrow">What people are saying</div>
+    <h2 class="section-title">The platform people have been asking for</h2>
+    <div class="testimonial">
+      <div class="testimonial-text">"For every hundred people on other apps, you might talk to one or two decent ones. On Kyzmyt everyone has already been cleared."</div>
+      <div class="testimonial-author">Nicole M., 42 — Akron, OH</div>
+    </div>
+    <div class="testimonial">
+      <div class="testimonial-text">"I never tried dating apps because of the weirdos. Knowing everyone is background checked changes everything."</div>
+      <div class="testimonial-author">Carla O., 38 — Cleveland, OH</div>
+    </div>
+    <div class="testimonial">
+      <div class="testimonial-text">"Dating in 2026 is a dumpster fire. Except this. This is different."</div>
+      <div class="testimonial-author">Steph M., 35 — Columbus, OH</div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="pricing-section" id="pricing">
+  <div style="max-width:480px;margin:0 auto">
+    <div class="section-eyebrow">Pricing</div>
+    <h2 class="section-title">Transparent. Fair. Worth it.</h2>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-tier">Browse</div>
+        <div class="pricing-price">Free</div>
+        <div class="pricing-period">forever</div>
+        <ul class="pricing-features">
+          <li>See verified profiles</li>
+          <li>Set your filters</li>
+          <li>Browse the community</li>
+          <li style="opacity:0.4;text-decoration:line-through">Send messages</li>
+          <li style="opacity:0.4;text-decoration:line-through">Appear in searches</li>
+        </ul>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-tier" style="color:var(--copper)">✦ Member</div>
+        <div class="pricing-price">$29</div>
+        <div class="pricing-period">per month</div>
+        <ul class="pricing-features">
+          <li>Everything in Browse</li>
+          <li>Full messaging</li>
+          <li>Appear in searches</li>
+          <li>Compatibility scores</li>
+          <li>Community access</li>
+          <li>Date check-in safety</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="max-width:480px;margin:0 auto">
+      <div class="card-body" style="text-align:center">
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">One-time fees</div>
+        <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:12px">
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:500;color:var(--navy)">$30</div>
+            <div style="font-size:12px;color:var(--text-muted)">Background check</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:500;color:var(--navy)">$5</div>
+            <div style="font-size:12px;color:var(--text-muted)">ID verification</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:500;color:var(--navy)">$12</div>
+            <div style="font-size:12px;color:var(--text-muted)">Financial badge</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-logo">Kyzm<span>yt</span></div>
+  <div class="footer-tagline">Some connections are fate. Find yours.</div>
+  <div class="footer-links">
+    <a href="/pages/about.html">About</a>
+    <a href="/pages/safety.html">Safety</a>
+    <a href="/pages/terms.html">Terms</a>
+    <a href="/pages/privacy.html">Privacy</a>
+    <a href="/pages/contact.html">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 Kyzmyt LLC. All rights reserved.</div>
+</footer>
+
+<script>
+  // PWA install prompt
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+  });
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>

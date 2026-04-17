@@ -1,0 +1,16 @@
+{
+  "name": "kyzmyt-functions",
+  "version": "1.0.0",
+  "description": "Netlify serverless functions for Kyzmyt",
+  "main": "index.js",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "@supabase/supabase-js": "^2.43.0",
+    "plaid": "^26.0.0",
+    "stripe": "^15.0.0",
+    "twilio": "^5.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

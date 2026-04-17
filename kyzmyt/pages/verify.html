@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kyzmyt — Get Verified</title>
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <style>
+    .verify-page { min-height: 100vh; background: var(--cream); }
+    .verify-header { padding: 16px 20px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .verify-content { padding: 24px 20px; max-width: 480px; margin: 0 auto; }
+    .verify-hero { text-align: center; padding: 32px 0 24px; }
+    .verify-icon { width: 72px; height: 72px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; }
+    .verify-title { font-family: var(--font-display); font-size: 32px; color: var(--navy); margin-bottom: 8px; }
+    .verify-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 320px; margin: 0 auto; }
+    .verify-step-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 12px; }
+    .verify-step-header { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+    .verify-step-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; flex-shrink: 0; }
+    .step-pending { background: var(--cream-mid); color: var(--text-muted); }
+    .step-active { background: var(--copper); color: var(--white); }
+    .step-done { background: var(--success-bg); color: var(--success); }
+    .verify-step-title { font-size: 15px; font-weight: 500; color: var(--navy); }
+    .verify-step-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .verify-step-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 14px; }
+    .price-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--copper-pale); color: var(--copper); border-radius: var(--radius-full); padding: 4px 12px; font-size: 13px; font-weight: 500; margin-bottom: 12px; }
+    .what-happens { background: var(--cream-mid); border-radius: var(--radius-md); padding: 14px; margin-top: 12px; }
+    .what-title { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+    .what-item { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.4; }
+    .what-icon { color: var(--copper); flex-shrink: 0; margin-top: 1px; }
+    .status-pending { color: var(--warning); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .status-clear { color: var(--success); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .status-failed { color: var(--danger); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .tamper-notice { background: var(--info-bg); border-radius: var(--radius-md); padding: 12px 14px; margin-top: 12px; display: flex; gap: 10px; }
+    .tamper-text { font-size: 12px; color: var(--info); line-height: 1.5; }
+    .progress-steps { display: flex; justify-content: space-between; margin: 24px 0; position: relative; }
+    .progress-steps::before { content: ''; position: absolute; top: 18px; left: 10%; right: 10%; height: 2px; background: var(--border); }
+    .prog-step { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; position: relative; z-index: 1; }
+    .prog-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; border: 2px solid var(--border); background: var(--cream); color: var(--text-muted); transition: all 0.3s; }
+    .prog-dot.active { border-color: var(--copper); background: var(--copper); color: var(--white); }
+    .prog-dot.done { border-color: var(--success); background: var(--success); color: var(--white); }
+    .prog-label { font-size: 10px; color: var(--text-muted); text-align: center; }
+  </style>
+</head>
+<body>
+
+<div id="toast-container" class="toast-container"></div>
+
+<div class="verify-page">
+  <div class="verify-header">
+    <a href="/" class="nav-logo" style="font-family:var(--font-display);font-size:22px;font-weight:600;color:var(--navy)">Kyzm<span style="color:var(--copper)">yt</span></a>
+    <a href="/pages/app.html" style="font-size:13px;color:var(--text-muted)">Skip for now</a>
+  </div>
+
+  <div class="verify-content">
+
+    <div class="verify-hero">
+      <div class="verify-icon">🛡️</div>
+      <h1 class="verify-title">Get verified</h1>
+      <p class="verify-sub">Two steps. Protects you and everyone else on the platform. No exceptions.</p>
+    </div>
+
+    <div class="progress-steps">
+      <div class="prog-step">
+        <div class="prog-dot active" id="prog-id">🪪</div>
+        <div class="prog-label">ID Check</div>
+      </div>
+      <div class="prog-step">
+        <div class="prog-dot" id="prog-bg">🔍</div>
+        <div class="prog-label">Background</div>
+      </div>
+      <div class="prog-step">
+        <div class="prog-dot" id="prog-done">✓</div>
+        <div class="prog-label">Verified</div>
+      </div>
+    </div>
+
+    <!-- Step 1: ID Verification -->
+    <div id="panel-id" class="verify-step-card">
+      <div class="verify-step-header">
+        <div class="verify-step-num step-active">1</div>
+        <div>
+          <div class="verify-step-title">Identity verification</div>
+          <div class="verify-step-sub">Government ID + liveness selfie</div>
+        </div>
+      </div>
+      <div class="price-pill">$5 one-time fee</div>
+      <div class="verify-step-desc">
+        We use Stripe Identity to verify your government-issued ID against a real-time selfie. This confirms you are a real human and that you are who you say you are.
+      </div>
+      <div class="what-happens">
+        <div class="what-title">What happens</div>
+        <div class="what-item"><span class="what-icon">→</span>You photograph your driver's license or passport</div>
+        <div class="what-item"><span class="what-icon">→</span>You take a quick liveness selfie</div>
+        <div class="what-item"><span class="what-icon">→</span>Stripe verifies they match in seconds</div>
+        <div class="what-item"><span class="what-icon">→</span>We store a verified flag — not your ID documents</div>
+      </div>
+      <div class="tamper-notice" style="margin-top:12px">
+        <div style="font-size:18px">🔒</div>
+        <div class="tamper-text">Your ID documents go to Stripe's secure servers, not us. We only receive a verified/not verified result. We never store your ID.</div>
+      </div>
+      <button class="btn btn-copper btn-full btn-lg" style="margin-top:16px" onclick="startIDVerification()">
+        <span id="id-btn-text">Verify My Identity — $5</span>
+        <span id="id-spinner" class="spinner hidden"></span>
+      </button>
+    </div>
+
+    <!-- Step 2: Background Check -->
+    <div id="panel-bg" class="verify-step-card" style="opacity:0.5;pointer-events:none">
+      <div class="verify-step-header">
+        <div class="verify-step-num step-pending" id="bg-step-num">2</div>
+        <div>
+          <div class="verify-step-title">Background check</div>
+          <div class="verify-step-sub" id="bg-step-sub">Complete ID verification first</div>
+        </div>
+      </div>
+      <div class="price-pill">$30 one-time fee</div>
+      <div class="verify-step-desc" id="bg-desc">
+        A real criminal background check powered by Checkr. We check national criminal records, sex offender registry, felony and misdemeanor history. Results go directly from Checkr to our servers — you cannot alter them.
+      </div>
+      <div class="what-happens">
+        <div class="what-title">What we check</div>
+        <div class="what-item"><span class="what-icon">→</span>National criminal database</div>
+        <div class="what-item"><span class="what-icon">→</span>Sex offender registry (all 50 states)</div>
+        <div class="what-item"><span class="what-icon">→</span>Felony and misdemeanor records</div>
+        <div class="what-item"><span class="what-icon">→</span>Global watchlist</div>
+      </div>
+      <div class="tamper-notice" style="margin-top:12px">
+        <div style="font-size:18px">🔒</div>
+        <div class="tamper-text">Results are sent directly from Checkr to our database via secure webhook. You have zero ability to edit, dispute, or alter the result. A background check badge on a profile is 100% tamper-proof.</div>
+      </div>
+      <div id="bg-status" style="margin-top:12px"></div>
+      <button class="btn btn-copper btn-full btn-lg" style="margin-top:16px" id="bg-btn" onclick="startBackgroundCheck()">
+        Run Background Check — $30
+      </button>
+    </div>
+
+    <!-- Optional: Financial Badge -->
+    <div class="verify-step-card" style="border-style:dashed">
+      <div class="verify-step-header">
+        <div class="verify-step-num" style="background:var(--warning-bg);color:var(--warning)">+</div>
+        <div>
+          <div class="verify-step-title">Financial verified badge <span style="font-size:11px;color:var(--text-muted)">(optional)</span></div>
+          <div class="verify-step-sub">Show your financial stability</div>
+        </div>
+      </div>
+      <div class="price-pill">$12 one-time fee</div>
+      <div class="verify-step-desc">
+        Connect your bank account via Plaid to receive a Financial Verified badge on your profile. Shows bank account confirmation and income range. Your actual data stays private — only the badge is public.
+      </div>
+      <button class="btn btn-outline btn-full" onclick="startFinancialVerification()">
+        Get Financial Badge — $12
+      </button>
+    </div>
+
+    <!-- Verified state (hidden until done) -->
+    <div id="verified-panel" class="hidden" style="text-align:center;padding:32px 0">
+      <div style="width:80px;height:80px;border-radius:50%;background:var(--success-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:36px">✓</div>
+      <h2 style="font-family:var(--font-display);font-size:32px;color:var(--navy);margin-bottom:8px">You're verified!</h2>
+      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:24px">Your background cleared. You're now visible to verified members near you.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:28px">
+        <div class="badge badge-verified">✓ ID Verified</div>
+        <div class="badge badge-background">✓ Background Clear</div>
+      </div>
+      <a href="/pages/app.html" class="btn btn-copper btn-lg btn-full">Find My Kyzmyt →</a>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { supabase, getUser, showToast } from '/js/supabase.js';
+
+let idVerified = false;
+let bgStatus = null;
+
+window.startIDVerification = async function() {
+  const btn = document.getElementById('id-btn-text');
+  const spinner = document.getElementById('id-spinner');
+  btn.textContent = 'Opening Stripe Identity...';
+  spinner.classList.remove('hidden');
+
+  const user = await getUser();
+  if (!user) { showToast('Please sign in first', 'error'); return; }
+
+  const res = await fetch('/.netlify/functions/create-verification-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId: user.id, type: 'id_verification' })
+  });
+
+  const { url, error } = await res.json();
+  spinner.classList.add('hidden');
+
+  if (error) { showToast(error, 'error'); btn.textContent = 'Verify My Identity — $5'; return; }
+
+  // Stripe Identity redirects back to this page with ?verified=true
+  window.location.href = url;
+};
+
+window.startBackgroundCheck = async function() {
+  const user = await getUser();
+  if (!user) { showToast('Please sign in first', 'error'); return; }
+
+  document.getElementById('bg-btn').textContent = 'Processing payment...';
+  document.getElementById('bg-btn').disabled = true;
+
+  const res = await fetch('/.netlify/functions/create-background-check', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId: user.id })
+  });
+
+  const { checkoutUrl, error } = await res.json();
+  if (error) { showToast(error, 'error'); return; }
+  window.location.href = checkoutUrl;
+};
+
+window.startFinancialVerification = async function() {
+  const user = await getUser();
+  if (!user) { showToast('Please sign in first', 'error'); return; }
+
+  const res = await fetch('/.netlify/functions/create-plaid-link', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId: user.id })
+  });
+
+  const { linkToken, error } = await res.json();
+  if (error) { showToast(error, 'error'); return; }
+  // Plaid Link would open here with linkToken
+  showToast('Plaid integration opening...', '');
+};
+
+async function checkVerificationStatus() {
+  const user = await getUser();
+  if (!user) return;
+
+  const { data: verification } = await supabase
+    .from('verifications')
+    .select('*')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!verification) return;
+
+  if (verification.id_verified) {
+    idVerified = true;
+    document.getElementById('panel-id').innerHTML = `
+      <div class="verify-step-header">
+        <div class="verify-step-num step-done">✓</div>
+        <div>
+          <div class="verify-step-title">Identity verified</div>
+          <div class="status-clear">✓ Your identity has been confirmed</div>
+        </div>
+      </div>`;
+    document.getElementById('panel-bg').style.opacity = '1';
+    document.getElementById('panel-bg').style.pointerEvents = 'auto';
+    document.getElementById('bg-step-num').className = 'verify-step-num step-active';
+    document.getElementById('bg-step-sub').textContent = 'Ready to run';
+    document.getElementById('prog-id').className = 'prog-dot done';
+    document.getElementById('prog-bg').className = 'prog-dot active';
+  }
+
+  if (verification.background_status === 'pending') {
+    document.getElementById('bg-status').innerHTML = '<div class="status-pending">⏳ Background check processing — usually 10–30 minutes</div>';
+    document.getElementById('bg-btn').textContent = 'Processing...';
+    document.getElementById('bg-btn').disabled = true;
+    setTimeout(checkVerificationStatus, 30000); // poll every 30s
+  }
+
+  if (verification.background_clear === true) {
+    bgStatus = 'clear';
+    document.getElementById('panel-id').style.display = 'none';
+    document.getElementById('panel-bg').style.display = 'none';
+    document.getElementById('verified-panel').classList.remove('hidden');
+    document.getElementById('prog-id').className = 'prog-dot done';
+    document.getElementById('prog-bg').className = 'prog-dot done';
+    document.getElementById('prog-done').className = 'prog-dot done';
+
+    await supabase.from('profiles').update({ is_visible: true, is_verified: true }).eq('user_id', user.id);
+  }
+
+  if (verification.background_clear === false) {
+    document.getElementById('bg-status').innerHTML = '<div class="status-failed">✗ Background check did not clear. You cannot join Kyzmyt.</div>';
+    document.getElementById('bg-btn').style.display = 'none';
+  }
+}
+
+// Check for return from Stripe/Checkr
+const params = new URLSearchParams(window.location.search);
+if (params.get('id_verified') === 'true') {
+  showToast('Identity verified! Now complete your background check.', 'success');
+}
+if (params.get('bg_paid') === 'true') {
+  showToast('Payment received. Background check is running...', 'success');
+}
+
+checkVerificationStatus();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kyzmyt — Discover</title>
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <style>
+    .app-page { min-height: 100vh; background: var(--cream); padding-bottom: 80px; }
+    .app-header { padding: 12px 16px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .app-logo { font-family: var(--font-display); font-size: 24px; font-weight: 600; color: var(--navy); }
+    .app-logo span { color: var(--copper); }
+    .header-actions { display: flex; gap: 8px; }
+    .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--cream-mid); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; transition: all 0.2s; position: relative; }
+    .icon-btn:hover { background: var(--copper-pale); border-color: var(--copper); }
+    .notif-badge { position: absolute; top: -2px; right: -2px; width: 16px; height: 16px; border-radius: 50%; background: var(--copper); color: var(--white); font-size: 9px; font-weight: 500; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); }
+    .feed-content { padding: 12px 16px; max-width: 480px; margin: 0 auto; }
+    .filter-section { margin-bottom: 14px; }
+    .profile-card { background: var(--white); border-radius: var(--radius-xl); border: 1px solid var(--border); overflow: hidden; margin-bottom: 14px; box-shadow: var(--shadow-sm); }
+    .card-photo { height: 280px; background: var(--navy); position: relative; overflow: hidden; }
+    .card-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .card-photo-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%); }
+    .photo-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 16px 14px; background: linear-gradient(to top, rgba(15,30,61,0.85) 0%, transparent 100%); }
+    .status-pill { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius-full); padding: 4px 10px; font-size: 11px; color: var(--white); margin-bottom: 6px; }
+    .status-live { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
+    .card-name { font-family: var(--font-display); font-size: 26px; font-weight: 600; color: var(--white); line-height: 1.1; }
+    .card-location { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 3px; }
+    .compat-badge { position: absolute; top: 12px; right: 12px; background: var(--copper); color: var(--white); border-radius: var(--radius-full); padding: 6px 10px; font-family: var(--font-display); font-size: 16px; font-weight: 600; }
+    .compat-badge.high { background: var(--success); }
+    .compat-badge.medium { background: var(--copper); }
+    .compat-badge.low { background: var(--text-muted); }
+    .badge-strip { display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .card-main { padding: 14px; }
+    .card-bio { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 12px; }
+    .card-section-title { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; }
+    .hot-take { background: var(--cream-mid); border-left: 3px solid var(--copper); padding: 8px 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 12px; color: var(--text-secondary); font-style: italic; margin-bottom: 6px; }
+    .detail-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .detail-chip { padding: 5px 12px; background: var(--cream-mid); border-radius: var(--radius-full); font-size: 11px; color: var(--text-secondary); border: 1px solid var(--border); }
+    .compat-breakdown { background: var(--cream-mid); border-radius: var(--radius-md); padding: 12px; margin-bottom: 12px; }
+    .compat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
+    .compat-row:last-child { margin-bottom: 0; }
+    .compat-label { color: var(--text-secondary); }
+    .compat-bar-wrap { flex: 1; margin: 0 10px; height: 4px; background: var(--border); border-radius: var(--radius-full); overflow: hidden; }
+    .compat-bar { height: 100%; background: var(--copper); border-radius: var(--radius-full); }
+    .compat-val { color: var(--navy); font-weight: 500; min-width: 28px; text-align: right; }
+    .card-actions { display: flex; gap: 10px; padding: 12px 14px; border-top: 1px solid var(--border); align-items: center; }
+    .btn-pass { flex: 1; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-mid); background: var(--white); font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; font-family: var(--font-body); }
+    .btn-pass:hover { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
+    .btn-superlike { width: 44px; height: 44px; border-radius: var(--radius-md); border: 1.5px solid var(--copper); background: var(--copper-pale); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; transition: all 0.2s; flex-shrink: 0; }
+    .btn-superlike:hover { background: var(--copper); }
+    .btn-connect { flex: 2; padding: 12px; border-radius: var(--radius-md); border: none; background: var(--navy); font-size: 13px; font-weight: 500; color: var(--white); cursor: pointer; transition: all 0.2s; font-family: var(--font-body); }
+    .btn-connect:hover { background: var(--navy-mid); transform: translateY(-1px); }
+    .matched-overlay { position: fixed; inset: 0; background: rgba(15,30,61,0.85); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 24px; }
+    .matched-card { background: var(--white); border-radius: var(--radius-xl); padding: 32px 24px; text-align: center; max-width: 360px; width: 100%; animation: fadeIn 0.4s ease; }
+    .matched-title { font-family: var(--font-display); font-size: 48px; color: var(--copper); margin-bottom: 8px; }
+    .matched-sub { font-size: 15px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.5; }
+    .matched-avatars { display: flex; justify-content: center; align-items: center; gap: -12px; margin-bottom: 24px; }
+    .stories-row { display: flex; gap: 10px; overflow-x: auto; padding: 4px 0 8px; margin-bottom: 14px; }
+    .stories-row::-webkit-scrollbar { display: none; }
+    .story-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex-shrink: 0; }
+    .story-ring { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--copper); padding: 2px; }
+    .story-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 18px; color: var(--white); font-weight: 600; }
+    .story-name { font-size: 10px; color: var(--text-secondary); text-align: center; max-width: 56px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-title { font-family: var(--font-display); font-size: 28px; color: var(--navy); margin-bottom: 8px; }
+    .empty-sub { font-size: 14px; color: var(--text-muted); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes cardOut { to { transform: translateX(-120%); opacity: 0; } }
+    @keyframes cardOutRight { to { transform: translateX(120%); opacity: 0; } }
+  </style>
+</head>
+<body>
+
+<div id="toast-container" class="toast-container"></div>
+
+<div class="app-page">
+  <div class="app-header">
+    <div class="app-logo">Kyzm<span>yt</span></div>
+    <div class="header-actions">
+      <div class="icon-btn" onclick="openFilters()">⚙</div>
+      <div class="icon-btn" onclick="location.href='/pages/messages.html'">
+        ✉
+        <div class="notif-badge" id="msg-badge" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feed-content">
+
+    <!-- Stories row -->
+    <div class="section-label" style="margin-bottom:8px">Active now</div>
+    <div class="stories-row" id="stories-row">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Filter chips -->
+    <div class="filter-section">
+      <div class="filter-bar" id="filter-bar">
+        <div class="chip active" onclick="setFilter(this,'all')">All Verified</div>
+        <div class="chip" onclick="setFilter(this,'bg')">Background ✓</div>
+        <div class="chip" onclick="setFilter(this,'financial')">Financial ✓</div>
+        <div class="chip" onclick="setFilter(this,'high_compat')">High Match</div>
+        <div class="chip" onclick="setFilter(this,'politics')">My Politics</div>
+        <div class="chip" onclick="setFilter(this,'religion')">My Faith</div>
+        <div class="chip" onclick="setFilter(this,'no_kids')">No Kids</div>
+        <div class="chip" onclick="setFilter(this,'iphone')">iPhone</div>
+      </div>
+    </div>
+
+    <!-- Profile feed -->
+    <div id="feed-container">
+      <div style="text-align:center;padding:40px;color:var(--text-muted)">
+        <div class="spinner" style="margin:0 auto 12px"></div>
+        <div style="font-size:13px">Finding verified members near you...</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Bottom nav -->
+<nav class="nav-bottom">
+  <button class="nav-item active" onclick="location.href='/pages/app.html'">
+    <div class="nav-icon">⊙</div>
+    <div class="nav-label">Discover</div>
+  </button>
+  <button class="nav-item" onclick="location.href='/pages/matches.html'" style="position:relative">
+    <div class="nav-icon">♡</div>
+    <div class="nav-label">Matches</div>
+    <div class="nav-badge" id="matches-badge" style="display:none"></div>
+  </button>
+  <button class="nav-item" onclick="location.href='/pages/messages.html'" style="position:relative">
+    <div class="nav-icon">✉</div>
+    <div class="nav-label">Messages</div>
+    <div class="nav-badge" id="nav-msg-badge" style="display:none"></div>
+  </button>
+  <button class="nav-item" onclick="location.href='/pages/community.html'">
+    <div class="nav-icon">⊕</div>
+    <div class="nav-label">Community</div>
+  </button>
+  <button class="nav-item" onclick="location.href='/pages/profile.html'">
+    <div class="nav-icon">◎</div>
+    <div class="nav-label">Profile</div>
+  </button>
+</nav>
+
+<!-- Filter modal -->
+<div id="filter-modal" class="modal-overlay hidden" onclick="closeFilters(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:20px">Filter matches</h3>
+
+    <div class="form-group">
+      <label class="form-label">Age range</label>
+      <div style="display:flex;gap:12px">
+        <input type="number" class="form-input" id="min-age" placeholder="Min" value="25" min="18" max="80" style="flex:1" />
+        <input type="number" class="form-input" id="max-age" placeholder="Max" value="55" min="18" max="80" style="flex:1" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Distance (miles)</label>
+      <input type="range" id="distance-range" min="5" max="100" value="25" style="width:100%;accent-color:var(--copper)" oninput="document.getElementById('distance-val').textContent=this.value" />
+      <div class="range-labels"><span>5 mi</span><span id="distance-val">25</span> mi<span>100 mi</span></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Politics</label>
+      <select class="form-input form-select" id="filter-politics">
+        <option value="">Any</option>
+        <option value="conservative">Conservative</option>
+        <option value="moderate">Moderate</option>
+        <option value="liberal">Liberal</option>
+        <option value="libertarian">Libertarian</option>
+        <option value="apolitical">Apolitical</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Religion</label>
+      <select class="form-input form-select" id="filter-religion">
+        <option value="">Any</option>
+        <option value="christian">Christian</option>
+        <option value="catholic">Catholic</option>
+        <option value="jewish">Jewish</option>
+        <option value="muslim">Muslim</option>
+        <option value="agnostic">Agnostic</option>
+        <option value="atheist">Atheist</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Has children</label>
+      <select class="form-input form-select" id="filter-kids">
+        <option value="">Any</option>
+        <option value="no">No children</option>
+        <option value="yes">Has children</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Device preference</label>
+      <select class="form-input form-select" id="filter-device">
+        <option value="">Any</option>
+        <option value="iphone">iPhone only</option>
+        <option value="android">Android only</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Minimum compatibility score</label>
+      <input type="range" id="min-compat" min="0" max="100" value="0" style="width:100%;accent-color:var(--copper)" oninput="document.getElementById('compat-val').textContent=this.value+'%'" />
+      <div class="range-labels"><span>0%</span><span id="compat-val">0%</span><span>100%</span></div>
+    </div>
+    <button class="btn btn-copper btn-full btn-lg" onclick="applyFilters()">Apply Filters</button>
+    <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="closeFilters()">Cancel</button>
+  </div>
+</div>
+
+<!-- Match celebration modal -->
+<div id="match-modal" class="matched-overlay hidden">
+  <div class="matched-card">
+    <div class="matched-title">It's a kyzmyt!</div>
+    <div class="matched-sub" id="match-message">You and <strong id="match-name"></strong> both connected. Say something real.</div>
+    <div class="matched-avatars">
+      <div class="avatar avatar-xl avatar-copper" id="my-avatar"></div>
+      <div style="font-size:24px;margin:0 8px">💫</div>
+      <div class="avatar avatar-xl avatar-navy" id="their-avatar"></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline flex-1" onclick="closeMatch()">Keep Browsing</button>
+      <button class="btn btn-copper flex-1" onclick="goToMessage()">Send Message</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { supabase, requireVerified, getDiscoverFeed, likeProfile, calculateCompatibility, showToast, getInitials, avatarColor, formatRelativeTime, getStories } from '/js/supabase.js';
+
+let currentUser = null;
+let currentProfile = null;
+let profiles = [];
+let filters = {};
+let currentMatchId = null;
+
+async function init() {
+  const result = await requireVerified();
+  if (!result) return;
+  currentUser = result.user;
+  currentProfile = result.profile;
+  await loadStories();
+  await loadFeed();
+  checkMessages();
+}
+
+async function loadStories() {
+  const stories = await getStories();
+  const row = document.getElementById('stories-row');
+  if (!stories.length) { row.style.display = 'none'; return; }
+  row.innerHTML = stories.map(s => `
+    <div class="story-item" onclick="viewStory('${s.id}')">
+      <div class="story-ring">
+        <div class="story-avatar" style="background:${avatarColor(s.profiles?.display_name)}">
+          ${getInitials(s.profiles?.display_name)}
+        </div>
+      </div>
+      <div class="story-name">${s.profiles?.display_name || 'Member'}</div>
+    </div>
+  `).join('');
+}
+
+async function loadFeed() {
+  const container = document.getElementById('feed-container');
+  const { data, error } = await getDiscoverFeed(currentUser.id, filters);
+
+  if (error || !data.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <div class="empty-title">No one nearby yet</div>
+        <div class="empty-sub">Try expanding your filters or check back soon as more members join.</div>
+      </div>`;
+    return;
+  }
+
+  profiles = data;
+  container.innerHTML = data.map(p => renderProfileCard(p)).join('');
+}
+
+function renderProfileCard(profile) {
+  const verif = profile.verifications?.[0] || profile.verifications || {};
+  const compat = currentProfile ? calculateCompatibility(currentProfile, profile) : Math.floor(Math.random() * 30) + 60;
+  const compatClass = compat >= 85 ? 'high' : compat >= 65 ? 'medium' : 'low';
+  const initials = getInitials(profile.display_name);
+  const color = avatarColor(profile.display_name);
+
+  const photos = profile.profile_photos || [];
+  const hasPhoto = photos.length > 0;
+
+  return `
+    <div class="profile-card" id="card-${profile.id}">
+      <div class="card-photo">
+        ${hasPhoto
+          ? `<img src="${photos[0].url}" alt="${profile.display_name}" loading="lazy" />`
+          : `<div class="card-photo-placeholder"><div class="avatar avatar-xl" style="background:${color};width:96px;height:96px;font-size:36px;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center">${initials}</div></div>`
+        }
+        <div class="photo-overlay">
+          <div class="status-pill">
+            <div class="status-live"></div>
+            ${profile.status_label ? profile.status_label.replace(/_/g,' ') : 'Looking for connection'}
+          </div>
+          <div class="card-name">${profile.display_name}, ${profile.age}</div>
+          <div class="card-location">📍 ${profile.city || 'Northeast Ohio'} · ${Math.floor(Math.random() * 25) + 1} miles away</div>
+        </div>
+        <div class="compat-badge ${compatClass}">${compat}%</div>
+      </div>
+
+      <div class="badge-strip">
+        ${verif.id_verified ? '<span class="badge badge-verified">✓ ID Verified</span>' : ''}
+        ${verif.background_clear ? '<span class="badge badge-background">✓ Background Clear</span>' : ''}
+        ${verif.financial_verified ? '<span class="badge badge-financial">✓ Financially Verified</span>' : ''}
+        ${verif.photo_real ? '<span class="badge badge-photo">✓ Photo Real</span>' : ''}
+      </div>
+
+      <div class="card-main">
+        ${profile.bio ? `<div class="card-bio">${profile.bio.slice(0, 140)}${profile.bio.length > 140 ? '...' : ''}</div>` : ''}
+
+        ${profile.hot_takes?.length ? `
+          <div class="card-section-title">Hot takes</div>
+          ${profile.hot_takes.slice(0, 2).map(h => `<div class="hot-take">"${h}"</div>`).join('')}
+        ` : ''}
+
+        <div class="card-section-title" style="margin-top:12px">About them</div>
+        <div class="detail-chips">
+          ${profile.politics ? `<div class="detail-chip">${profile.politics}</div>` : ''}
+          ${profile.religion ? `<div class="detail-chip">${profile.religion}</div>` : ''}
+          ${profile.love_language ? `<div class="detail-chip">${profile.love_language.replace(/_/g,' ')}</div>` : ''}
+          ${profile.attachment_style ? `<div class="detail-chip">${profile.attachment_style} attachment</div>` : ''}
+          ${profile.device_pref ? `<div class="detail-chip">${profile.device_pref}</div>` : ''}
+        </div>
+
+        <div class="compat-breakdown">
+          <div style="font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">Compatibility breakdown</div>
+          ${renderCompatRow('Values alignment', compat)}
+          ${renderCompatRow('Lifestyle match', Math.max(compat - 8, 20))}
+          ${renderCompatRow('Communication style', Math.max(compat - 15, 20))}
+          ${renderCompatRow('Future goals', Math.max(compat - 5, 30))}
+        </div>
+
+        ${profile.current_obsession ? `
+          <div style="background:var(--copper-pale);border-radius:var(--radius-md);padding:10px 12px;font-size:12px;color:var(--copper);font-weight:500">
+            🔥 Currently obsessed with: ${profile.current_obsession}
+          </div>
+        ` : ''}
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-pass" onclick="passProfile('${profile.id}')">Pass</button>
+        <button class="btn-superlike" onclick="superlikeProfile('${profile.id}')">★</button>
+        <button class="btn-connect" onclick="connectProfile('${profile.id}', '${profile.display_name}')">Connect</button>
+      </div>
+    </div>`;
+}
+
+function renderCompatRow(label, score) {
+  return `
+    <div class="compat-row">
+      <span class="compat-label">${label}</span>
+      <div class="compat-bar-wrap"><div class="compat-bar" style="width:${score}%"></div></div>
+      <span class="compat-val">${score}%</span>
+    </div>`;
+}
+
+window.passProfile = function(profileId) {
+  const card = document.getElementById(`card-${profileId}`);
+  card.style.animation = 'cardOut 0.3s ease forwards';
+  setTimeout(() => card.remove(), 300);
+};
+
+window.connectProfile = async function(profileId, name) {
+  const card = document.getElementById(`card-${profileId}`);
+  card.style.animation = 'cardOutRight 0.3s ease forwards';
+
+  const { matched } = await likeProfile(currentUser.id, profileId);
+
+  if (matched) {
+    currentMatchId = profileId;
+    document.getElementById('match-name').textContent = name;
+    document.getElementById('my-avatar').textContent = getInitials(currentProfile?.display_name);
+    document.getElementById('their-avatar').textContent = getInitials(name);
+    document.getElementById('match-modal').classList.remove('hidden');
+  } else {
+    showToast(`You connected with ${name}!`, 'success');
+  }
+  setTimeout(() => card.remove(), 300);
+};
+
+window.superlikeProfile = async function(profileId) {
+  const card = document.getElementById(`card-${profileId}`);
+  card.style.border = '2px solid var(--copper)';
+  await supabase.from('likes').insert({ from_user: currentUser.id, to_user: profileId, is_superlike: true });
+  showToast('Super connect sent! ★', 'copper');
+  setTimeout(() => { card.style.animation = 'cardOutRight 0.3s ease forwards'; setTimeout(() => card.remove(), 300); }, 500);
+};
+
+window.setFilter = function(el, type) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  // Apply quick filters
+  if (type === 'high_compat') filters.min_compat = 80;
+  else if (type === 'financial') filters.financial_verified = true;
+  else { delete filters.min_compat; delete filters.financial_verified; }
+  loadFeed();
+};
+
+window.openFilters = () => document.getElementById('filter-modal').classList.remove('hidden');
+window.closeFilters = (e) => {
+  if (!e || e.target === document.getElementById('filter-modal'))
+    document.getElementById('filter-modal').classList.add('hidden');
+};
+
+window.applyFilters = function() {
+  filters.min_age = parseInt(document.getElementById('min-age').value);
+  filters.max_age = parseInt(document.getElementById('max-age').value);
+  filters.politics = document.getElementById('filter-politics').value || undefined;
+  filters.religion = document.getElementById('filter-religion').value || undefined;
+  closeFilters();
+  loadFeed();
+  showToast('Filters applied', 'success');
+};
+
+window.closeMatch = () => document.getElementById('match-modal').classList.add('hidden');
+window.goToMessage = () => { if (currentMatchId) location.href = `/pages/messages.html?match=${currentMatchId}`; };
+window.viewStory = (id) => showToast('Stories feature coming soon!', '');
+
+async function checkMessages() {
+  if (!currentUser) return;
+  const { count } = await supabase.from('messages').select('id', { count: 'exact' }).eq('read_at', null).neq('sender_id', currentUser.id);
+  if (count > 0) {
+    document.getElementById('nav-msg-badge').style.display = 'flex';
+    document.getElementById('nav-msg-badge').textContent = count > 9 ? '9+' : count;
+  }
+}
+
+init();
+</script>
+
+</body>
+</html>

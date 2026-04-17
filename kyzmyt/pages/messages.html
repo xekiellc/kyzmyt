@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kyzmyt — Messages</title>
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <style>
+    .msg-page { min-height: 100vh; background: var(--cream); display: flex; flex-direction: column; }
+    .msg-header { padding: 12px 16px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+    .back-btn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; background: none; border: none; font-size: 18px; color: var(--navy); }
+    .msg-header-info { flex: 1; }
+    .msg-header-name { font-size: 16px; font-weight: 500; color: var(--navy); }
+    .msg-header-status { font-size: 12px; color: var(--text-muted); }
+    .thread-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .thread-item { display: flex; gap: 12px; padding: 14px 16px; cursor: pointer; transition: background 0.2s; border-bottom: 1px solid var(--border); }
+    .thread-item:hover { background: var(--cream-mid); }
+    .thread-item.active { background: var(--copper-pale); }
+    .thread-body { flex: 1; min-width: 0; }
+    .thread-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+    .thread-name { font-size: 14px; font-weight: 500; color: var(--navy); }
+    .thread-time { font-size: 11px; color: var(--text-muted); }
+    .thread-preview { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .thread-preview.unread { color: var(--navy); font-weight: 500; }
+    .unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--copper); flex-shrink: 0; margin-top: 4px; }
+    .badge-mini { display: flex; gap: 4px; margin-top: 4px; }
+    .chat-container { display: flex; flex-direction: column; height: 100vh; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 80px; display: flex; flex-direction: column; gap: 12px; }
+    .msg-group { display: flex; flex-direction: column; gap: 4px; }
+    .msg-bubble { max-width: 75%; padding: 10px 14px; border-radius: 18px; font-size: 14px; line-height: 1.5; }
+    .msg-mine { background: var(--navy); color: var(--white); border-radius: 18px 18px 4px 18px; align-self: flex-end; }
+    .msg-theirs { background: var(--white); color: var(--navy); border: 1px solid var(--border); border-radius: 18px 18px 18px 4px; align-self: flex-start; }
+    .msg-time { font-size: 10px; color: var(--text-muted); margin: 2px 4px; }
+    .msg-time.mine { text-align: right; }
+    .chat-input-area { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); padding: 10px 14px; padding-bottom: max(10px, env(safe-area-inset-bottom)); display: flex; gap: 10px; align-items: flex-end; }
+    .chat-input { flex: 1; border: 1px solid var(--border-mid); border-radius: 20px; padding: 10px 16px; font-family: var(--font-body); font-size: 14px; resize: none; max-height: 120px; outline: none; background: var(--cream); color: var(--text-primary); }
+    .chat-input:focus { border-color: var(--copper); }
+    .send-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--copper); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 16px; color: var(--white); transition: all 0.2s; }
+    .send-btn:hover { background: var(--copper-light); transform: scale(1.05); }
+    .icebreaker-bar { background: var(--copper-pale); border: 1px solid rgba(184,115,51,0.2); border-radius: var(--radius-md); padding: 10px 14px; margin: 8px 0; display: flex; gap: 10px; align-items: flex-start; }
+    .icebreaker-icon { font-size: 18px; flex-shrink: 0; }
+    .icebreaker-text { font-size: 12px; color: var(--copper); line-height: 1.5; }
+    .icebreaker-use { font-size: 12px; color: var(--copper); font-weight: 500; cursor: pointer; text-decoration: underline; }
+    .safety-bar { background: var(--danger-bg); border: 1px solid rgba(198,40,40,0.2); border-radius: var(--radius-md); padding: 10px 14px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; }
+    .safety-text { font-size: 12px; color: var(--danger); }
+    .match-header-card { background: var(--white); border-bottom: 1px solid var(--border); padding: 14px 16px; display: flex; gap: 12px; align-items: center; }
+    .match-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+    .compat-inline { font-size: 13px; color: var(--copper); font-weight: 500; }
+    .date-dare { background: var(--navy); border-radius: var(--radius-md); padding: 14px; margin: 12px 0; color: var(--white); }
+    .dare-label { font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .dare-text { font-size: 14px; line-height: 1.5; }
+    .dare-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .dare-btn { flex: 1; padding: 8px; border-radius: var(--radius-md); font-size: 12px; font-weight: 500; cursor: pointer; border: none; font-family: var(--font-body); }
+    .dare-accept { background: var(--copper); color: var(--white); }
+    .dare-skip { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+    .checkin-btn { background: var(--danger-bg); border: 1px solid rgba(198,40,40,0.3); border-radius: var(--radius-md); padding: 10px 14px; font-size: 12px; color: var(--danger); cursor: pointer; display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+  </style>
+</head>
+<body>
+
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Thread list view -->
+<div id="threads-view" class="msg-page">
+  <div class="msg-header">
+    <button class="back-btn" onclick="location.href='/pages/app.html'">←</button>
+    <div class="msg-header-info">
+      <div class="msg-header-name">Messages</div>
+      <div class="msg-header-status" id="thread-count">Loading...</div>
+    </div>
+  </div>
+
+  <div class="thread-list" id="thread-list">
+    <div style="text-align:center;padding:40px;color:var(--text-muted)">
+      <div class="spinner" style="margin:0 auto 12px"></div>
+      <div style="font-size:13px">Loading conversations...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Chat view -->
+<div id="chat-view" class="chat-container hidden">
+  <div class="msg-header">
+    <button class="back-btn" onclick="showThreads()">←</button>
+    <div class="avatar avatar-md avatar-navy" id="chat-avatar">?</div>
+    <div class="msg-header-info">
+      <div class="msg-header-name" id="chat-name">—</div>
+      <div class="msg-header-status" id="chat-status">Verified member</div>
+    </div>
+    <div class="icon-btn" onclick="showSafetyOptions()" style="flex-shrink:0">🛡</div>
+  </div>
+
+  <!-- Match info header -->
+  <div class="match-header-card" id="match-info-header">
+    <div class="avatar avatar-lg avatar-copper" id="match-their-avatar"></div>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:500;color:var(--navy)" id="match-their-name"></div>
+      <div class="match-badges" id="match-badges"></div>
+      <div class="compat-inline" id="match-compat"></div>
+    </div>
+  </div>
+
+  <div class="chat-messages" id="chat-messages">
+    <!-- Messages rendered by JS -->
+  </div>
+
+  <div class="chat-input-area">
+    <textarea class="chat-input" id="msg-input" placeholder="Say something real..." rows="1" onkeydown="handleMsgKeydown(event)" oninput="autoResize(this)"></textarea>
+    <button class="send-btn" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+
+<!-- Safety modal -->
+<div id="safety-modal" class="modal-overlay hidden" onclick="closeSafety(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:16px">Safety options</h3>
+    <div class="checkin-btn" onclick="setupCheckin()">
+      📍 Set up date check-in
+      <div style="font-size:11px;color:var(--text-muted);margin-top:2px">We'll check in during your date and alert a trusted contact if you don't respond</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+      <button class="btn btn-outline btn-full" onclick="reportUser()">Report this profile</button>
+      <button class="btn btn-danger btn-full" onclick="blockUser()">Block this person</button>
+    </div>
+  </div>
+</div>
+
+<!-- Check-in setup modal -->
+<div id="checkin-modal" class="modal-overlay hidden" onclick="closeCheckin(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:8px">Date check-in</h3>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.5">Set a check-in time for your date. If you don't respond, we'll alert your trusted contact.</p>
+    <div class="form-group">
+      <label class="form-label">Check-in time</label>
+      <input type="datetime-local" class="form-input" id="checkin-time" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Trusted contact phone number</label>
+      <input type="tel" class="form-input" id="trusted-contact" placeholder="+1 (555) 000-0000" />
+    </div>
+    <div style="background:var(--info-bg);border-radius:var(--radius-md);padding:12px;font-size:12px;color:var(--info);margin-bottom:16px">
+      At your check-in time, we'll send you a text. If you don't reply within 15 minutes, your trusted contact receives your last known location.
+    </div>
+    <button class="btn btn-copper btn-full btn-lg" onclick="saveCheckin()">Set Check-in</button>
+  </div>
+</div>
+
+<script type="module">
+import { supabase, requireVerified, getMatches, getMessages, sendMessage, subscribeToMessages, createCheckin, showToast, getInitials, avatarColor, formatRelativeTime, calculateCompatibility } from '/js/supabase.js';
+
+let currentUser = null;
+let currentProfile = null;
+let currentMatchId = null;
+let currentMatch = null;
+let messageSubscription = null;
+let matches = [];
+
+async function init() {
+  const result = await requireVerified();
+  if (!result) return;
+  currentUser = result.user;
+  currentProfile = result.profile;
+  await loadThreads();
+
+  // If coming from match modal
+  const params = new URLSearchParams(window.location.search);
+  const matchParam = params.get('match');
+  if (matchParam) openChat(matchParam);
+}
+
+async function loadThreads() {
+  matches = await getMatches(currentUser.id);
+  const list = document.getElementById('thread-list');
+  document.getElementById('thread-count').textContent = `${matches.length} match${matches.length !== 1 ? 'es' : ''}`;
+
+  if (!matches.length) {
+    list.innerHTML = `
+      <div style="text-align:center;padding:60px 20px">
+        <div style="font-size:48px;margin-bottom:16px">💫</div>
+        <div style="font-family:var(--font-display);font-size:24px;color:var(--navy);margin-bottom:8px">No matches yet</div>
+        <div style="font-size:13px;color:var(--text-muted)">Connect with someone in Discover to start a conversation.</div>
+        <a href="/pages/app.html" class="btn btn-copper" style="margin-top:20px;display:inline-flex">Find Matches</a>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = matches.map(m => {
+    const other = m.user_a === currentUser.id
+      ? (m['profiles!matches_user_b_fkey'] || {})
+      : (m['profiles!matches_user_a_fkey'] || {});
+    const initials = getInitials(other.display_name);
+    const color = avatarColor(other.display_name);
+    return `
+      <div class="thread-item" onclick="openChat('${m.id}')">
+        <div class="avatar avatar-md" style="background:${color};color:white;width:44px;height:44px;font-family:var(--font-display);font-size:16px;font-weight:600">${initials}</div>
+        <div class="thread-body">
+          <div class="thread-top">
+            <div class="thread-name">${other.display_name || 'Member'}</div>
+            <div class="thread-time">${formatRelativeTime(m.matched_at)}</div>
+          </div>
+          <div class="thread-preview">You matched — say something real</div>
+          <div class="badge-mini">
+            <span class="badge badge-verified" style="font-size:9px;padding:2px 5px">✓ Verified</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+window.openChat = async function(matchId) {
+  currentMatchId = matchId;
+  const match = matches.find(m => m.id === matchId);
+  currentMatch = match;
+
+  const other = match?.user_a === currentUser.id
+    ? (match['profiles!matches_user_b_fkey'] || {})
+    : (match['profiles!matches_user_a_fkey'] || {});
+
+  document.getElementById('chat-name').textContent = other.display_name || 'Member';
+  document.getElementById('chat-avatar').textContent = getInitials(other.display_name);
+  document.getElementById('chat-avatar').style.background = avatarColor(other.display_name);
+  document.getElementById('match-their-avatar').textContent = getInitials(other.display_name);
+  document.getElementById('match-their-avatar').style.background = avatarColor(other.display_name);
+  document.getElementById('match-their-name').textContent = other.display_name || 'Member';
+
+  if (currentProfile && other) {
+    const compat = calculateCompatibility(currentProfile, other);
+    document.getElementById('match-compat').textContent = `${compat}% compatibility match`;
+  }
+
+  document.getElementById('threads-view').classList.add('hidden');
+  document.getElementById('chat-view').classList.remove('hidden');
+
+  await loadMessages();
+  subscribeToNewMessages();
+  generateIcebreaker(other);
+};
+
+window.showThreads = function() {
+  document.getElementById('chat-view').classList.add('hidden');
+  document.getElementById('threads-view').classList.remove('hidden');
+  if (messageSubscription) { messageSubscription.unsubscribe(); messageSubscription = null; }
+};
+
+async function loadMessages() {
+  const msgs = await getMessages(currentMatchId);
+  const container = document.getElementById('chat-messages');
+
+  if (!msgs.length) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:20px">
+        <div style="font-size:32px;margin-bottom:8px">💫</div>
+        <div style="font-size:13px;color:var(--text-muted)">You matched! Be the first to say something real.</div>
+      </div>
+      <div id="icebreaker-container"></div>
+      <div id="dare-container"></div>`;
+    generateIcebreaker();
+    return;
+  }
+
+  container.innerHTML = `<div id="icebreaker-container"></div><div id="dare-container"></div>` + msgs.map(m => renderMessage(m)).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function renderMessage(msg) {
+  const isMine = msg.sender_id === currentUser.id;
+  return `
+    <div class="msg-group" style="align-items:${isMine ? 'flex-end' : 'flex-start'}">
+      <div class="msg-bubble ${isMine ? 'msg-mine' : 'msg-theirs'}">${escapeHTML(msg.content)}</div>
+      <div class="msg-time ${isMine ? 'mine' : ''}">${formatRelativeTime(msg.sent_at)}</div>
+    </div>`;
+}
+
+function escapeHTML(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function subscribeToNewMessages() {
+  if (messageSubscription) messageSubscription.unsubscribe();
+  messageSubscription = subscribeToMessages(currentMatchId, (payload) => {
+    const container = document.getElementById('chat-messages');
+    container.insertAdjacentHTML('beforeend', renderMessage(payload.new));
+    container.scrollTop = container.scrollHeight;
+  });
+}
+
+window.sendMsg = async function() {
+  const input = document.getElementById('msg-input');
+  const content = input.value.trim();
+  if (!content) return;
+  input.value = '';
+  autoResize(input);
+
+  const { error } = await sendMessage(currentMatchId, currentUser.id, content);
+  if (error) showToast('Failed to send message', 'error');
+};
+
+window.handleMsgKeydown = function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+};
+
+window.autoResize = function(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+};
+
+async function generateIcebreaker(otherProfile) {
+  const container = document.getElementById('icebreaker-container');
+  if (!container) return;
+
+  const icebreakers = [
+    "You both have strong opinions about things — what's one thing you'd argue about for hours but still enjoy?",
+    "What's the last thing you were genuinely excited about?",
+    "Coffee order and that tells me everything I need to know — what's yours?",
+    "What's something on your bucket list that most people would find surprising?"
+  ];
+
+  const random = icebreakers[Math.floor(Math.random() * icebreakers.length)];
+  container.innerHTML = `
+    <div class="icebreaker-bar">
+      <div class="icebreaker-icon">💡</div>
+      <div>
+        <div class="icebreaker-text">"${random}"</div>
+        <div class="icebreaker-use" onclick="useIcebreaker('${random.replace(/'/g,"\\'")}')">Use this opener →</div>
+      </div>
+    </div>`;
+}
+
+window.useIcebreaker = function(text) {
+  document.getElementById('msg-input').value = text;
+  document.getElementById('msg-input').focus();
+};
+
+window.showSafetyOptions = () => document.getElementById('safety-modal').classList.remove('hidden');
+window.closeSafety = (e) => { if (!e || e.target === document.getElementById('safety-modal')) document.getElementById('safety-modal').classList.add('hidden'); };
+window.setupCheckin = () => { document.getElementById('safety-modal').classList.add('hidden'); document.getElementById('checkin-modal').classList.remove('hidden'); };
+window.closeCheckin = (e) => { if (!e || e.target === document.getElementById('checkin-modal')) document.getElementById('checkin-modal').classList.add('hidden'); };
+
+window.saveCheckin = async function() {
+  const time = document.getElementById('checkin-time').value;
+  const contact = document.getElementById('trusted-contact').value;
+  if (!time || !contact) { showToast('Please fill in both fields', 'error'); return; }
+  const { error } = await createCheckin(currentUser.id, currentMatchId, time, contact);
+  if (error) { showToast('Error setting check-in', 'error'); return; }
+  showToast('Date check-in set! Stay safe. 🛡', 'success');
+  document.getElementById('checkin-modal').classList.add('hidden');
+};
+
+window.reportUser = async function() {
+  const reason = prompt('Please briefly describe your concern:');
+  if (!reason) return;
+  await supabase.from('reports').insert({ reporter_id: currentUser.id, reported_id: currentMatchId, reason, created_at: new Date().toISOString() });
+  showToast('Report submitted. We review all reports within 24 hours.', 'success');
+  document.getElementById('safety-modal').classList.add('hidden');
+};
+
+window.blockUser = async function() {
+  if (!confirm('Block this person? They will no longer be able to contact you.')) return;
+  await supabase.from('blocks').insert({ blocker_id: currentUser.id, blocked_id: currentMatchId });
+  showToast('User blocked.', 'success');
+  showThreads();
+};
+
+init();
+</script>
+
+</body>
+</html>

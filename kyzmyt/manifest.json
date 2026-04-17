@@ -1,0 +1,50 @@
+{
+  "name": "Kyzmyt",
+  "short_name": "Kyzmyt",
+  "description": "The verified dating platform. Background checked. ID verified. Real connections.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1e3d",
+  "theme_color": "#0f1e3d",
+  "categories": ["lifestyle", "social"],
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/screenshot-discover.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "label": "Discover verified members near you"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Discover",
+      "short_name": "Discover",
+      "description": "Find your kyzmyt",
+      "url": "/pages/app.html",
+      "icons": [{ "src": "/assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Messages",
+      "short_name": "Messages",
+      "description": "Your conversations",
+      "url": "/pages/messages.html",
+      "icons": [{ "src": "/assets/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

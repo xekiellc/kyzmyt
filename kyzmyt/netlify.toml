@@ -1,0 +1,58 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+  edge_functions = "netlify/edge-functions"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/app"
+  to = "/pages/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/signup"
+  to = "/pages/signup.html"
+  status = 200
+
+[[redirects]]
+  from = "/verify"
+  to = "/pages/verify.html"
+  status = 200
+
+[[redirects]]
+  from = "/profile"
+  to = "/pages/profile.html"
+  status = 200
+
+[[redirects]]
+  from = "/messages"
+  to = "/pages/messages.html"
+  status = 200
+
+[[redirects]]
+  from = "/community"
+  to = "/pages/community.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin"
+  to = "/pages/admin.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(self)"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co https://api.stripe.com https://api.checkr.com https://api.plaid.com; frame-src https://js.stripe.com"
+
+[[edge_functions]]
+  function = "og-inject"
+  path = "/share/*"
+
+[functions."date-checkin-alert"]
+  schedule = "*/5 * * * *"
