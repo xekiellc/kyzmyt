@@ -3,57 +3,393 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kyzmyt — Terms of Service</title>
-  <link rel="stylesheet" href="/css/design-system.css" />
+  <title>Terms of Service — Kyzmyt</title>
+  <meta name="description" content="Kyzmyt's Terms of Service — the rules that govern use of the world's first verified dating platform." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
-    .legal-page { min-height: 100vh; background: var(--cream); padding: 40px 24px; }
-    .legal-content { max-width: 680px; margin: 0 auto; }
-    .legal-header { margin-bottom: 40px; }
-    .legal-logo { font-family: var(--font-display); font-size: 28px; color: var(--navy); font-weight: 600; margin-bottom: 8px; }
-    .legal-logo span { color: var(--copper); }
-    h1 { font-family: var(--font-display); font-size: 36px; color: var(--navy); margin-bottom: 8px; }
-    .legal-date { font-size: 13px; color: var(--text-muted); margin-bottom: 32px; }
-    h2 { font-family: var(--font-display); font-size: 22px; color: var(--navy); margin: 28px 0 10px; }
-    p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 14px; }
-    .highlight { background: var(--copper-pale); border-radius: var(--radius-md); padding: 16px; border-left: 3px solid var(--copper); margin: 20px 0; font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+    :root {
+      --navy: #0A1628;
+      --copper: #B87333;
+      --copper-light: #d4924d;
+      --cream: #FAF8F5;
+      --cream-dark: #F0EDE8;
+      --text: #1a2a40;
+      --text-muted: #5a6a7a;
+      --border: rgba(184,115,51,0.2);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+    }
+    nav {
+      background: var(--navy);
+      padding: 1.2rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+    }
+    .nav-logo span { color: var(--copper); }
+    .nav-back {
+      color: var(--copper);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .hero {
+      background: var(--navy);
+      padding: 4rem 2rem 3rem;
+      text-align: center;
+      position: relative;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--copper), transparent);
+    }
+    .hero-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 500;
+      color: var(--cream);
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .hero-meta { color: rgba(250,248,245,0.5); font-size: 0.85rem; }
+    .container { max-width: 800px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+    .intro-box {
+      background: white;
+      border-left: 3px solid var(--copper);
+      border-radius: 0 8px 8px 0;
+      padding: 1.5rem 2rem;
+      margin-bottom: 3rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+    .intro-box strong { color: var(--text); font-weight: 500; }
+    .section { margin-bottom: 3rem; }
+    .section-num {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 0.4rem;
+    }
+    .section h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .section p { font-size: 0.95rem; color: var(--text); margin-bottom: 1rem; }
+    .section p:last-child { margin-bottom: 0; }
+    .bullet-list { list-style: none; margin: 1rem 0; }
+    .bullet-list li {
+      padding: 0.4rem 0 0.4rem 1.5rem;
+      position: relative;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    .bullet-list li::before {
+      content: '✶';
+      position: absolute;
+      left: 0;
+      color: var(--copper);
+      font-size: 0.7rem;
+      top: 0.55rem;
+    }
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(10,22,40,0.05), rgba(184,115,51,0.08));
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .highlight-box h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.75rem;
+    }
+    .highlight-box p { font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .warn-box {
+      background: rgba(184,115,51,0.1);
+      border: 1px solid rgba(184,115,51,0.35);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+    .warn-box strong { color: var(--navy); }
+    .divider {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 3rem 0;
+    }
+    .contact-block {
+      background: var(--navy);
+      color: var(--cream);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 3rem;
+    }
+    .contact-block h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+    .contact-block p { font-size: 0.9rem; color: rgba(250,248,245,0.7); margin-bottom: 0.75rem; }
+    .contact-email { color: var(--copper); font-size: 0.95rem; }
+    footer {
+      background: var(--navy);
+      padding: 2rem;
+      text-align: center;
+      color: rgba(250,248,245,0.4);
+      font-size: 0.8rem;
+      border-top: 1px solid rgba(184,115,51,0.15);
+    }
+    footer a { color: var(--copper); text-decoration: none; }
   </style>
 </head>
 <body>
-<div class="legal-page">
-  <div class="legal-content">
-    <div class="legal-header">
-      <a href="/" class="legal-logo">Kyzm<span>yt</span></a>
-    </div>
-    <h1>Terms of Service</h1>
-    <div class="legal-date">Effective: January 1, 2026</div>
 
-    <div class="highlight">Kyzmyt requires all members to complete identity verification and a criminal background check. By joining, you consent to these checks and agree that results are final and tamper-proof.</div>
+<nav>
+  <a href="../index.html" class="nav-logo">KYZM<span>✶</span>T</a>
+  <a href="../index.html" class="nav-back">← Back to Kyzmyt</a>
+</nav>
 
-    <h2>1. Eligibility</h2>
-    <p>You must be at least 18 years old to use Kyzmyt. By creating an account, you represent that you are 18 or older. We reserve the right to require proof of age at any time.</p>
-
-    <h2>2. Verification requirements</h2>
-    <p>All members must complete identity verification via government-issued ID and a liveness check (powered by Stripe Identity), and pass a criminal background check (powered by Checkr). These are not optional. Members who do not pass verification cannot participate in the platform.</p>
-    <p>Background check results are sent directly from Checkr to our servers via secure webhook. You cannot view, alter, or dispute Kyzmyt's copy of your results through our platform. Background check decisions are final for platform access purposes.</p>
-
-    <h2>3. Conduct</h2>
-    <p>You agree not to harass, threaten, or harm other members. You agree to represent yourself honestly, including your photos, age, and personal details. You agree not to use the platform for commercial solicitation, spam, or any illegal purpose.</p>
-
-    <h2>4. Subscriptions and fees</h2>
-    <p>One-time verification fees are non-refundable once the verification process has been initiated. Monthly subscriptions may be cancelled at any time; cancellation takes effect at the end of the current billing period. Refunds are not provided for partial months.</p>
-
-    <h2>5. Safety features</h2>
-    <p>The date check-in safety feature is provided as a good-faith safety tool. Kyzmyt is not responsible for outcomes on dates or in-person meetings. We strongly encourage safe dating practices at all times.</p>
-
-    <h2>6. Account termination</h2>
-    <p>We reserve the right to suspend or permanently ban any account for violation of these terms, a failed or concerning background check result, credible safety reports from other members, or any behavior we determine to be harmful to our community.</p>
-
-    <h2>7. Limitation of liability</h2>
-    <p>Kyzmyt is not responsible for the conduct of members on or off the platform. We are not liable for any damages arising from use of the platform, including but not limited to personal safety incidents, emotional distress, or financial loss.</p>
-
-    <h2>8. Contact</h2>
-    <p>Questions? <a href="mailto:legal@kyzmyt.com">legal@kyzmyt.com</a></p>
-  </div>
+<div class="hero">
+  <div class="hero-label">Legal</div>
+  <h1>Terms of Service</h1>
+  <p class="hero-meta">Effective Date: April 17, 2026 &nbsp;✶&nbsp; KYZMYT, LLC &nbsp;✶&nbsp; EIN 42-1983754</p>
 </div>
+
+<div class="container">
+
+  <div class="intro-box">
+    <strong>The short version:</strong> Kyzmyt requires every member to complete mandatory ID verification and a background check before using the platform. In exchange, you get a verified community you can actually trust. Use the platform honestly, treat others with respect, and don't try to game the verification system. If you do, your account is gone — permanently.
+  </div>
+
+  <div class="section">
+    <div class="section-num">Section 1</div>
+    <h2>Acceptance of Terms</h2>
+    <p>These Terms of Service ("Terms") constitute a legally binding agreement between you and <strong>KYZMYT, LLC</strong> ("Kyzmyt," "we," "us," or "our"), governing your access to and use of the Kyzmyt platform at kyzmyt.com.</p>
+    <p>By creating an account, clicking "I Agree," or using any part of the platform, you confirm that:</p>
+    <ul class="bullet-list">
+      <li>You are at least 18 years old</li>
+      <li>You have the legal capacity to enter into a binding agreement</li>
+      <li>You have read, understood, and agree to be bound by these Terms</li>
+      <li>You agree to our <a href="privacy.html" style="color:var(--copper)">Privacy Policy</a>, which is incorporated herein by reference</li>
+    </ul>
+    <p>If you do not agree, do not create an account or use the platform.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-num">Section 2</div>
+    <h2>Mandatory Verification — The Foundation of Kyzmyt</h2>
+    <p>Kyzmyt is the world's first verified dating platform. Verification is not optional. <strong>No member may send messages, view other profiles, or access any interactive features without completing both:</strong></p>
+    <ul class="bullet-list">
+      <li><strong>ID Verification ($5):</strong> Submission of a government-issued photo ID and liveness check via Stripe Identity. This confirms your real identity.</li>
+      <li><strong>Background Check ($30):</strong> A criminal background check conducted by Checkr, including national criminal records and sex offender registry screening.</li>
+    </ul>
+    <div class="highlight-box">
+      <h3>✶ The Tamper-Proof Guarantee</h3>
+      <p>Background check results are delivered directly from Checkr to our database via cryptographically signed webhook. No user, administrator, or Kyzmyt employee can alter these results. Your verification status is the permanent, unmodifiable record of your background check outcome. This is non-negotiable.</p>
+    </div>
+    <p>Verification fees are non-refundable. They cover the cost of the Stripe Identity and Checkr services.</p>
+    <p>Kyzmyt reserves the right to deny platform access to any individual whose background check returns results we determine are incompatible with member safety, at our sole discretion.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-num">Section 3</div>
+    <h2>Eligibility</h2>
+    <ul class="bullet-list">
+      <li>You are 18 years of age or older</li>
+      <li>You are a human individual (no bots, scripts, or automated accounts)</li>
+      <li>You are not prohibited from using the platform under applicable law</li>
+      <li>You have not been previously banned from Kyzmyt</li>
+      <li>You pass mandatory ID verification and background check screening</li>
+    </ul>
+    <p>Kyzmyt is currently available to residents of the United States. International availability may be added in the future.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-num">Section 4</div>
+    <h2>Your Account</h2>
+    <p>You are responsible for maintaining the security of your account credentials. Do not share your password with anyone. You are responsible for all activity that occurs under your account.</p>
+    <ul class="bullet-list">
+      <li>Create an account on behalf of another person</li>
+      <li>Use another person's identity or impersonate anyone</li>
+      <li>Maintain more than one account</li>
+      <li>Transfer your account to another person</li>
+    </ul>
+    <p>If you suspect unauthorized access to your account, contact us immediately at <a href="mailto:safety@kyzmyt.com" style="color:var(--copper)">safety@kyzmyt.com</a>.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-num">Section 5</div>
+    <h2>Subscriptions and Payments</h2>
+    <ul class="bullet-list">
+      <li><strong>ID Verification — $5 (one-time, non-refundable):</strong> Required for all members</li>
+      <li><strong>Background Check — $30 (one-time, non-refundable):</strong> Required for all members</li>
+      <li><strong>Monthly Membership — $29/month (recurring):</strong> Full platform access including unlimited messaging and match visibility</li>
+      <li><strong>Financial Badge — $12 (one-time, optional):</strong> Plaid-verified asset badge on your profile</li>
+      <li><strong>Boosts — $2.99–$14.99 (one-time):</strong> Temporary profile visibility boosts</li>
+      <li><strong>Super Connects — $4.99–$9.99 (one-time):</strong> Priority connection requests</li>
+      <li><strong>Concierge Matchmaking — $299/month (recurring):</strong> Premium human matchmaking service</li>
+    </ul>
+    <p>All payments are processed by Stripe. Monthly subscriptions renew automatically until cancelled. To cancel, visit your Profile settings or the Stripe billing portal. Partial months are not refunded. Verification fees ($5 and $30) are non-refundable under any circumstances.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-num">Section 6</div>
+    <h2>Community Rules — What You May Not Do</h2>
+    <p>The following behaviors will result in immediate, permanent account termination:</p>
+    <ul class="bullet-list">
+      <li>Attempting to circumvent, falsify, or tamper with the verification process in any way</li>
+      <li>Submitting fraudulent identification documents</li>
+      <li>Harassing, threatening, or stalking any member</li>
+      <li>Sending unsolicited explicit content</li>
+      <li>Soliciting money from other members (romance scams)</li>
+      <li>Using the platform to solicit commercial transactions outside of Kyzmyt</li>
+      <li>Sharing another member's personal information without their consent (doxxing)</li>
+      <li>Creating fake or misleading profile information</li>
+      <li>Using bots, scrapers, or automated tools to interact with the platform</li>
+      <li>Attempting to access another member's account or Kyzmyt's backend systems</li>
+    </ul>
+    <div class="warn-box">
+      <strong>Zero Tolerance:</strong> Verification fraud, harassment, and romance scams result in immediate permanent bans with no appeal. Law enforcement referrals may follow.
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-num">Section 7</div>
+    <h2>Your Content</h2>
+    <p>You retain ownership of the content you post on Kyzmyt. By posting content, you grant KYZMYT, LLC a limited, non-exclusive, royalty-free license to use, display, and distribute your content solely for the purpose of operating the platform.</p>
+    <ul class="bullet-list">
+      <li>You have the right to post all content you submit</li>
+      <li>Your content does not violate any third party's intellectual property rights</li>
+      <li>Your photos are of you and are recent and accurate</li>
+      <li>Your content does not contain nudity, explicit sexual content, or violent imagery</li>
+    </ul>
+    <p>We reserve the right to remove any content that violates these Terms without notice.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-num">Section 8</div>
+    <h2>Safety Features — Your Responsibility</h2>
+    <p>Kyzmyt provides optional safety tools including the <strong>Date Check-In System</strong>. The Date Check-In System is a safety tool, not a guarantee of safety. <strong>Kyzmyt is not responsible for your physical safety on dates arranged through the platform.</strong> Always meet in public places, tell someone where you are going, and trust your instincts.</p>
+    <p>Mandatory background checks significantly reduce — but cannot eliminate — risk. A clean background check does not guarantee safe behavior.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-num">Section 9</div>
+    <h2>AI-Powered Features</h2>
+    <p>Kyzmyt uses Claude AI (Anthropic) to generate compatibility scores, icebreakers, and date dares. These features are provided for entertainment and connection purposes. AI-generated content may not always be accurate or appropriate. Compatibility scores are not scientific measures and should not be the sole basis for any decision.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-num">Section 10</div>
+    <h2>Disclaimers and Limitation of Liability</h2>
+    <p>THE KYZMYT PLATFORM IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED. TO THE FULLEST EXTENT PERMITTED BY LAW, KYZMYT, LLC DISCLAIMS ALL WARRANTIES, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.</p>
+    <p>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, KYZMYT, LLC'S TOTAL LIABILITY TO YOU FOR ANY CLAIM ARISING FROM OR RELATED TO THESE TERMS OR THE PLATFORM WILL NOT EXCEED THE GREATER OF (A) THE AMOUNT YOU PAID TO KYZMYT IN THE 12 MONTHS BEFORE THE CLAIM OR (B) $100.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-num">Section 11</div>
+    <h2>Termination</h2>
+    <p>You may delete your account at any time from your Profile settings. We may suspend or terminate your account at any time, with or without notice, for violations of these Terms, harm to the community, law enforcement requests, or platform discontinuation.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-num">Section 12</div>
+    <h2>Dispute Resolution and Governing Law</h2>
+    <p>These Terms are governed by the laws of the State of Ohio. Any dispute will be resolved in the state or federal courts located in Summit County, Ohio.</p>
+    <p><strong>Informal Resolution First:</strong> Before filing any legal action, you agree to contact us at <a href="mailto:legal@kyzmyt.com" style="color:var(--copper)">legal@kyzmyt.com</a> and give us 30 days to attempt informal resolution.</p>
+    <p><strong>Class Action Waiver:</strong> To the fullest extent permitted by law, you waive any right to participate in a class action lawsuit or class-wide arbitration against Kyzmyt.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-num">Section 13</div>
+    <h2>Changes to These Terms</h2>
+    <p>We may update these Terms as the platform grows. When we make material changes, we will notify you by email at least 14 days before the changes take effect. Continued use of Kyzmyt after the effective date constitutes acceptance of the updated Terms.</p>
+  </div>
+
+  <div class="contact-block">
+    <h2>Legal Questions?</h2>
+    <p>For legal inquiries, subpoenas, or law enforcement requests, contact us below.</p>
+    <p>Email: <a href="mailto:legal@kyzmyt.com" class="contact-email">legal@kyzmyt.com</a></p>
+    <p style="margin-top:0.5rem;">KYZMYT, LLC &nbsp;·&nbsp; Cuyahoga Falls, OH</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>&copy; 2026 KYZMYT, LLC. All rights reserved. &nbsp;✶&nbsp;
+    <a href="terms.html">Terms</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy</a> &nbsp;·&nbsp;
+    <a href="safety.html">Safety</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a>
+  </p>
+</footer>
+
 </body>
 </html>
