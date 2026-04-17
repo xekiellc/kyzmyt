@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9WSYHBGQZZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9WSYHBGQZZ');
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concierge Matchmaking — Kyzmyt</title>
+  <meta name="description" content="Kyzmyt Concierge — premium human matchmaking for verified members who are serious about finding the right person." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0A1628;
+      --copper: #B87333;
+      --copper-light: #d4924d;
+      --cream: #FAF8F5;
+      --cream-dark: #F0EDE8;
+      --text: #1a2a40;
+      --text-muted: #5a6a7a;
+      --border: rgba(184,115,51,0.2);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+    }
+    nav {
+      background: var(--navy);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+    }
+    .nav-logo span { color: var(--copper); }
+    .nav-back {
+      color: var(--copper);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Hero */
+    .hero {
+      background: var(--navy);
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(184,115,51,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--copper), transparent);
+    }
+    .hero-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 500;
+      color: var(--cream);
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .hero h1 em { font-style: italic; color: var(--copper); }
+    .hero-sub {
+      font-size: 1rem;
+      color: rgba(250,248,245,0.6);
+      max-width: 500px;
+      margin: 0 auto 1.5rem;
+      position: relative;
+    }
+    .hero-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      color: var(--copper);
+      position: relative;
+    }
+
+    .container { max-width: 820px; margin: 0 auto; padding: 4rem 2rem 5rem; }
+
+    /* What's included */
+    .included {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 4rem;
+    }
+    .include-item {
+      background: white;
+      border-radius: 12px;
+      padding: 1.75rem 1.5rem;
+      border-top: 2px solid var(--copper);
+      box-shadow: 0 2px 12px rgba(10,22,40,0.05);
+    }
+    .include-icon { font-size: 1.5rem; margin-bottom: 0.75rem; display: block; }
+    .include-item h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.4rem;
+    }
+    .include-item p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; }
+
+    /* How it works */
+    .steps { list-style: none; margin-bottom: 4rem; }
+    .step { display: flex; gap: 1.5rem; margin-bottom: 2rem; align-items: flex-start; }
+    .step-num {
+      flex-shrink: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--navy);
+      color: var(--copper);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .step-content h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.3rem;
+    }
+    .step-content p { font-size: 0.88rem; color: var(--text-muted); }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 0.4rem;
+    }
+    .section-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Application form */
+    .form-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 4px 24px rgba(10,22,40,0.07);
+      margin-bottom: 3rem;
+    }
+    .form-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.4rem;
+    }
+    .form-card .form-sub { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.75rem; }
+    .form-group { margin-bottom: 1.25rem; }
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1.5px solid var(--cream-dark);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: var(--text);
+      background: var(--cream);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--copper); }
+    textarea { resize: vertical; min-height: 100px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 540px) { .form-row { grid-template-columns: 1fr; } }
+    .submit-btn {
+      width: 100%;
+      background: var(--navy);
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      margin-top: 0.5rem;
+    }
+    .submit-btn:hover { background: var(--copper); transform: translateY(-1px); }
+    .price-note {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 1rem;
+    }
+
+    .divider {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 3rem 0;
+    }
+    footer {
+      background: var(--navy);
+      padding: 2rem;
+      text-align: center;
+      color: rgba(250,248,245,0.4);
+      font-size: 0.8rem;
+      border-top: 1px solid rgba(184,115,51,0.15);
+    }
+    footer a { color: var(--copper); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="app.html" class="nav-logo">KYZM<span>✶</span>T</a>
+  <a href="app.html" class="nav-back">← Discover</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-label">Concierge Matchmaking</div>
+  <h1>Your own personal<br><em>matchmaker.</em></h1>
+  <p class="hero-sub">For verified members who are serious about finding the right person — not just the next swipe.</p>
+  <div class="hero-price">$299 / month &nbsp;✶&nbsp; Cancel anytime</div>
+</div>
+
+<div class="container">
+
+  <!-- What's included -->
+  <div class="section-label">What's Included</div>
+  <div class="section-h2" style="margin-bottom:1.5rem;">Everything. Handled for you.</div>
+
+  <div class="included">
+    <div class="include-item">
+      <span class="include-icon">🔍</span>
+      <h4>Curated Matches</h4>
+      <p>We hand-select compatible verified members for you — no swiping, no browsing required.</p>
+    </div>
+    <div class="include-item">
+      <span class="include-icon">📞</span>
+      <h4>Onboarding Interview</h4>
+      <p>A personal call to understand exactly what you're looking for and what matters most to you.</p>
+    </div>
+    <div class="include-item">
+      <span class="include-icon">✶</span>
+      <h4>Priority Profile</h4>
+      <p>Your profile is elevated across the platform for maximum visibility to compatible members.</p>
+    </div>
+    <div class="include-item">
+      <span class="include-icon">💬</span>
+      <h4>Date Coaching</h4>
+      <p>Feedback and guidance after each introduction to help every connection go further.</p>
+    </div>
+    <div class="include-item">
+      <span class="include-icon">🛡</span>
+      <h4>Full Verification</h4>
+      <p>Every match is fully verified — background checked and ID confirmed, just like you.</p>
+    </div>
+    <div class="include-item">
+      <span class="include-icon">📋</span>
+      <h4>Monthly Check-In</h4>
+      <p>A dedicated monthly review of your matches, feedback, and preferences to refine your search.</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- How it works -->
+  <div class="section-label">How It Works</div>
+  <div class="section-h2">Simple. Personal. Effective.</div>
+
+  <ol class="steps">
+    <li class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>Apply Below</h4>
+        <p>Tell us a little about yourself and what you're looking for. Applications are reviewed within 48 hours.</p>
+      </div>
+    </li>
+    <li class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>Onboarding Call</h4>
+        <p>We schedule a personal call to understand your values, lifestyle, and what a great match looks like to you.</p>
+      </div>
+    </li>
+    <li class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>We Go to Work</h4>
+        <p>Our team identifies compatible verified members and facilitates warm introductions on your behalf.</p>
+      </div>
+    </li>
+    <li class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h4>You Connect</h4>
+        <p>Meet your curated matches through the platform. We follow up, gather feedback, and keep refining.</p>
+      </div>
+    </li>
+  </ol>
+
+  <hr class="divider" />
+
+  <!-- Application form -->
+  <div class="form-card">
+    <h3>Apply for Concierge</h3>
+    <p class="form-sub">Applications are reviewed within 48 hours. If accepted, you'll receive a call to schedule your onboarding interview.</p>
+
+    <form id="conciergeForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fname">First Name</label>
+          <input type="text" id="fname" name="fname" placeholder="First name" required />
+        </div>
+        <div class="form-group">
+          <label for="lname">Last Name</label>
+          <input type="text" id="lname" name="lname" placeholder="Last name" required />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" name="age" placeholder="Your age" min="18" required />
+        </div>
+        <div class="form-group">
+          <label for="location">City / State</label>
+          <input type="text" id="location" name="location" placeholder="e.g. Cleveland, OH" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="seeking">I'm Looking For</label>
+        <select id="seeking" name="seeking">
+          <option value="">Select one</option>
+          <option value="long-term">Long-term relationship</option>
+          <option value="marriage">Marriage</option>
+          <option value="companionship">Companionship</option>
+          <option value="open">Open to what develops</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="about">Tell Us About Yourself</label>
+        <textarea id="about" name="about" placeholder="A few sentences about who you are, your lifestyle, and what matters most to you in a partner..." required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="dealbreakers">Any Dealbreakers or Must-Haves?</label>
+        <textarea id="dealbreakers" name="dealbreakers" placeholder="Optional — helps us find better matches for you..." style="min-height:80px;"></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Submit Application ✶</button>
+      <p class="price-note">$299/month · Billed monthly after acceptance · Cancel anytime</p>
+    </form>
+  </div>
+
+</div>
+
+<footer>
+  <p>&copy; 2026 KYZMYT, LLC. All rights reserved. &nbsp;✶&nbsp;
+    <a href="terms.html">Terms</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy</a> &nbsp;·&nbsp;
+    <a href="safety.html">Safety</a>
+  </p>
+</footer>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  import { getSupabaseConfig } from '../js/supabase.js';
+
+  const { url, anonKey } = getSupabaseConfig();
+  const supabase = createClient(url, anonKey);
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) { window.location.href = 'login.html'; }
+
+  const form = document.getElementById('conciergeForm');
+  const btn = document.getElementById('submitBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+
+    const { error } = await supabase.from('concierge_applications').insert({
+      user_id: user.id,
+      first_name: document.getElementById('fname').value,
+      last_name: document.getElementById('lname').value,
+      age: parseInt(document.getElementById('age').value),
+      location: document.getElementById('location').value,
+      seeking: document.getElementById('seeking').value,
+      about: document.getElementById('about').value,
+      dealbreakers: document.getElementById('dealbreakers').value,
+      status: 'pending'
+    });
+
+    if (error) {
+      btn.textContent = 'Submit Application ✶';
+      btn.disabled = false;
+      alert('Something went wrong. Please try again.');
+    } else {
+      btn.textContent = 'Application Submitted ✶';
+      btn.style.background = 'var(--copper)';
+      form.reset();
+    }
+  });
+</script>
+
+</body>
+</html>
