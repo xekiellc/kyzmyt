@@ -2,6 +2,7 @@
   publish = "."
   functions = "netlify/functions"
   edge_functions = "netlify/edge-functions"
+  command = "cd netlify/functions && npm install"
 
 [build.environment]
   NODE_VERSION = "18"
