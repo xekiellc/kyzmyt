@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Kyzmyt</title>
+  <meta name="description" content="Kyzmyt's Privacy Policy — how we collect, use, and protect your data on the world's first verified dating platform." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0A1628;
+      --copper: #B87333;
+      --copper-light: #d4924d;
+      --cream: #FAF8F5;
+      --cream-dark: #F0EDE8;
+      --text: #1a2a40;
+      --text-muted: #5a6a7a;
+      --border: rgba(184,115,51,0.2);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--navy);
+      padding: 1.2rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+    }
+    .nav-logo span { color: var(--copper); }
+    .nav-back {
+      color: var(--copper);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--copper-light); }
+
+    /* HERO */
+    .hero {
+      background: var(--navy);
+      padding: 4rem 2rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--copper), transparent);
+    }
+    .hero-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 500;
+      color: var(--cream);
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .hero-meta {
+      color: rgba(250,248,245,0.5);
+      font-size: 0.85rem;
+      font-weight: 300;
+    }
+
+    /* LAYOUT */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+
+    /* INTRO BOX */
+    .intro-box {
+      background: white;
+      border-left: 3px solid var(--copper);
+      border-radius: 0 8px 8px 0;
+      padding: 1.5rem 2rem;
+      margin-bottom: 3rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+    .intro-box strong { color: var(--text); font-weight: 500; }
+
+    /* SECTIONS */
+    .section {
+      margin-bottom: 3rem;
+    }
+    .section-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 0.4rem;
+    }
+    .section h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .section p {
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .section p:last-child { margin-bottom: 0; }
+
+    /* DATA TABLE */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+    .data-table th {
+      background: var(--navy);
+      color: var(--cream);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 400;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .data-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--cream-dark);
+      vertical-align: top;
+      line-height: 1.6;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:nth-child(even) td { background: rgba(250,248,245,0.6); }
+    .data-label {
+      font-weight: 500;
+      color: var(--navy);
+      width: 35%;
+    }
+
+    /* BULLET LIST */
+    .bullet-list {
+      list-style: none;
+      margin: 1rem 0;
+    }
+    .bullet-list li {
+      padding: 0.4rem 0 0.4rem 1.5rem;
+      position: relative;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    .bullet-list li::before {
+      content: '✶';
+      position: absolute;
+      left: 0;
+      color: var(--copper);
+      font-size: 0.7rem;
+      top: 0.55rem;
+    }
+
+    /* HIGHLIGHT BOX */
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(10,22,40,0.05), rgba(184,115,51,0.08));
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .highlight-box h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.75rem;
+    }
+    .highlight-box p {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* DIVIDER */
+    .divider {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 3rem 0;
+    }
+
+    /* CONTACT BLOCK */
+    .contact-block {
+      background: var(--navy);
+      color: var(--cream);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 3rem;
+    }
+    .contact-block h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 1rem;
+    }
+    .contact-block p {
+      font-size: 0.9rem;
+      color: rgba(250,248,245,0.7);
+      margin-bottom: 0.75rem;
+    }
+    .contact-email {
+      display: inline-block;
+      color: var(--copper);
+      font-size: 0.95rem;
+      font-weight: 400;
+      margin-top: 0.25rem;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--navy);
+      padding: 2rem;
+      text-align: center;
+      color: rgba(250,248,245,0.4);
+      font-size: 0.8rem;
+      border-top: 1px solid rgba(184,115,51,0.15);
+    }
+    footer a { color: var(--copper); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html" class="nav-logo">KYZM<span>✶</span>T</a>
+  <a href="../index.html" class="nav-back">← Back to Kyzmyt</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">Legal</div>
+  <h1>Privacy Policy</h1>
+  <p class="hero-meta">Effective Date: April 17, 2026 &nbsp;✶&nbsp; KYZMYT, LLC &nbsp;✶&nbsp; EIN 42-1983754</p>
+</div>
+
+<div class="container">
+
+  <div class="intro-box">
+    <strong>Plain English first:</strong> Kyzmyt is a verified dating platform. To verify every member, we collect sensitive data including government ID, biometric liveness checks, and background check results. This policy explains exactly what we collect, why, who handles it, and your rights. We do not sell your data. We never will. Read on for the details.
+  </div>
+
+  <!-- 1. WHO WE ARE -->
+  <div class="section">
+    <div class="section-num">Section 1</div>
+    <h2>Who We Are</h2>
+    <p>Kyzmyt is operated by <strong>KYZMYT, LLC</strong>, an Ohio limited liability company (EIN 42-1983754, Ohio SOS Document ID 202610702238). Our platform is located at <strong>kyzmyt.com</strong>. For privacy inquiries, contact us at <a href="mailto:privacy@kyzmyt.com" style="color:var(--copper)">privacy@kyzmyt.com</a>.</p>
+    <p>This Privacy Policy applies to all users of kyzmyt.com and the Kyzmyt progressive web application. By creating an account, you agree to this policy.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 2. WHAT WE COLLECT -->
+  <div class="section">
+    <div class="section-num">Section 2</div>
+    <h2>Data We Collect</h2>
+    <p>Because Kyzmyt requires mandatory verification of every member, we collect several categories of data:</p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Category</th><th>What It Includes</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="data-label">Account Data</td>
+          <td>Name, email address, date of birth, password (hashed)</td>
+          <td>Account creation and authentication</td>
+        </tr>
+        <tr>
+          <td class="data-label">Profile Data</td>
+          <td>Photos, bio, values, relationship goals, profile soundtrack, answers to compatibility quiz</td>
+          <td>Matching and discovery features</td>
+        </tr>
+        <tr>
+          <td class="data-label">Government ID</td>
+          <td>A scan or photo of your government-issued ID (driver's license, passport, or equivalent)</td>
+          <td>ID verification via Stripe Identity — required for every member</td>
+        </tr>
+        <tr>
+          <td class="data-label">Biometric Data</td>
+          <td>A liveness check (selfie or video) used to confirm the ID belongs to you</td>
+          <td>Fraud prevention — processed by Stripe Identity, not stored by Kyzmyt</td>
+        </tr>
+        <tr>
+          <td class="data-label">Background Check Data</td>
+          <td>Criminal history records, sex offender registry results, as returned by Checkr</td>
+          <td>Member safety — results flow directly from Checkr to our database via signed webhook. No human or admin touches this data.</td>
+        </tr>
+        <tr>
+          <td class="data-label">Financial Badge Data</td>
+          <td>Asset verification data via Plaid (no account numbers or balances stored by Kyzmyt)</td>
+          <td>Optional financial badge feature for members who choose it</td>
+        </tr>
+        <tr>
+          <td class="data-label">Payment Data</td>
+          <td>Payment card and subscription information</td>
+          <td>Processed entirely by Stripe — Kyzmyt never stores card numbers</td>
+        </tr>
+        <tr>
+          <td class="data-label">Messages</td>
+          <td>Real-time chat messages between matched members</td>
+          <td>Communication between matches — encrypted in transit</td>
+        </tr>
+        <tr>
+          <td class="data-label">Safety Data</td>
+          <td>Date check-in records, safety reports, post-date ratings</td>
+          <td>Member safety — alerts sent via Twilio if a check-in is not resolved</td>
+        </tr>
+        <tr>
+          <td class="data-label">Usage Data</td>
+          <td>Pages visited, features used, session length, device type, IP address</td>
+          <td>Platform improvement via Google Analytics 4</td>
+        </tr>
+        <tr>
+          <td class="data-label">Location Data</td>
+          <td>General region (city/metro level) as provided in your profile</td>
+          <td>Discovery and local matching — we do not track precise GPS location</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 3. HOW WE USE YOUR DATA -->
+  <div class="section">
+    <div class="section-num">Section 3</div>
+    <h2>How We Use Your Data</h2>
+    <ul class="bullet-list">
+      <li>To verify your identity and conduct your mandatory background check before allowing platform access</li>
+      <li>To power the discovery feed, matching, and AI compatibility features</li>
+      <li>To send transactional emails (match notifications, check-in alerts, account messages)</li>
+      <li>To operate the date safety check-in system and send Twilio SMS alerts for unresolved check-ins</li>
+      <li>To process payments for verification fees, membership, and boosts via Stripe</li>
+      <li>To review safety reports and take action on policy violations</li>
+      <li>To improve platform features using aggregated, anonymized analytics</li>
+      <li>To comply with legal obligations including lawful law enforcement requests</li>
+    </ul>
+
+    <div class="highlight-box">
+      <h3>✶ The Tamper-Proof Verification Guarantee</h3>
+      <p>Background check results travel directly from Checkr to our database via a cryptographically signed webhook. No user, admin, employee, or system process can modify verification results. This is the architectural core of Kyzmyt's safety model. Your verification status is the ground truth — unalterable by design.</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 4. WHO WE SHARE DATA WITH -->
+  <div class="section">
+    <div class="section-num">Section 4</div>
+    <h2>Third Parties We Share Data With</h2>
+    <p>We share data with service providers who process it on our behalf. We do not sell your data to advertisers or data brokers, ever.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Provider</th><th>What They Receive</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="data-label">Stripe</td>
+          <td>Payment information, government ID, liveness biometric</td>
+          <td>Payment processing, ID verification via Stripe Identity</td>
+        </tr>
+        <tr>
+          <td class="data-label">Checkr</td>
+          <td>Name, date of birth, SSN (last 4), consent</td>
+          <td>Criminal background check — results returned directly to DB</td>
+        </tr>
+        <tr>
+          <td class="data-label">Plaid</td>
+          <td>Banking institution access (if you opt into Financial Badge)</td>
+          <td>Asset verification for optional Financial Badge</td>
+        </tr>
+        <tr>
+          <td class="data-label">Supabase</td>
+          <td>All platform data (PostgreSQL database host)</td>
+          <td>Database infrastructure — SOC 2 compliant</td>
+        </tr>
+        <tr>
+          <td class="data-label">Resend</td>
+          <td>Your email address and email content</td>
+          <td>Transactional email delivery</td>
+        </tr>
+        <tr>
+          <td class="data-label">Twilio</td>
+          <td>Your phone number (if provided for safety check-ins)</td>
+          <td>SMS safety alerts for date check-ins</td>
+        </tr>
+        <tr>
+          <td class="data-label">Anthropic</td>
+          <td>Profile data, quiz answers (no PII) used to generate compatibility scores</td>
+          <td>AI compatibility scoring and icebreaker generation</td>
+        </tr>
+        <tr>
+          <td class="data-label">Spotify</td>
+          <td>Your Spotify account (if you link it for profile soundtrack)</td>
+          <td>Profile music feature — optional</td>
+        </tr>
+        <tr>
+          <td class="data-label">Google Analytics</td>
+          <td>Anonymized usage data, IP (anonymized)</td>
+          <td>Platform analytics</td>
+        </tr>
+        <tr>
+          <td class="data-label">Netlify / Cloudflare</td>
+          <td>Web traffic, IP addresses</td>
+          <td>Hosting, CDN, and security</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>We may disclose your information to law enforcement or legal authorities when required by law, subpoena, or court order. Legal requests should be directed to <a href="mailto:legal@kyzmyt.com" style="color:var(--copper)">legal@kyzmyt.com</a>.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 5. BIOMETRIC & SENSITIVE DATA -->
+  <div class="section">
+    <div class="section-num">Section 5</div>
+    <h2>Biometric and Sensitive Data</h2>
+    <p>Kyzmyt uses Stripe Identity for ID verification and liveness detection. Your government ID image and biometric liveness data are processed by Stripe under their privacy policy and are not stored by Kyzmyt on our servers. Stripe retains this data in accordance with their data retention policies and applicable law.</p>
+    <p>Background check data (criminal history records) is stored in our database under strict access controls. This data is visible only to you (your own record) and to Kyzmyt administrators with a legitimate need to review safety reports. It is never visible to other members.</p>
+    <p>Ohio residents: To the extent Ohio law imposes specific obligations regarding biometric or sensitive data, we comply with those obligations. Contact <a href="mailto:privacy@kyzmyt.com" style="color:var(--copper)">privacy@kyzmyt.com</a> for details.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 6. DATA RETENTION -->
+  <div class="section">
+    <div class="section-num">Section 6</div>
+    <h2>Data Retention</h2>
+    <ul class="bullet-list">
+      <li><strong>Active account data</strong> is retained for as long as your account is active.</li>
+      <li><strong>Messages</strong> are retained while both matched users have active accounts. When a match is ended, message history is retained for 90 days for safety purposes, then deleted.</li>
+      <li><strong>Stories</strong> expire and are permanently deleted after 24 hours.</li>
+      <li><strong>Background check results</strong> are retained for the lifetime of your account and for 3 years after account deletion for safety record purposes.</li>
+      <li><strong>Safety reports</strong> are retained indefinitely to protect the community.</li>
+      <li><strong>Payment records</strong> are retained for 7 years as required for tax and accounting purposes.</li>
+      <li>Upon account deletion, personal profile data, photos, and messages are deleted within 30 days, except where retention is required by law or safety policy.</li>
+    </ul>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 7. YOUR RIGHTS -->
+  <div class="section">
+    <div class="section-num">Section 7</div>
+    <h2>Your Privacy Rights</h2>
+    <p>Depending on your location, you may have the following rights:</p>
+    <ul class="bullet-list">
+      <li><strong>Access:</strong> Request a copy of the personal data we hold about you.</li>
+      <li><strong>Correction:</strong> Request correction of inaccurate profile data.</li>
+      <li><strong>Deletion:</strong> Request deletion of your account and associated data, subject to our safety retention policy above.</li>
+      <li><strong>Portability:</strong> Receive a machine-readable export of your data.</li>
+      <li><strong>Opt-out:</strong> Opt out of non-essential communications at any time via your profile settings or by emailing us.</li>
+      <li><strong>CCPA (California):</strong> California residents have the right to know what personal information is sold or disclosed and to opt out of sale. We do not sell personal information.</li>
+      <li><strong>GDPR (EU/EEA):</strong> If you are located in the EU or EEA, you have additional rights under GDPR including the right to lodge a complaint with your supervisory authority.</li>
+    </ul>
+    <p>To exercise any of these rights, email <a href="mailto:privacy@kyzmyt.com" style="color:var(--copper)">privacy@kyzmyt.com</a>. We will respond within 30 days.</p>
+
+    <div class="highlight-box">
+      <h3>✶ Important Note on Verification Data</h3>
+      <p>Because background check and ID verification results are the foundation of Kyzmyt's safety model, we cannot delete or modify these records for active accounts. If you request full account deletion, verification data will be retained in our safety archives as described in Section 6.</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 8. COOKIES -->
+  <div class="section">
+    <div class="section-num">Section 8</div>
+    <h2>Cookies and Tracking</h2>
+    <p>Kyzmyt uses cookies and similar technologies for:</p>
+    <ul class="bullet-list">
+      <li><strong>Authentication:</strong> Session tokens to keep you logged in securely (essential — cannot be disabled).</li>
+      <li><strong>Analytics:</strong> Google Analytics 4 to understand platform usage patterns. IP addresses are anonymized.</li>
+      <li><strong>Preferences:</strong> Remembering your settings and preferences.</li>
+    </ul>
+    <p>We do not use third-party advertising cookies. You can manage browser cookies in your browser settings. Disabling essential cookies will prevent login functionality.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 9. SECURITY -->
+  <div class="section">
+    <div class="section-num">Section 9</div>
+    <h2>Security</h2>
+    <p>We implement industry-standard security measures including:</p>
+    <ul class="bullet-list">
+      <li>TLS encryption for all data in transit</li>
+      <li>Row-level security (RLS) in our PostgreSQL database — every query is scoped to the authenticated user</li>
+      <li>Cryptographically signed webhooks for all background check data (Checkr) and payment events (Stripe)</li>
+      <li>Service role keys for sensitive operations — never exposed to client-side code</li>
+      <li>Cloudflare CDN with bot protection and DDoS mitigation</li>
+    </ul>
+    <p>No system is perfectly secure. If you believe you have discovered a security vulnerability, please contact us at <a href="mailto:safety@kyzmyt.com" style="color:var(--copper)">safety@kyzmyt.com</a> immediately.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 10. CHILDREN -->
+  <div class="section">
+    <div class="section-num">Section 10</div>
+    <h2>Children's Privacy</h2>
+    <p>Kyzmyt is intended exclusively for adults aged 18 and older. We do not knowingly collect personal information from anyone under 18. Our mandatory ID verification process is designed to confirm adult status. If we become aware that a minor has created an account, we will immediately terminate the account and delete all associated data. If you believe a minor has accessed the platform, contact us at <a href="mailto:safety@kyzmyt.com" style="color:var(--copper)">safety@kyzmyt.com</a>.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 11. CHANGES -->
+  <div class="section">
+    <div class="section-num">Section 11</div>
+    <h2>Changes to This Policy</h2>
+    <p>We may update this Privacy Policy as the platform evolves. When we make material changes, we will notify you by email (to the address on your account) and post a notice on the platform. The "Effective Date" at the top of this page reflects when the current version took effect. Continued use of Kyzmyt after the effective date constitutes acceptance of the updated policy.</p>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact-block">
+    <h2>Privacy Questions?</h2>
+    <p>We take your privacy seriously. For any questions about this policy or to exercise your privacy rights, reach out directly.</p>
+    <p>Email: <a href="mailto:privacy@kyzmyt.com" class="contact-email">privacy@kyzmyt.com</a></p>
+    <p style="margin-top:0.5rem;">KYZMYT, LLC &nbsp;·&nbsp; Cuyahoga Falls, OH</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>&copy; 2026 KYZMYT, LLC. All rights reserved. &nbsp;✶&nbsp;
+    <a href="terms.html">Terms</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy</a> &nbsp;·&nbsp;
+    <a href="safety.html">Safety</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a>
+  </p>
+</footer>
+
+</body>
+</html>
