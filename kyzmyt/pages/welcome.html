@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9WSYHBGQZZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9WSYHBGQZZ');
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reset Password — Kyzmyt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0A1628;
+      --copper: #B87333;
+      --copper-light: #d4924d;
+      --cream: #FAF8F5;
+      --cream-dark: #F0EDE8;
+      --text: #1a2a40;
+      --text-muted: #5a6a7a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--navy);
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(1px 1px at 15% 25%, rgba(184,115,51,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 60%, rgba(250,248,245,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 20%, rgba(184,115,51,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 75%, rgba(250,248,245,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 80%, rgba(184,115,51,0.3) 0%, transparent 100%);
+    }
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 3rem 2.5rem;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+    }
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--cream);
+      letter-spacing: 0.08em;
+      margin-bottom: 2rem;
+      display: block;
+      text-decoration: none;
+    }
+    .logo span { color: var(--copper); }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: rgba(250,248,245,0.5);
+      margin-bottom: 2rem;
+    }
+    .form-group { margin-bottom: 1.25rem; text-align: left; }
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(250,248,245,0.5);
+      margin-bottom: 0.4rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus { border-color: var(--copper); }
+    input::placeholder { color: rgba(250,248,245,0.25); }
+    .password-rules {
+      text-align: left;
+      margin-bottom: 1.5rem;
+      padding: 0.75rem 1rem;
+      background: rgba(184,115,51,0.08);
+      border: 1px solid rgba(184,115,51,0.2);
+      border-radius: 8px;
+    }
+    .password-rules p {
+      font-size: 0.78rem;
+      color: rgba(250,248,245,0.5);
+      margin-bottom: 0.25rem;
+    }
+    .password-rules p:last-child { margin-bottom: 0; }
+    .rule { display: flex; align-items: center; gap: 0.5rem; }
+    .rule-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(184,115,51,0.4);
+      flex-shrink: 0;
+    }
+    .submit-btn {
+      width: 100%;
+      background: var(--copper);
+      color: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      margin-bottom: 1.25rem;
+    }
+    .submit-btn:hover { background: var(--copper-light); transform: translateY(-1px); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .back-link {
+      color: rgba(250,248,245,0.4);
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--copper); }
+    .message {
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+    .message.success {
+      background: rgba(184,115,51,0.1);
+      border: 1px solid rgba(184,115,51,0.3);
+      color: var(--copper);
+      display: block;
+    }
+    .message.error {
+      background: rgba(220,38,38,0.1);
+      border: 1px solid rgba(220,38,38,0.3);
+      color: #f87171;
+      display: block;
+    }
+    footer {
+      position: relative;
+      z-index: 1;
+      margin-top: 2rem;
+      color: rgba(250,248,245,0.2);
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<div class="card">
+  <a href="../index.html" class="logo">KYZM<span>✶</span>T</a>
+  <h1>Set New Password</h1>
+  <p class="subtitle">Choose a strong password for your Kyzmyt account.</p>
+
+  <div id="message" class="message"></div>
+
+  <form id="resetForm">
+    <div class="form-group">
+      <label for="password">New Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter new password" required />
+    </div>
+    <div class="form-group">
+      <label for="confirm">Confirm Password</label>
+      <input type="password" id="confirm" name="confirm" placeholder="Confirm new password" required />
+    </div>
+
+    <div class="password-rules">
+      <div class="rule"><span class="rule-dot"></span><p>At least 8 characters</p></div>
+      <div class="rule"><span class="rule-dot"></span><p>At least one number or special character</p></div>
+    </div>
+
+    <button type="submit" class="submit-btn" id="submitBtn">Update Password</button>
+    <a href="login.html" class="back-link">← Back to sign in</a>
+  </form>
+</div>
+
+<footer>&copy; 2026 KYZMYT, LLC</footer>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+  const SUPABASE_URL = 'https://gnknifxhzriqwugmvoxf.supabase.co';
+  const SUPABASE_ANON_KEY = document.querySelector('meta[name="supabase-key"]')?.content || '';
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const form = document.getElementById('resetForm');
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('message');
+
+  function showMessage(text, type) {
+    msg.textContent = text;
+    msg.className = `message ${type}`;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const password = document.getElementById('password').value;
+    const confirm = document.getElementById('confirm').value;
+
+    if (password.length < 8) {
+      showMessage('Password must be at least 8 characters.', 'error');
+      return;
+    }
+    if (password !== confirm) {
+      showMessage('Passwords do not match.', 'error');
+      return;
+    }
+
+    btn.textContent = 'Updating...';
+    btn.disabled = true;
+
+    const { error } = await supabase.auth.updateUser({ password });
+
+    if (error) {
+      showMessage(error.message || 'Something went wrong. Please try again.', 'error');
+      btn.textContent = 'Update Password';
+      btn.disabled = false;
+    } else {
+      showMessage('Password updated successfully! Redirecting...', 'success');
+      setTimeout(() => { window.location.href = 'app.html'; }, 2000);
+    }
+  });
+</script>
+
+</body>
+</html>
