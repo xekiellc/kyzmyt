@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Kyzmyt — Some connections are fate. Find yours.</title>
+  <meta name="description" content="The story behind Kyzmyt — the world's first verified dating platform. The name. The mission. The people behind it." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0A1628;
+      --copper: #B87333;
+      --copper-light: #d4924d;
+      --cream: #FAF8F5;
+      --cream-dark: #F0EDE8;
+      --text: #1a2a40;
+      --text-muted: #5a6a7a;
+      --border: rgba(184,115,51,0.2);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+    }
+    nav {
+      background: var(--navy);
+      padding: 1.2rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+    }
+    .nav-logo span { color: var(--copper); }
+    .nav-back {
+      color: var(--copper);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .hero {
+      background: var(--navy);
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-stars {
+      position: absolute;
+      inset: 0;
+      opacity: 0.3;
+      pointer-events: none;
+      background-image:
+        radial-gradient(1px 1px at 15% 25%, rgba(184,115,51,0.8) 0%, transparent 100%),
+        radial-gradient(1px 1px at 35% 60%, rgba(250,248,245,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 20%, rgba(184,115,51,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80% 70%, rgba(250,248,245,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 35%, rgba(184,115,51,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 80%, rgba(250,248,245,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 50%, rgba(184,115,51,0.4) 0%, transparent 100%);
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--copper), transparent);
+    }
+    .hero-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 500;
+      color: var(--cream);
+      line-height: 1.0;
+      margin-bottom: 1rem;
+      letter-spacing: 0.04em;
+      position: relative;
+    }
+    .hero h1 em { font-style: italic; color: var(--copper); }
+    .hero-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-style: italic;
+      color: rgba(250,248,245,0.65);
+      position: relative;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 4rem 2rem 5rem;
+    }
+    .origin-block {
+      background: white;
+      border-radius: 16px;
+      padding: 3rem;
+      margin-bottom: 4rem;
+      box-shadow: 0 4px 24px rgba(10,22,40,0.07);
+      text-align: center;
+    }
+    .origin-word {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.5rem;
+      font-weight: 500;
+      color: var(--navy);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.25rem;
+    }
+    .origin-word span { color: var(--copper); }
+    .origin-pronunciation {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .origin-divider {
+      width: 3rem;
+      height: 1px;
+      background: var(--copper);
+      margin: 1.5rem auto;
+    }
+    .origin-def {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .origin-etymology {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .section { margin-bottom: 3.5rem; }
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 0.4rem;
+    }
+    .section h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 1.25rem;
+      line-height: 1.2;
+    }
+    .section p { font-size: 0.95rem; color: var(--text); margin-bottom: 1rem; line-height: 1.85; }
+    .section p:last-child { margin-bottom: 0; }
+    .pullquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-style: italic;
+      font-weight: 500;
+      color: var(--navy);
+      line-height: 1.4;
+      padding: 2rem 0 2rem 2rem;
+      border-left: 3px solid var(--copper);
+      margin: 2.5rem 0;
+    }
+    .values-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    @media (max-width: 600px) { .values-grid { grid-template-columns: 1fr; } }
+    .value {
+      background: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      border-top: 2px solid var(--copper);
+    }
+    .value-mark { color: var(--copper); font-size: 1.1rem; margin-bottom: 0.5rem; display: block; }
+    .value h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.4rem;
+    }
+    .value p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0; }
+    .divider {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 3rem 0;
+    }
+    .founder-block {
+      background: var(--navy);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+    }
+    .founder-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 1rem;
+    }
+    .founder-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 0.25rem;
+    }
+    .founder-title { font-size: 0.85rem; color: rgba(250,248,245,0.5); margin-bottom: 1.5rem; font-style: italic; }
+    .founder-block p { font-size: 0.9rem; color: rgba(250,248,245,0.72); line-height: 1.85; margin-bottom: 1rem; }
+    .founder-block p:last-child { margin-bottom: 0; }
+    .contact-section {
+      background: white;
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-top: 2rem;
+      box-shadow: 0 2px 16px rgba(10,22,40,0.06);
+    }
+    .contact-section h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+    .contact-section p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 1.25rem; }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--cream-dark);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: var(--text);
+      background: var(--cream);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--copper); }
+    textarea { resize: vertical; min-height: 120px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 540px) { .form-row { grid-template-columns: 1fr; } }
+    .submit-btn {
+      background: var(--navy);
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.85rem 2.5rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .submit-btn:hover { background: var(--copper); transform: translateY(-1px); }
+    .email-alts {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--cream-dark);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .email-alt { font-size: 0.85rem; }
+    .email-alt-label {
+      font-weight: 500;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.2rem;
+    }
+    .email-alt a { color: var(--copper); text-decoration: none; font-size: 0.88rem; }
+    footer {
+      background: var(--navy);
+      padding: 2rem;
+      text-align: center;
+      color: rgba(250,248,245,0.4);
+      font-size: 0.8rem;
+      border-top: 1px solid rgba(184,115,51,0.15);
+    }
+    footer a { color: var(--copper); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html" class="nav-logo">KYZM<span>✶</span>T</a>
+  <a href="../index.html" class="nav-back">← Back to Kyzmyt</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-stars"></div>
+  <div class="hero-eyebrow">About Kyzmyt</div>
+  <h1>Some connections<br>are <em>fate.</em></h1>
+  <p class="hero-tagline">Not luck. Kyzmyt.</p>
+</div>
+
+<div class="container">
+
+  <div class="origin-block">
+    <div class="origin-word">KYZM<span>✶</span>T</div>
+    <div class="origin-pronunciation">KIZ-mit &nbsp;·&nbsp; like kismet, but real</div>
+    <div class="origin-divider"></div>
+    <p class="origin-def">"Fate; destiny; the inevitable unfolding of events written before we arrived."</p>
+    <p class="origin-etymology">
+      From the Turkish <em>kısmet</em>, from Arabic <em>qisma</em> (قِسْمَة) — meaning "portion" or "lot." The idea that some things are simply meant to happen. We took that word, made it ours, and gave it a distinctive spelling that belongs to no one else. Because if fate is real, it deserves its own name.
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Why We Exist</div>
+    <h2>The Problem with Modern Dating</h2>
+    <p>Online dating was supposed to make connection easier. In some ways, it did. But it also created an environment where nobody knows who anyone really is. Where a profile photo might be five years old — or belong to someone else entirely. Where anyone can say anything, and there's no way to verify a word of it.</p>
+    <p>The result? Millions of people swiping through strangers with no real trust, no real safety, and no real accountability. People who've been burned before approach every new connection with anxiety instead of excitement. Legitimate people are treated with suspicion they didn't earn.</p>
+    <div class="pullquote">
+      What if you could walk into every first date knowing the person across from you is exactly who they said they were?
+    </div>
+    <p>That's the question Kyzmyt was built to answer. Not with a better algorithm. Not with a new swipe mechanic. With actual verification.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-label">Our Approach</div>
+    <h2>The World's First Verified Dating Platform</h2>
+    <p>Kyzmyt requires every member — every single one — to complete a government ID verification and a full national criminal background check before they can interact with anyone on the platform. Not optional. Not a premium feature. Mandatory for everyone.</p>
+    <p>Background check results travel directly from Checkr (our background check partner) to our database via a cryptographically signed webhook. No human sees or touches them in transit. No admin can alter them. No user can appeal them into oblivion. The result is permanent and unalterable — that's the point.</p>
+    <p>When you see a verified badge on Kyzmyt, it means something. It means the government confirmed that person's identity. It means a national criminal background check came back clean. It means the community you're in was built on a foundation that other platforms have never attempted.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-label">What We Believe</div>
+    <h2>Built on Four Commitments</h2>
+    <div class="values-grid">
+      <div class="value">
+        <span class="value-mark">✶</span>
+        <h4>Verification Without Exception</h4>
+        <p>There are no workarounds, no grandfathered accounts, no "verify later." If you're on Kyzmyt, you've been verified. Full stop.</p>
+      </div>
+      <div class="value">
+        <span class="value-mark">✶</span>
+        <h4>Safety as Architecture</h4>
+        <p>Safety isn't a feature we added. It's the structural foundation — built into every layer of the platform from day one.</p>
+      </div>
+      <div class="value">
+        <span class="value-mark">✶</span>
+        <h4>Real Accountability</h4>
+        <p>Harassment, threats, and scam attempts are met with immediate, permanent bans. The community polices itself — and we back it up.</p>
+      </div>
+      <div class="value">
+        <span class="value-mark">✶</span>
+        <h4>Fate Over Algorithm</h4>
+        <p>We believe the right connection finds you when you stop gaming a system and start showing up as yourself in a trustworthy space.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section">
+    <div class="section-label">Who Kyzmyt is For</div>
+    <h2>Adults Who Are Done With Games</h2>
+    <p>Kyzmyt is designed for adults between roughly 30 and 55 who've been through the wringer — who've experienced catfishing, ghosting from strangers, or the unsettling feeling of meeting someone and realizing halfway through the date that you know nothing real about them.</p>
+    <p>These are people who don't need a thousand options. They need one good option — and the confidence that the person sitting across from them is who they said they were. They want connection, not a casino.</p>
+    <p>Kyzmyt launched in Northeast Ohio — Cleveland, Akron, Canton, Columbus, and the broader Pittsburgh region. We started here because this is home. The plan is to grow from a real community rather than scale from nothing.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="founder-block">
+    <div class="founder-label">The Founder</div>
+    <div class="founder-name">Zachary Robert Myers</div>
+    <div class="founder-title">Founder &amp; CEO, KYZMYT, LLC &nbsp;·&nbsp; Northeast Ohio</div>
+    <p>Zachary Myers is a technology founder, entrepreneur, and academic based in Northeast Ohio. He is the founder and CEO of XEKIE LLC, an Ohio-based multi-venture operation, and holds a BBA in Finance and an MPA from Kent State University. He is currently pursuing a PhD in Health Sciences at Youngstown State University, where his research focuses on misinformation, disinformation, and harmful speech in digital environments.</p>
+    <p>He is also a published novelist and co-author of three standalone thrillers under the Crooked River Politics series name: <em>Spyder Byte</em>, <em>2084</em>, and <em>Crooked River Politics</em>.</p>
+    <p>Kyzmyt was founded April 17, 2026, and built in a single day — from concept to LLC filing to live platform. The speed wasn't recklessness. It was conviction: some ideas are right enough that you just go.</p>
+  </div>
+
+  <div class="contact-section">
+    <h2>Get in Touch</h2>
+    <p>Questions, press inquiries, partnership ideas, or just want to say hello — we'd love to hear from you.</p>
+    <form id="contactForm" netlify name="kyzmyt-contact">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" placeholder="First and last name" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="you@email.com" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="subject">Subject</label>
+        <select id="subject" name="subject">
+          <option value="general">General Inquiry</option>
+          <option value="press">Press &amp; Media</option>
+          <option value="partnership">Partnership</option>
+          <option value="feedback">Platform Feedback</option>
+          <option value="safety">Safety Concern</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="What's on your mind?" required></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Send Message ✶</button>
+    </form>
+
+    <div class="email-alts">
+      <div class="email-alt">
+        <div class="email-alt-label">General</div>
+        <a href="mailto:hello@kyzmyt.com">hello@kyzmyt.com</a>
+      </div>
+      <div class="email-alt">
+        <div class="email-alt-label">Safety &amp; Urgent</div>
+        <a href="mailto:safety@kyzmyt.com">safety@kyzmyt.com</a>
+      </div>
+      <div class="email-alt">
+        <div class="email-alt-label">Privacy &amp; Data</div>
+        <a href="mailto:privacy@kyzmyt.com">privacy@kyzmyt.com</a>
+      </div>
+      <div class="email-alt">
+        <div class="email-alt-label">Legal</div>
+        <a href="mailto:legal@kyzmyt.com">legal@kyzmyt.com</a>
+      </div>
+      <div class="email-alt">
+        <div class="email-alt-label">Member Support</div>
+        <a href="mailto:support@kyzmyt.com">support@kyzmyt.com</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>KYZMYT, LLC &nbsp;·&nbsp; EIN 42-1983754 &nbsp;·&nbsp; Cuyahoga Falls, OH &nbsp;·&nbsp; Founded April 17, 2026</p>
+  <p style="margin-top:0.5rem;">&copy; 2026 KYZMYT, LLC. &nbsp;✶&nbsp;
+    <a href="terms.html">Terms</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy</a> &nbsp;·&nbsp;
+    <a href="safety.html">Safety</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a>
+  </p>
+</footer>
+
+<script>
+  const form = document.getElementById('contactForm');
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('.submit-btn');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      const formData = new FormData(form);
+      try {
+        await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(formData).toString()
+        });
+        btn.textContent = 'Message sent ✶';
+        btn.style.background = 'var(--copper)';
+        form.reset();
+      } catch {
+        btn.textContent = 'Send Message ✶';
+        btn.disabled = false;
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
