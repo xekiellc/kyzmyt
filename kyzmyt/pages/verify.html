@@ -30,7 +30,6 @@
     .verify-step-title { font-size: 15px; font-weight: 500; color: var(--navy); }
     .verify-step-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
     .verify-step-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 14px; }
-    .price-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--copper-pale); color: var(--copper); border-radius: var(--radius-full); padding: 4px 12px; font-size: 13px; font-weight: 500; margin-bottom: 12px; }
     .what-happens { background: var(--cream-mid); border-radius: var(--radius-md); padding: 14px; margin-top: 12px; }
     .what-title { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
     .what-item { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.4; }
@@ -91,7 +90,6 @@
           <div class="verify-step-sub">Government ID + liveness selfie</div>
         </div>
       </div>
-      <div class="price-pill">$5 one-time fee</div>
       <div class="verify-step-desc">
         We use Stripe Identity to verify your government-issued ID against a real-time selfie. This confirms you are a real human and that you are who you say you are.
       </div>
@@ -107,7 +105,7 @@
         <div class="tamper-text">Your ID documents go to Stripe's secure servers, not us. We only receive a verified/not verified result. We never store your ID.</div>
       </div>
       <button class="btn btn-copper btn-full btn-lg" style="margin-top:16px" onclick="startIDVerification()">
-        <span id="id-btn-text">Verify My Identity — $5</span>
+        <span id="id-btn-text">Verify My Identity</span>
         <span id="id-spinner" class="spinner hidden"></span>
       </button>
     </div>
@@ -121,7 +119,6 @@
           <div class="verify-step-sub" id="bg-step-sub">Complete ID verification first</div>
         </div>
       </div>
-      <div class="price-pill">$30 one-time fee</div>
       <div class="verify-step-desc" id="bg-desc">
         A real criminal background check powered by Checkr. We check national criminal records, sex offender registry, felony and misdemeanor history. Results go directly from Checkr to our servers — you cannot alter them.
       </div>
@@ -138,7 +135,7 @@
       </div>
       <div id="bg-status" style="margin-top:12px"></div>
       <button class="btn btn-copper btn-full btn-lg" style="margin-top:16px" id="bg-btn" onclick="startBackgroundCheck()">
-        Run Background Check — $30
+        Run Background Check
       </button>
     </div>
 
@@ -151,12 +148,11 @@
           <div class="verify-step-sub">Show your financial stability</div>
         </div>
       </div>
-      <div class="price-pill">$12 one-time fee</div>
       <div class="verify-step-desc">
         Connect your bank account via Plaid to receive a Financial Verified badge on your profile. Shows bank account confirmation and income range. Your actual data stays private — only the badge is public.
       </div>
       <button class="btn btn-outline btn-full" onclick="startFinancialVerification()">
-        Get Financial Badge — $12
+        Get Financial Badge
       </button>
     </div>
 
@@ -199,9 +195,8 @@ window.startIDVerification = async function() {
   const { url, error } = await res.json();
   spinner.classList.add('hidden');
 
-  if (error) { showToast(error, 'error'); btn.textContent = 'Verify My Identity — $5'; return; }
+  if (error) { showToast(error, 'error'); btn.textContent = 'Verify My Identity'; return; }
 
-  // Stripe Identity redirects back to this page with ?verified=true
   window.location.href = url;
 };
 
@@ -235,7 +230,6 @@ window.startFinancialVerification = async function() {
 
   const { linkToken, error } = await res.json();
   if (error) { showToast(error, 'error'); return; }
-  // Plaid Link would open here with linkToken
   showToast('Plaid integration opening...', '');
 };
 
@@ -273,7 +267,7 @@ async function checkVerificationStatus() {
     document.getElementById('bg-status').innerHTML = '<div class="status-pending">⏳ Background check processing — usually 10–30 minutes</div>';
     document.getElementById('bg-btn').textContent = 'Processing...';
     document.getElementById('bg-btn').disabled = true;
-    setTimeout(checkVerificationStatus, 30000); // poll every 30s
+    setTimeout(checkVerificationStatus, 30000);
   }
 
   if (verification.background_clear === true) {
@@ -294,7 +288,6 @@ async function checkVerificationStatus() {
   }
 }
 
-// Check for return from Stripe/Checkr
 const params = new URLSearchParams(window.location.search);
 if (params.get('id_verified') === 'true') {
   showToast('Identity verified! Now complete your background check.', 'success');
