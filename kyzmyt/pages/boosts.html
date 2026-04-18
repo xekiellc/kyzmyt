@@ -95,7 +95,6 @@
     }
     .container { max-width: 860px; margin: 0 auto; padding: 3rem 2rem 5rem; }
 
-    /* Stats bar */
     .stats-bar {
       display: flex;
       gap: 1rem;
@@ -122,7 +121,6 @@
     }
     .stat-label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
 
-    /* Section headers */
     .section-header { margin-bottom: 1.5rem; }
     .section-label {
       font-size: 0.72rem;
@@ -139,7 +137,6 @@
       color: var(--navy);
     }
 
-    /* Product grid */
     .products {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -179,14 +176,6 @@
       margin-bottom: 0.35rem;
     }
     .product-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.6; }
-    .product-price {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 1rem;
-    }
-    .product-price span { font-size: 0.9rem; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-weight: 300; }
     .buy-btn {
       width: 100%;
       background: var(--navy);
@@ -202,7 +191,6 @@
     }
     .buy-btn:hover { background: var(--copper); }
 
-    /* Referral section */
     .referral-box {
       background: var(--navy);
       border-radius: 16px;
@@ -282,7 +270,6 @@
 
 <div class="container">
 
-  <!-- Stats -->
   <div class="stats-bar">
     <div class="stat">
       <div class="stat-value" id="boostCount">0</div>
@@ -309,7 +296,6 @@
       <span class="product-icon">⚡</span>
       <div class="product-name">1-Hour Boost</div>
       <p class="product-desc">Jump to the top of the discovery feed for a full hour. Perfect for a quick visibility spike.</p>
-      <div class="product-price">$2.99 <span>one-time</span></div>
       <button class="buy-btn" onclick="purchase('boost_1hr')">Get Boost</button>
     </div>
     <div class="product featured">
@@ -317,14 +303,12 @@
       <span class="product-icon">🔥</span>
       <div class="product-name">3-Hour Boost</div>
       <p class="product-desc">Three hours at the top — ideal for evenings and weekends when activity peaks.</p>
-      <div class="product-price">$5.99 <span>one-time</span></div>
       <button class="buy-btn" onclick="purchase('boost_3hr')">Get Boost</button>
     </div>
     <div class="product">
       <span class="product-icon">✨</span>
       <div class="product-name">24-Hour Boost</div>
       <p class="product-desc">A full day of elevated visibility. Maximum exposure across the entire verified community.</p>
-      <div class="product-price">$14.99 <span>one-time</span></div>
       <button class="buy-btn" onclick="purchase('boost_24hr')">Get Boost</button>
     </div>
   </div>
@@ -342,7 +326,6 @@
       <span class="product-icon">✶</span>
       <div class="product-name">5 Super Connects</div>
       <p class="product-desc">Send a Super Connect to signal serious interest. It bypasses the queue and goes straight to their inbox.</p>
-      <div class="product-price">$4.99 <span>one-time</span></div>
       <button class="buy-btn" onclick="purchase('super_5')">Get Super Connects</button>
     </div>
     <div class="product featured">
@@ -350,14 +333,12 @@
       <span class="product-icon">✶✶</span>
       <div class="product-name">15 Super Connects</div>
       <p class="product-desc">Stock up and save. Fifteen Super Connects to use whenever you feel that spark.</p>
-      <div class="product-price">$9.99 <span>one-time</span></div>
       <button class="buy-btn" onclick="purchase('super_15')">Get Super Connects</button>
     </div>
     <div class="product">
       <span class="product-icon">🌟</span>
       <div class="product-name">7-Day Spotlight</div>
       <p class="product-desc">Featured placement across the platform for a full week. The ultimate visibility package.</p>
-      <div class="product-price">$19.99 <span>one-time</span></div>
       <button class="buy-btn" onclick="purchase('spotlight_7day')">Get Spotlight</button>
     </div>
   </div>
@@ -392,11 +373,9 @@
   const { url, anonKey } = getSupabaseConfig();
   const supabase = createClient(url, anonKey);
 
-  // Load user stats
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) { window.location.href = 'login.html'; }
 
-  // Load referral code
   const { data: referral } = await supabase
     .from('referrals')
     .select('code')
@@ -407,7 +386,6 @@
     document.getElementById('referralCode').textContent = referral.code;
   }
 
-  // Load boost/super connect balance
   const { data: balance } = await supabase
     .from('super_connect_balance')
     .select('balance')
