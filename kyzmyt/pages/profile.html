@@ -34,10 +34,20 @@
     .info-label { font-size: 13px; color: var(--text-muted); }
     .info-value { font-size: 13px; font-weight: 500; color: var(--navy); text-align: right; max-width: 200px; }
     .hot-take-display { background: var(--cream-mid); border-left: 3px solid var(--copper); padding: 10px 12px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 13px; color: var(--text-secondary); font-style: italic; margin-bottom: 8px; line-height: 1.5; }
+
+    /* Photo grid */
     .photo-grid-profile { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
     .photo-thumb { aspect-ratio: 3/4; border-radius: var(--radius-md); overflow: hidden; background: var(--cream-mid); cursor: pointer; position: relative; }
-    .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .photo-thumb .add { display: flex; align-items: center; justify-content: center; height: 100%; font-size: 24px; color: var(--text-muted); border: 2px dashed var(--border-mid); border-radius: var(--radius-md); }
+    .photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-thumb .add { display: flex; align-items: center; justify-content: center; height: 100%; font-size: 24px; color: var(--text-muted); border: 2px dashed var(--border-mid); border-radius: var(--radius-md); transition: border-color 0.2s; }
+    .photo-thumb .add:hover { border-color: var(--copper); color: var(--copper); }
+    .photo-thumb .photo-delete { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; background: rgba(0,0,0,0.6); color: white; border: none; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+    .photo-thumb:hover .photo-delete { opacity: 1; }
+    .photo-thumb .photo-primary { position: absolute; bottom: 4px; left: 4px; background: var(--copper); color: white; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 99px; letter-spacing: 0.5px; }
+    .photo-uploading { display: flex; align-items: center; justify-content: center; height: 100%; background: rgba(184,115,51,0.1); }
+    .photo-uploading::after { content: ''; width: 24px; height: 24px; border: 2px solid var(--copper); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     .obsession-card { background: var(--copper-pale); border: 1px solid rgba(184,115,51,0.2); border-radius: var(--radius-md); padding: 14px; display: flex; gap: 10px; align-items: flex-start; }
     .obsession-icon { font-size: 22px; flex-shrink: 0; }
     .visibility-toggle { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--white); margin-bottom: 8px; }
@@ -49,7 +59,32 @@
     .sub-features li::before { content: '✓'; color: var(--copper); }
     .upgrade-card { background: var(--copper); border-radius: var(--radius-lg); padding: 20px; margin: 0 16px 8px; }
     .danger-zone { background: var(--white); margin-bottom: 8px; }
-    .edit-modal-content { padding: 0; }
+
+    /* Modals */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
+    .modal-overlay.hidden { display: none; }
+    .modal { background: var(--white); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 24px 20px 40px; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; }
+    .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 99px; margin: 0 auto 20px; }
+
+    /* Chips for dealbreakers */
+    .chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip-option { padding: 6px 14px; border-radius: 99px; border: 1.5px solid var(--border); font-size: 13px; color: var(--text-muted); cursor: pointer; transition: all 0.15s; user-select: none; }
+    .chip-option.selected { border-color: var(--copper); background: var(--copper-pale); color: var(--copper); font-weight: 500; }
+
+    /* Select inputs in modal */
+    .modal select, .modal input[type="text"], .modal textarea {
+      width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-md);
+      font-family: var(--font-body); font-size: 14px; color: var(--navy); background: var(--cream);
+      outline: none; transition: border-color 0.2s; margin-bottom: 4px;
+    }
+    .modal select:focus, .modal input[type="text"]:focus, .modal textarea:focus { border-color: var(--copper); }
+    .modal-label { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; display: block; margin-top: 16px; }
+    .modal-label:first-child { margin-top: 0; }
+
+    /* Hot takes */
+    .hot-take-input-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+    .hot-take-input-row input { flex: 1; margin-bottom: 0; }
+    .hot-take-remove { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--border); background: none; cursor: pointer; color: var(--text-muted); font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -71,7 +106,8 @@
         <div class="avatar-hero" id="hero-avatar" onclick="triggerAvatarUpload()">?</div>
         <div class="avatar-change">✎</div>
       </div>
-      <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)" />
+      <input type="file" id="avatar-upload" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleAvatarUpload(event)" />
+      <input type="file" id="photo-upload" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handlePhotoUpload(event)" />
       <div class="profile-hero-name" id="hero-name">Loading...</div>
       <div class="profile-hero-sub" id="hero-sub"></div>
       <div class="badge-strip-hero" id="hero-badges"></div>
@@ -95,21 +131,15 @@
     <div class="profile-section">
       <div class="section-header">
         <div class="section-h3">Photos</div>
-        <div class="edit-link" onclick="openPhotoEdit()">Edit</div>
+        <div class="edit-link" onclick="openPhotoEdit()">Add photo</div>
       </div>
       <div class="section-body">
-        <div class="photo-grid-profile" id="photo-grid">
-          <div class="photo-thumb"><div class="add">+</div></div>
-          <div class="photo-thumb"><div class="add">+</div></div>
-          <div class="photo-thumb"><div class="add">+</div></div>
-          <div class="photo-thumb"><div class="add">+</div></div>
-          <div class="photo-thumb"><div class="add">+</div></div>
-          <div class="photo-thumb"><div class="add">+</div></div>
-        </div>
+        <div class="photo-grid-profile" id="photo-grid"></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:10px">Tap a photo slot to upload. First photo is your primary. Max 6 photos, 10MB each.</div>
       </div>
     </div>
 
-    <!-- Bio and obsession -->
+    <!-- Bio -->
     <div class="profile-section">
       <div class="section-header">
         <div class="section-h3">About me</div>
@@ -161,7 +191,7 @@
         <div class="edit-link" onclick="editDealbreakers()">Edit</div>
       </div>
       <div class="section-body">
-        <div class="flex flex-wrap gap-8" id="dealbreakers-display">
+        <div class="chip-grid" id="dealbreakers-display">
           <span style="font-size:13px;color:var(--text-muted)">None set</span>
         </div>
       </div>
@@ -211,21 +241,111 @@
   <button class="nav-item active" onclick="location.href='/pages/profile.html'"><div class="nav-icon">◎</div><div class="nav-label">Profile</div></button>
 </nav>
 
-<!-- Edit bio modal -->
-<div id="bio-modal" class="modal-overlay hidden" onclick="closeBioModal(event)">
+<!-- Bio modal -->
+<div id="bio-modal" class="modal-overlay hidden" onclick="closeModal('bio-modal', event)">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
-    <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:16px">Edit bio</h3>
-    <div class="form-group">
-      <label class="form-label">Bio</label>
-      <textarea class="form-input form-textarea" id="bio-edit" rows="5" maxlength="300"></textarea>
-      <div class="form-hint">Keep it real. 300 characters max.</div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Currently obsessed with</label>
-      <input type="text" class="form-input" id="obsession-edit" placeholder="What are you into right now?" />
-    </div>
-    <button class="btn btn-copper btn-full btn-lg" onclick="saveBio()">Save</button>
+    <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:16px">About me</h3>
+    <label class="modal-label">Bio</label>
+    <textarea id="bio-edit" rows="5" maxlength="300" placeholder="Tell people who you are. Keep it real."></textarea>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px" id="bio-char">0 / 300</div>
+    <label class="modal-label">Currently obsessed with</label>
+    <input type="text" id="obsession-edit" placeholder="What are you into right now?" maxlength="80" />
+    <button class="btn btn-copper btn-full btn-lg" style="margin-top:20px" onclick="saveBio()">Save</button>
+  </div>
+</div>
+
+<!-- Hot takes modal -->
+<div id="hottakes-modal" class="modal-overlay hidden" onclick="closeModal('hottakes-modal', event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:8px">Hot takes</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Unpopular opinions. Strong stances. What makes you interesting.</p>
+    <div id="hot-takes-inputs"></div>
+    <button class="btn btn-outline btn-full btn-sm" style="margin-bottom:16px" onclick="addHotTakeInput()">+ Add another</button>
+    <button class="btn btn-copper btn-full btn-lg" onclick="saveHotTakes()">Save</button>
+  </div>
+</div>
+
+<!-- Values modal -->
+<div id="values-modal" class="modal-overlay hidden" onclick="closeModal('values-modal', event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:16px">My values</h3>
+
+    <label class="modal-label">Politics</label>
+    <select id="val-politics-edit">
+      <option value="">Prefer not to say</option>
+      <option value="Very liberal">Very liberal</option>
+      <option value="Liberal">Liberal</option>
+      <option value="Moderate">Moderate</option>
+      <option value="Conservative">Conservative</option>
+      <option value="Very conservative">Very conservative</option>
+      <option value="Apolitical">Apolitical</option>
+    </select>
+
+    <label class="modal-label">Religion</label>
+    <select id="val-religion-edit">
+      <option value="">Prefer not to say</option>
+      <option value="Christian">Christian</option>
+      <option value="Catholic">Catholic</option>
+      <option value="Jewish">Jewish</option>
+      <option value="Muslim">Muslim</option>
+      <option value="Hindu">Hindu</option>
+      <option value="Buddhist">Buddhist</option>
+      <option value="Spiritual but not religious">Spiritual but not religious</option>
+      <option value="Agnostic">Agnostic</option>
+      <option value="Atheist">Atheist</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label class="modal-label">Love language</label>
+    <select id="val-love-edit">
+      <option value="">Select one</option>
+      <option value="Words of affirmation">Words of affirmation</option>
+      <option value="Acts of service">Acts of service</option>
+      <option value="Receiving gifts">Receiving gifts</option>
+      <option value="Quality time">Quality time</option>
+      <option value="Physical touch">Physical touch</option>
+    </select>
+
+    <label class="modal-label">Attachment style</label>
+    <select id="val-attach-edit">
+      <option value="">Select one</option>
+      <option value="Secure">Secure</option>
+      <option value="Anxious">Anxious</option>
+      <option value="Avoidant">Avoidant</option>
+      <option value="Disorganized">Disorganized</option>
+    </select>
+
+    <label class="modal-label">Phone</label>
+    <select id="val-device-edit">
+      <option value="">Select one</option>
+      <option value="iPhone">iPhone</option>
+      <option value="Android">Android</option>
+    </select>
+
+    <label class="modal-label">Relationship status</label>
+    <select id="val-status-edit">
+      <option value="">Select one</option>
+      <option value="Single">Single</option>
+      <option value="Divorced">Divorced</option>
+      <option value="Widowed">Widowed</option>
+      <option value="Separated">Separated</option>
+    </select>
+
+    <button class="btn btn-copper btn-full btn-lg" style="margin-top:20px" onclick="saveValues()">Save</button>
+  </div>
+</div>
+
+<!-- Dealbreakers modal -->
+<div id="dealbreakers-modal" class="modal-overlay hidden" onclick="closeModal('dealbreakers-modal', event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:8px">Dealbreakers</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Select all that apply. These filter out incompatible matches.</p>
+    <div class="chip-grid" id="dealbreakers-chips"></div>
+    <button class="btn btn-copper btn-full btn-lg" style="margin-top:20px" onclick="saveDealbreakers()">Save</button>
   </div>
 </div>
 
@@ -234,6 +354,14 @@ import { supabase, requireVerified, updateProfile, getVerification, showToast, g
 
 let currentUser = null;
 let currentProfile = null;
+let userPhotos = [];
+
+const DEALBREAKER_OPTIONS = [
+  'Smoker', 'Heavy drinker', 'No kids ever', 'Already has kids', 'Wants kids',
+  'Different religion', 'Different politics', 'No pets', 'Has pets',
+  'Long distance', 'Non-monogamy', 'No college degree', 'Under 5\'6"',
+  'Unemployed', 'Vegan/vegetarian', 'Meat eater'
+];
 
 async function init() {
   const result = await requireVerified();
@@ -241,6 +369,7 @@ async function init() {
   currentUser = result.user;
   currentProfile = result.profile;
   renderProfile(currentProfile);
+  await loadPhotos();
   await loadVerifications();
   await loadSubscription();
 }
@@ -248,42 +377,44 @@ async function init() {
 function renderProfile(p) {
   if (!p) return;
 
-  // Hero
   const heroAvatar = document.getElementById('hero-avatar');
-  heroAvatar.style.background = avatarColor(p.display_name);
-  heroAvatar.textContent = getInitials(p.display_name);
-  document.getElementById('hero-name').textContent = `${p.display_name || 'You'}, ${p.age || ''}`;
+  if (p.avatar_url) {
+    heroAvatar.innerHTML = `<img src="${p.avatar_url}" alt="Profile" style="width:100%;height:100%;object-fit:cover;" />`;
+  } else {
+    heroAvatar.style.background = avatarColor(p.display_name);
+    heroAvatar.textContent = getInitials(p.display_name);
+  }
+
+  document.getElementById('hero-name').textContent = `${p.display_name || 'You'}${p.age ? ', ' + p.age : ''}`;
   document.getElementById('hero-sub').textContent = p.status_label?.replace(/_/g, ' ') || 'Kyzmyt member';
 
-  // Badges
   const badges = [];
   if (p.is_verified) badges.push('<span class="badge badge-verified">✓ ID Verified</span>');
-  if (p.verifications?.background_clear) badges.push('<span class="badge badge-background">✓ Background Clear</span>');
+  if (p.background_clear) badges.push('<span class="badge badge-background">✓ Background Clear</span>');
   if (p.has_financial_badge) badges.push('<span class="badge badge-financial">✓ Financial</span>');
   document.getElementById('hero-badges').innerHTML = badges.join('');
 
-  // Compat hint
   document.getElementById('compat-hint-text').textContent = p.is_visible ? 'Your profile is live and active' : 'Profile paused — not visible';
 
-  // Visibility toggle
   const toggle = document.getElementById('visibility-toggle');
   if (p.is_visible) toggle.classList.add('on');
   document.getElementById('visibility-status').textContent = p.is_visible ? 'Visible to verified members' : 'Hidden — tap to go live';
 
-  // Bio
   document.getElementById('bio-display').textContent = p.bio || 'No bio yet. Tell people who you are.';
   if (p.current_obsession) {
     document.getElementById('obsession-card').style.display = 'flex';
     document.getElementById('obsession-text').textContent = p.current_obsession;
+  } else {
+    document.getElementById('obsession-card').style.display = 'none';
   }
 
-  // Hot takes
   const htContainer = document.getElementById('hot-takes-display');
   if (p.hot_takes?.length) {
     htContainer.innerHTML = p.hot_takes.filter(Boolean).map(h => `<div class="hot-take-display">"${h}"</div>`).join('');
+  } else {
+    htContainer.innerHTML = '<div style="font-size:13px;color:var(--text-muted)">No hot takes yet. Add some spice.</div>';
   }
 
-  // Values
   document.getElementById('val-politics').textContent = p.politics || '—';
   document.getElementById('val-religion').textContent = p.religion || '—';
   document.getElementById('val-love').textContent = p.love_language?.replace(/_/g, ' ') || '—';
@@ -291,25 +422,295 @@ function renderProfile(p) {
   document.getElementById('val-device').textContent = p.device_pref || '—';
   document.getElementById('val-status').textContent = p.status_label?.replace(/_/g, ' ') || '—';
 
-  // Dealbreakers
   const dbContainer = document.getElementById('dealbreakers-display');
   if (p.dealbreakers?.length) {
     dbContainer.innerHTML = p.dealbreakers.map(d => `<span class="chip">${d.replace(/_/g, ' ')}</span>`).join('');
+  } else {
+    dbContainer.innerHTML = '<span style="font-size:13px;color:var(--text-muted)">None set</span>';
   }
 }
+
+// ── PHOTOS ──────────────────────────────────────────────
+
+async function loadPhotos() {
+  const { data, error } = await supabase
+    .from('profile_photos')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('display_order', { ascending: true });
+
+  userPhotos = data || [];
+  renderPhotoGrid();
+}
+
+function renderPhotoGrid() {
+  const grid = document.getElementById('photo-grid');
+  grid.innerHTML = '';
+  const MAX = 6;
+
+  userPhotos.slice(0, MAX).forEach((photo, idx) => {
+    const div = document.createElement('div');
+    div.className = 'photo-thumb';
+    div.innerHTML = `
+      <img src="${photo.url}" alt="Photo ${idx + 1}" />
+      ${idx === 0 ? '<div class="photo-primary">PRIMARY</div>' : ''}
+      <button class="photo-delete" onclick="deletePhoto('${photo.id}', event)" title="Remove">✕</button>
+    `;
+    grid.appendChild(div);
+  });
+
+  // Fill remaining slots with + buttons
+  for (let i = userPhotos.length; i < MAX; i++) {
+    const div = document.createElement('div');
+    div.className = 'photo-thumb';
+    div.innerHTML = '<div class="add">+</div>';
+    div.onclick = () => document.getElementById('photo-upload').click();
+    grid.appendChild(div);
+  }
+}
+
+window.openPhotoEdit = () => document.getElementById('photo-upload').click();
+
+window.handlePhotoUpload = async function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = '';
+
+  if (userPhotos.length >= 6) {
+    showToast('Max 6 photos. Remove one first.', 'error');
+    return;
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('Photo must be under 10MB', 'error');
+    return;
+  }
+
+  // Show uploading state
+  const grid = document.getElementById('photo-grid');
+  const slots = grid.querySelectorAll('.photo-thumb');
+  const emptySlot = Array.from(slots).find(s => s.querySelector('.add'));
+  if (emptySlot) emptySlot.innerHTML = '<div class="photo-uploading"></div>';
+
+  const ext = file.name.split('.').pop().toLowerCase();
+  const filename = `${Date.now()}.${ext}`;
+  const path = `${currentUser.id}/${filename}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('profile-photos')
+    .upload(path, file, { upsert: false });
+
+  if (uploadError) {
+    showToast('Upload failed. Try again.', 'error');
+    renderPhotoGrid();
+    return;
+  }
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('profile-photos')
+    .getPublicUrl(path);
+
+  const { data: photoRecord, error: dbError } = await supabase
+    .from('profile_photos')
+    .insert({
+      user_id: currentUser.id,
+      url: publicUrl,
+      storage_path: path,
+      display_order: userPhotos.length,
+      is_primary: userPhotos.length === 0
+    })
+    .select()
+    .single();
+
+  if (dbError) {
+    showToast('Photo saved but record failed. Refresh.', 'error');
+    return;
+  }
+
+  // If first photo, set as avatar
+  if (userPhotos.length === 0) {
+    await updateProfile(currentUser.id, { avatar_url: publicUrl });
+    const heroAvatar = document.getElementById('hero-avatar');
+    heroAvatar.innerHTML = `<img src="${publicUrl}" alt="Profile" style="width:100%;height:100%;object-fit:cover;" />`;
+  }
+
+  userPhotos.push(photoRecord);
+  renderPhotoGrid();
+  showToast('Photo uploaded!', 'success');
+};
+
+window.deletePhoto = async function(photoId, e) {
+  e.stopPropagation();
+  if (!confirm('Remove this photo?')) return;
+
+  const photo = userPhotos.find(p => p.id === photoId);
+  if (!photo) return;
+
+  await supabase.storage.from('profile-photos').remove([photo.storage_path]);
+  await supabase.from('profile_photos').delete().eq('id', photoId);
+
+  userPhotos = userPhotos.filter(p => p.id !== photoId);
+
+  // If deleted primary, promote next
+  if (photo.is_primary && userPhotos.length > 0) {
+    userPhotos[0].is_primary = true;
+    await supabase.from('profile_photos').update({ is_primary: true }).eq('id', userPhotos[0].id);
+    await updateProfile(currentUser.id, { avatar_url: userPhotos[0].url });
+  }
+
+  renderPhotoGrid();
+  showToast('Photo removed', 'success');
+};
+
+window.triggerAvatarUpload = () => document.getElementById('photo-upload').click();
+
+window.handleAvatarUpload = async function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const ext = file.name.split('.').pop();
+  const path = `${currentUser.id}/avatar.${ext}`;
+  const { error } = await supabase.storage.from('profile-photos').upload(path, file, { upsert: true });
+  if (error) { showToast('Upload failed', 'error'); return; }
+  const { data: { publicUrl } } = supabase.storage.from('profile-photos').getPublicUrl(path);
+  await updateProfile(currentUser.id, { avatar_url: publicUrl });
+  const heroAvatar = document.getElementById('hero-avatar');
+  heroAvatar.innerHTML = `<img src="${publicUrl}" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />`;
+  showToast('Photo updated!', 'success');
+};
+
+// ── BIO ──────────────────────────────────────────────────
+
+window.editBio = function() {
+  const bioEdit = document.getElementById('bio-edit');
+  bioEdit.value = currentProfile?.bio || '';
+  document.getElementById('bio-char').textContent = `${bioEdit.value.length} / 300`;
+  bioEdit.oninput = () => document.getElementById('bio-char').textContent = `${bioEdit.value.length} / 300`;
+  document.getElementById('obsession-edit').value = currentProfile?.current_obsession || '';
+  document.getElementById('bio-modal').classList.remove('hidden');
+};
+
+window.saveBio = async function() {
+  const bio = document.getElementById('bio-edit').value.slice(0, 300);
+  const obsession = document.getElementById('obsession-edit').value;
+  const { error } = await updateProfile(currentUser.id, { bio, current_obsession: obsession });
+  if (error) { showToast('Error saving', 'error'); return; }
+  currentProfile = { ...currentProfile, bio, current_obsession: obsession };
+  renderProfile(currentProfile);
+  document.getElementById('bio-modal').classList.add('hidden');
+  showToast('Bio saved!', 'success');
+};
+
+// ── HOT TAKES ────────────────────────────────────────────
+
+window.editHotTakes = function() {
+  const container = document.getElementById('hot-takes-inputs');
+  container.innerHTML = '';
+  const takes = currentProfile?.hot_takes?.filter(Boolean) || [''];
+  takes.forEach(t => addHotTakeInput(t));
+  document.getElementById('hottakes-modal').classList.remove('hidden');
+};
+
+window.addHotTakeInput = function(value = '') {
+  const container = document.getElementById('hot-takes-inputs');
+  const row = document.createElement('div');
+  row.className = 'hot-take-input-row';
+  row.innerHTML = `
+    <input type="text" placeholder="Pineapple belongs on pizza." maxlength="120" value="${value.replace(/"/g, '&quot;')}" />
+    <button class="hot-take-remove" onclick="this.parentElement.remove()">✕</button>
+  `;
+  container.appendChild(row);
+};
+
+window.saveHotTakes = async function() {
+  const inputs = document.querySelectorAll('#hot-takes-inputs input');
+  const hot_takes = Array.from(inputs).map(i => i.value.trim()).filter(Boolean).slice(0, 5);
+  const { error } = await updateProfile(currentUser.id, { hot_takes });
+  if (error) { showToast('Error saving', 'error'); return; }
+  currentProfile = { ...currentProfile, hot_takes };
+  renderProfile(currentProfile);
+  document.getElementById('hottakes-modal').classList.add('hidden');
+  showToast('Hot takes saved!', 'success');
+};
+
+// ── VALUES ───────────────────────────────────────────────
+
+window.editValues = function() {
+  document.getElementById('val-politics-edit').value = currentProfile?.politics || '';
+  document.getElementById('val-religion-edit').value = currentProfile?.religion || '';
+  document.getElementById('val-love-edit').value = currentProfile?.love_language || '';
+  document.getElementById('val-attach-edit').value = currentProfile?.attachment_style || '';
+  document.getElementById('val-device-edit').value = currentProfile?.device_pref || '';
+  document.getElementById('val-status-edit').value = currentProfile?.status_label || '';
+  document.getElementById('values-modal').classList.remove('hidden');
+};
+
+window.saveValues = async function() {
+  const updates = {
+    politics: document.getElementById('val-politics-edit').value,
+    religion: document.getElementById('val-religion-edit').value,
+    love_language: document.getElementById('val-love-edit').value,
+    attachment_style: document.getElementById('val-attach-edit').value,
+    device_pref: document.getElementById('val-device-edit').value,
+    status_label: document.getElementById('val-status-edit').value,
+  };
+  const { error } = await updateProfile(currentUser.id, updates);
+  if (error) { showToast('Error saving', 'error'); return; }
+  currentProfile = { ...currentProfile, ...updates };
+  renderProfile(currentProfile);
+  document.getElementById('values-modal').classList.add('hidden');
+  showToast('Values saved!', 'success');
+};
+
+// ── DEALBREAKERS ─────────────────────────────────────────
+
+window.editDealbreakers = function() {
+  const current = currentProfile?.dealbreakers || [];
+  const container = document.getElementById('dealbreakers-chips');
+  container.innerHTML = DEALBREAKER_OPTIONS.map(opt => `
+    <div class="chip-option ${current.includes(opt) ? 'selected' : ''}" onclick="toggleChip(this, '${opt}')">${opt}</div>
+  `).join('');
+  document.getElementById('dealbreakers-modal').classList.remove('hidden');
+};
+
+window.toggleChip = function(el, value) {
+  el.classList.toggle('selected');
+};
+
+window.saveDealbreakers = async function() {
+  const selected = Array.from(document.querySelectorAll('#dealbreakers-chips .chip-option.selected')).map(el => el.textContent);
+  const { error } = await updateProfile(currentUser.id, { dealbreakers: selected });
+  if (error) { showToast('Error saving', 'error'); return; }
+  currentProfile = { ...currentProfile, dealbreakers: selected };
+  renderProfile(currentProfile);
+  document.getElementById('dealbreakers-modal').classList.add('hidden');
+  showToast('Dealbreakers saved!', 'success');
+};
+
+// ── SHARED ───────────────────────────────────────────────
+
+window.closeModal = function(id, e) {
+  if (!e || e.target === document.getElementById(id))
+    document.getElementById(id).classList.add('hidden');
+};
+
+window.toggleVisibility = async function() {
+  const toggle = document.getElementById('visibility-toggle');
+  const newVal = !toggle.classList.contains('on');
+  toggle.classList.toggle('on');
+  document.getElementById('visibility-status').textContent = newVal ? 'Visible to verified members' : 'Hidden — tap to go live';
+  await updateProfile(currentUser.id, { is_visible: newVal });
+  showToast(newVal ? 'Profile is now visible' : 'Profile hidden', 'success');
+};
 
 async function loadVerifications() {
   const verif = await getVerification(currentUser.id);
   if (!verif) return;
-
   document.getElementById('verif-id').className = `badge ${verif.id_verified ? 'badge-verified' : 'badge-pending'}`;
   document.getElementById('verif-id').textContent = verif.id_verified ? '✓ Verified' : 'Pending';
-
-  const bgClass = verif.background_clear === true ? 'badge-background' : verif.background_clear === false ? '' : 'badge-pending';
-  const bgText = verif.background_clear === true ? '✓ Clear' : verif.background_status === 'pending' ? '⏳ Pending' : verif.background_clear === false ? '✗ Not clear' : 'Not started';
+  const bgClass = verif.background_clear === true ? 'badge-background' : 'badge-pending';
+  const bgText = verif.background_clear === true ? '✓ Clear' : verif.background_status === 'pending' ? '⏳ Pending' : 'Not started';
   document.getElementById('verif-bg').className = `badge ${bgClass}`;
   document.getElementById('verif-bg').textContent = bgText;
-
   document.getElementById('verif-fin').className = `badge ${verif.financial_verified ? 'badge-financial' : 'badge-pending'}`;
   document.getElementById('verif-fin').textContent = verif.financial_verified ? '✓ Verified' : 'Not added';
 }
@@ -317,7 +718,6 @@ async function loadVerifications() {
 async function loadSubscription() {
   const { data: sub } = await supabase.from('subscriptions').select('*').eq('user_id', currentUser.id).single();
   const container = document.getElementById('subscription-section');
-
   if (sub?.status === 'active') {
     container.innerHTML = `
       <div class="subscription-card" style="margin:8px 16px">
@@ -335,7 +735,7 @@ async function loadSubscription() {
     container.innerHTML = `
       <div class="upgrade-card" style="margin:8px 16px">
         <div class="sub-tier" style="color:rgba(255,255,255,0.7)">Upgrade to unlock everything</div>
-        <div class="sub-name" style="color:white">Member Plan — $29/mo</div>
+        <div class="sub-name" style="color:white">Member Plan</div>
         <ul class="sub-features">
           <li>Full messaging access</li>
           <li>Appear in verified searches</li>
@@ -347,52 +747,6 @@ async function loadSubscription() {
       </div>`;
   }
 }
-
-window.toggleVisibility = async function() {
-  const toggle = document.getElementById('visibility-toggle');
-  const newVal = !toggle.classList.contains('on');
-  toggle.classList.toggle('on');
-  document.getElementById('visibility-status').textContent = newVal ? 'Visible to verified members' : 'Hidden — tap to go live';
-  await updateProfile(currentUser.id, { is_visible: newVal });
-  showToast(newVal ? 'Profile is now visible' : 'Profile hidden', 'success');
-};
-
-window.editBio = function() {
-  document.getElementById('bio-edit').value = currentProfile?.bio || '';
-  document.getElementById('obsession-edit').value = currentProfile?.current_obsession || '';
-  document.getElementById('bio-modal').classList.remove('hidden');
-};
-
-window.closeBioModal = (e) => {
-  if (!e || e.target === document.getElementById('bio-modal'))
-    document.getElementById('bio-modal').classList.add('hidden');
-};
-
-window.saveBio = async function() {
-  const bio = document.getElementById('bio-edit').value.slice(0, 300);
-  const obsession = document.getElementById('obsession-edit').value;
-  const { error } = await updateProfile(currentUser.id, { bio, current_obsession: obsession });
-  if (error) { showToast('Error saving', 'error'); return; }
-  currentProfile = { ...currentProfile, bio, current_obsession: obsession };
-  renderProfile(currentProfile);
-  document.getElementById('bio-modal').classList.add('hidden');
-  showToast('Bio saved!', 'success');
-};
-
-window.triggerAvatarUpload = () => document.getElementById('avatar-upload').click();
-window.handleAvatarUpload = async function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const ext = file.name.split('.').pop();
-  const path = `${currentUser.id}/avatar.${ext}`;
-  const { error } = await supabase.storage.from('profile-photos').upload(path, file, { upsert: true });
-  if (error) { showToast('Upload failed', 'error'); return; }
-  const { data: { publicUrl } } = supabase.storage.from('profile-photos').getPublicUrl(path);
-  await updateProfile(currentUser.id, { avatar_url: publicUrl });
-  const heroAvatar = document.getElementById('hero-avatar');
-  heroAvatar.innerHTML = `<img src="${publicUrl}" alt="Profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />`;
-  showToast('Photo updated!', 'success');
-};
 
 window.subscribe = async function() {
   const res = await fetch('/.netlify/functions/create-subscription', {
@@ -420,8 +774,8 @@ window.deactivateAccount = async function() {
 };
 
 window.deleteAccount = async function() {
-  if (!prompt('Type DELETE to permanently delete your account:') === 'DELETE') return;
-  // Would call a server function to delete all data
+  const input = prompt('Type DELETE to permanently delete your account:');
+  if (input !== 'DELETE') return;
   showToast('Deletion request submitted. You\'ll receive a confirmation email.', '');
 };
 
@@ -429,12 +783,6 @@ window.signOut = async function() {
   await authSignOut();
   window.location.href = '/';
 };
-
-// Stub edit functions
-window.openPhotoEdit = () => showToast('Photo reordering coming soon!', '');
-window.editHotTakes = () => showToast('Open your profile settings to edit hot takes.', '');
-window.editValues = () => showToast('Full edit mode coming in next update.', '');
-window.editDealbreakers = () => showToast('Full edit mode coming in next update.', '');
 
 init();
 </script>
