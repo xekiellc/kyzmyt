@@ -28,22 +28,14 @@
     .step-title { font-family: var(--font-display); font-size: 32px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
     .step-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; line-height: 1.5; }
     .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-    .option-card {
-      border: 1.5px solid var(--border-mid); border-radius: var(--radius-md);
-      padding: 14px 12px; cursor: pointer; transition: all 0.2s; text-align: center;
-      background: var(--white); user-select: none;
-    }
+    .option-card { border: 1.5px solid var(--border-mid); border-radius: var(--radius-md); padding: 14px 12px; cursor: pointer; transition: all 0.2s; text-align: center; background: var(--white); user-select: none; }
     .option-card:hover { border-color: var(--copper); }
     .option-card.selected { border-color: var(--copper); background: var(--copper-pale); }
     .option-card .opt-icon { font-size: 22px; margin-bottom: 6px; }
     .option-card .opt-label { font-size: 13px; font-weight: 500; color: var(--navy); }
     .option-card .opt-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
     .option-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-    .option-row {
-      border: 1.5px solid var(--border-mid); border-radius: var(--radius-md);
-      padding: 14px 16px; cursor: pointer; transition: all 0.2s; display: flex;
-      align-items: center; justify-content: space-between; background: var(--white);
-    }
+    .option-row { border: 1.5px solid var(--border-mid); border-radius: var(--radius-md); padding: 14px 16px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; background: var(--white); }
     .option-row:hover { border-color: var(--copper); }
     .option-row.selected { border-color: var(--copper); background: var(--copper-pale); }
     .option-row-label { font-size: 14px; color: var(--navy); font-weight: 500; }
@@ -52,29 +44,18 @@
     .option-row.selected .radio-check { border-color: var(--copper); background: var(--copper); }
     .option-row.selected .radio-check::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: white; }
     .chip-selector { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-    .chip-select {
-      padding: 8px 16px; border-radius: var(--radius-full); border: 1.5px solid var(--border-mid);
-      background: var(--white); font-size: 13px; color: var(--text-secondary);
-      cursor: pointer; transition: all 0.2s; user-select: none;
-    }
+    .chip-select { padding: 8px 16px; border-radius: var(--radius-full); border: 1.5px solid var(--border-mid); background: var(--white); font-size: 13px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; user-select: none; }
     .chip-select:hover { border-color: var(--copper); }
     .chip-select.selected { background: var(--navy); color: var(--white); border-color: var(--navy); }
-    .photo-upload-area {
-      border: 2px dashed var(--border-mid); border-radius: var(--radius-lg);
-      padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.2s;
-      background: var(--white);
-    }
-    .photo-upload-area:hover { border-color: var(--copper); background: var(--copper-pale); }
     .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
-    .photo-slot {
-      aspect-ratio: 3/4; border-radius: var(--radius-md); overflow: hidden;
-      background: var(--cream-mid); border: 1.5px dashed var(--border-mid);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.2s; position: relative;
-    }
+    .photo-slot { aspect-ratio: 3/4; border-radius: var(--radius-md); overflow: hidden; background: var(--cream-mid); border: 1.5px dashed var(--border-mid); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; position: relative; }
     .photo-slot:hover { border-color: var(--copper); }
     .photo-slot img { width: 100%; height: 100%; object-fit: cover; }
     .photo-slot .add-icon { font-size: 24px; color: var(--text-muted); }
+    .photo-slot .uploading-indicator { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
+    .photo-slot .uploading-indicator::after { content: ''; width: 24px; height: 24px; border: 2px solid var(--copper); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .photo-slot .primary-badge { position: absolute; bottom: 4px; left: 4px; background: var(--copper); color: white; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 99px; }
     .hot-takes-input { background: var(--white); border: 1px solid var(--border-mid); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 10px; display: flex; gap: 10px; align-items: flex-start; }
     .hot-take-num { width: 24px; height: 24px; border-radius: 50%; background: var(--copper-pale); color: var(--copper); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; margin-top: 2px; }
     .dealbreaker-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px; }
@@ -83,13 +64,7 @@
     .toggle.on { background: var(--copper); }
     .toggle-thumb { width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; box-shadow: var(--shadow-sm); }
     .toggle.on .toggle-thumb { left: 22px; }
-    .progress-header { margin-bottom: 24px; }
-    .progress-step-label { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
     .range-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-    .compat-preview { background: var(--navy); border-radius: var(--radius-lg); padding: 20px; margin-top: 20px; text-align: center; }
-    .compat-preview-title { font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
-    .compat-preview-score { font-family: var(--font-display); font-size: 48px; font-weight: 600; color: var(--copper); }
-    .compat-preview-sub { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
@@ -166,39 +141,19 @@
       <div class="form-group">
         <label class="form-label">Gender</label>
         <div class="option-grid">
-          <div class="option-card" onclick="selectOption(this,'gender','man')">
-            <div class="opt-icon">👨</div>
-            <div class="opt-label">Man</div>
-          </div>
-          <div class="option-card" onclick="selectOption(this,'gender','woman')">
-            <div class="opt-icon">👩</div>
-            <div class="opt-label">Woman</div>
-          </div>
-          <div class="option-card" onclick="selectOption(this,'gender','nonbinary')">
-            <div class="opt-icon">🧑</div>
-            <div class="opt-label">Non-binary</div>
-          </div>
-          <div class="option-card" onclick="selectOption(this,'gender','other')">
-            <div class="opt-icon">✨</div>
-            <div class="opt-label">Other</div>
-          </div>
+          <div class="option-card" onclick="selectOption(this,'gender','man')"><div class="opt-icon">👨</div><div class="opt-label">Man</div></div>
+          <div class="option-card" onclick="selectOption(this,'gender','woman')"><div class="opt-icon">👩</div><div class="opt-label">Woman</div></div>
+          <div class="option-card" onclick="selectOption(this,'gender','nonbinary')"><div class="opt-icon">🧑</div><div class="opt-label">Non-binary</div></div>
+          <div class="option-card" onclick="selectOption(this,'gender','other')"><div class="opt-icon">✨</div><div class="opt-label">Other</div></div>
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">Interested in</label>
         <div class="option-grid">
-          <div class="option-card" onclick="selectOption(this,'seeking','men')">
-            <div class="opt-label">Men</div>
-          </div>
-          <div class="option-card" onclick="selectOption(this,'seeking','women')">
-            <div class="opt-label">Women</div>
-          </div>
-          <div class="option-card" onclick="selectOption(this,'seeking','nonbinary')">
-            <div class="opt-label">Non-binary</div>
-          </div>
-          <div class="option-card" onclick="selectOption(this,'seeking','everyone')">
-            <div class="opt-label">Everyone</div>
-          </div>
+          <div class="option-card" onclick="selectOption(this,'seeking','men')"><div class="opt-label">Men</div></div>
+          <div class="option-card" onclick="selectOption(this,'seeking','women')"><div class="opt-label">Women</div></div>
+          <div class="option-card" onclick="selectOption(this,'seeking','nonbinary')"><div class="opt-label">Non-binary</div></div>
+          <div class="option-card" onclick="selectOption(this,'seeking','everyone')"><div class="opt-label">Everyone</div></div>
         </div>
       </div>
       <div class="form-group">
@@ -213,60 +168,29 @@
     <div class="step-panel" id="step-2">
       <h1 class="step-title">Where are you in life?</h1>
       <p class="step-subtitle">Be honest. The right person wants to know exactly where you're starting from.</p>
-      <div class="option-list" id="status-options">
-        <div class="option-row" onclick="selectRow(this,'status','single_ready')">
-          <div><div class="option-row-label">Single and ready to mingle</div><div class="option-row-sub">Never been better, ready for something great</div></div>
-          <div class="radio-check"></div>
-        </div>
-        <div class="option-row" onclick="selectRow(this,'status','divorced_ready')">
-          <div><div class="option-row-label">Divorced and starting over</div><div class="option-row-sub">New chapter, wiser than before</div></div>
-          <div class="radio-check"></div>
-        </div>
-        <div class="option-row" onclick="selectRow(this,'status','divorced_slow')">
-          <div><div class="option-row-label">Divorced and taking it slow</div><div class="option-row-sub">Open but being careful this time</div></div>
-          <div class="radio-check"></div>
-        </div>
-        <div class="option-row" onclick="selectRow(this,'status','widowed')">
-          <div><div class="option-row-label">Widowed and opening my heart</div><div class="option-row-sub">Ready when the time is right</div></div>
-          <div class="radio-check"></div>
-        </div>
-        <div class="option-row" onclick="selectRow(this,'status','breakup_recent')">
-          <div><div class="option-row-label">Just out of something long-term</div><div class="option-row-sub">Getting my bearings</div></div>
-          <div class="radio-check"></div>
-        </div>
-        <div class="option-row" onclick="selectRow(this,'status','done_with_games')">
-          <div><div class="option-row-label">Done with games, ready for real</div><div class="option-row-sub">Serious about finding my person</div></div>
-          <div class="radio-check"></div>
-        </div>
-        <div class="option-row" onclick="selectRow(this,'status','coparent')">
-          <div><div class="option-row-label">Co-parenting and dating again</div><div class="option-row-sub">Kids come first, but I'm ready</div></div>
-          <div class="radio-check"></div>
-        </div>
-        <div class="option-row" onclick="selectRow(this,'status','empty_nester')">
-          <div><div class="option-row-label">Empty nester, new chapter</div><div class="option-row-sub">The kids are grown, now it's my turn</div></div>
-          <div class="radio-check"></div>
-        </div>
-        <div class="option-row" onclick="selectRow(this,'status','casual')">
-          <div><div class="option-row-label">Not looking for anything serious</div><div class="option-row-sub">Just good company, no pressure</div></div>
-          <div class="radio-check"></div>
-        </div>
-        <div class="option-row" onclick="selectRow(this,'status','never_married')">
-          <div><div class="option-row-label">Never married, finally ready</div><div class="option-row-sub">Taking the plunge for real this time</div></div>
-          <div class="radio-check"></div>
-        </div>
+      <div class="option-list">
+        <div class="option-row" onclick="selectRow(this,'status','single_ready')"><div><div class="option-row-label">Single and ready to mingle</div><div class="option-row-sub">Never been better, ready for something great</div></div><div class="radio-check"></div></div>
+        <div class="option-row" onclick="selectRow(this,'status','divorced_ready')"><div><div class="option-row-label">Divorced and starting over</div><div class="option-row-sub">New chapter, wiser than before</div></div><div class="radio-check"></div></div>
+        <div class="option-row" onclick="selectRow(this,'status','divorced_slow')"><div><div class="option-row-label">Divorced and taking it slow</div><div class="option-row-sub">Open but being careful this time</div></div><div class="radio-check"></div></div>
+        <div class="option-row" onclick="selectRow(this,'status','widowed')"><div><div class="option-row-label">Widowed and opening my heart</div><div class="option-row-sub">Ready when the time is right</div></div><div class="radio-check"></div></div>
+        <div class="option-row" onclick="selectRow(this,'status','breakup_recent')"><div><div class="option-row-label">Just out of something long-term</div><div class="option-row-sub">Getting my bearings</div></div><div class="radio-check"></div></div>
+        <div class="option-row" onclick="selectRow(this,'status','done_with_games')"><div><div class="option-row-label">Done with games, ready for real</div><div class="option-row-sub">Serious about finding my person</div></div><div class="radio-check"></div></div>
+        <div class="option-row" onclick="selectRow(this,'status','coparent')"><div><div class="option-row-label">Co-parenting and dating again</div><div class="option-row-sub">Kids come first, but I'm ready</div></div><div class="radio-check"></div></div>
+        <div class="option-row" onclick="selectRow(this,'status','empty_nester')"><div><div class="option-row-label">Empty nester, new chapter</div><div class="option-row-sub">The kids are grown, now it's my turn</div></div><div class="radio-check"></div></div>
+        <div class="option-row" onclick="selectRow(this,'status','casual')"><div><div class="option-row-label">Not looking for anything serious</div><div class="option-row-sub">Just good company, no pressure</div></div><div class="radio-check"></div></div>
+        <div class="option-row" onclick="selectRow(this,'status','never_married')"><div><div class="option-row-label">Never married, finally ready</div><div class="option-row-sub">Taking the plunge for real this time</div></div><div class="radio-check"></div></div>
       </div>
       <button class="btn btn-copper btn-full btn-lg" onclick="nextStep()">Continue</button>
       <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="prevStep()">Back</button>
     </div>
 
-    <!-- Step 3: Values and lifestyle -->
+    <!-- Step 3: Values -->
     <div class="step-panel" id="step-3">
       <h1 class="step-title">Your values</h1>
       <p class="step-subtitle">These power your compatibility score. Be real — filtered results only work with honest inputs.</p>
-
       <div class="form-group">
         <label class="form-label">Political affiliation</label>
-        <div class="chip-selector" id="politics-selector">
+        <div class="chip-selector">
           <div class="chip-select" onclick="selectChip(this,'politics','conservative')">Conservative</div>
           <div class="chip-select" onclick="selectChip(this,'politics','moderate')">Moderate</div>
           <div class="chip-select" onclick="selectChip(this,'politics','liberal')">Liberal</div>
@@ -275,10 +199,9 @@
           <div class="chip-select" onclick="selectChip(this,'politics','prefer_not')">Prefer not to say</div>
         </div>
       </div>
-
       <div class="form-group">
         <label class="form-label">Religion / faith</label>
-        <div class="chip-selector" id="religion-selector">
+        <div class="chip-selector">
           <div class="chip-select" onclick="selectChip(this,'religion','christian')">Christian</div>
           <div class="chip-select" onclick="selectChip(this,'religion','catholic')">Catholic</div>
           <div class="chip-select" onclick="selectChip(this,'religion','jewish')">Jewish</div>
@@ -291,88 +214,41 @@
           <div class="chip-select" onclick="selectChip(this,'religion','other')">Other</div>
         </div>
       </div>
-
       <div class="form-group">
         <label class="form-label">Love language</label>
         <div class="option-list">
-          <div class="option-row" onclick="selectRow(this,'love_language','words')">
-            <div><div class="option-row-label">Words of Affirmation</div><div class="option-row-sub">I thrive on verbal encouragement and compliments</div></div>
-            <div class="radio-check"></div>
-          </div>
-          <div class="option-row" onclick="selectRow(this,'love_language','acts')">
-            <div><div class="option-row-label">Acts of Service</div><div class="option-row-sub">Actions speak louder than words</div></div>
-            <div class="radio-check"></div>
-          </div>
-          <div class="option-row" onclick="selectRow(this,'love_language','gifts')">
-            <div><div class="option-row-label">Receiving Gifts</div><div class="option-row-sub">Thoughtful gestures mean everything</div></div>
-            <div class="radio-check"></div>
-          </div>
-          <div class="option-row" onclick="selectRow(this,'love_language','time')">
-            <div><div class="option-row-label">Quality Time</div><div class="option-row-sub">Undivided attention is the ultimate gift</div></div>
-            <div class="radio-check"></div>
-          </div>
-          <div class="option-row" onclick="selectRow(this,'love_language','touch')">
-            <div><div class="option-row-label">Physical Touch</div><div class="option-row-sub">Connection through touch and closeness</div></div>
-            <div class="radio-check"></div>
-          </div>
+          <div class="option-row" onclick="selectRow(this,'love_language','words')"><div><div class="option-row-label">Words of Affirmation</div><div class="option-row-sub">I thrive on verbal encouragement</div></div><div class="radio-check"></div></div>
+          <div class="option-row" onclick="selectRow(this,'love_language','acts')"><div><div class="option-row-label">Acts of Service</div><div class="option-row-sub">Actions speak louder than words</div></div><div class="radio-check"></div></div>
+          <div class="option-row" onclick="selectRow(this,'love_language','gifts')"><div><div class="option-row-label">Receiving Gifts</div><div class="option-row-sub">Thoughtful gestures mean everything</div></div><div class="radio-check"></div></div>
+          <div class="option-row" onclick="selectRow(this,'love_language','time')"><div><div class="option-row-label">Quality Time</div><div class="option-row-sub">Undivided attention is the ultimate gift</div></div><div class="radio-check"></div></div>
+          <div class="option-row" onclick="selectRow(this,'love_language','touch')"><div><div class="option-row-label">Physical Touch</div><div class="option-row-sub">Connection through touch and closeness</div></div><div class="radio-check"></div></div>
         </div>
       </div>
-
       <div class="form-group">
         <label class="form-label">Attachment style</label>
         <div class="option-list">
-          <div class="option-row" onclick="selectRow(this,'attachment','secure')">
-            <div><div class="option-row-label">Secure</div><div class="option-row-sub">Comfortable with intimacy and independence</div></div>
-            <div class="radio-check"></div>
-          </div>
-          <div class="option-row" onclick="selectRow(this,'attachment','anxious')">
-            <div><div class="option-row-label">Anxious</div><div class="option-row-sub">Crave closeness, worry about the relationship</div></div>
-            <div class="radio-check"></div>
-          </div>
-          <div class="option-row" onclick="selectRow(this,'attachment','avoidant')">
-            <div><div class="option-row-label">Avoidant</div><div class="option-row-sub">Value independence, sometimes pull back</div></div>
-            <div class="radio-check"></div>
-          </div>
-          <div class="option-row" onclick="selectRow(this,'attachment','disorganized')">
-            <div><div class="option-row-label">Disorganized / Fearful</div><div class="option-row-sub">Working through some complicated patterns</div></div>
-            <div class="radio-check"></div>
-          </div>
+          <div class="option-row" onclick="selectRow(this,'attachment','secure')"><div><div class="option-row-label">Secure</div><div class="option-row-sub">Comfortable with intimacy and independence</div></div><div class="radio-check"></div></div>
+          <div class="option-row" onclick="selectRow(this,'attachment','anxious')"><div><div class="option-row-label">Anxious</div><div class="option-row-sub">Crave closeness, worry about the relationship</div></div><div class="radio-check"></div></div>
+          <div class="option-row" onclick="selectRow(this,'attachment','avoidant')"><div><div class="option-row-label">Avoidant</div><div class="option-row-sub">Value independence, sometimes pull back</div></div><div class="radio-check"></div></div>
+          <div class="option-row" onclick="selectRow(this,'attachment','disorganized')"><div><div class="option-row-label">Disorganized / Fearful</div><div class="option-row-sub">Working through some complicated patterns</div></div><div class="radio-check"></div></div>
         </div>
       </div>
-
       <div class="form-group">
-        <label class="form-label">Tech preferences (for compatibility fun)</label>
-        <div class="grid-2">
-          <div>
-            <div class="form-label" style="margin-bottom:8px">Phone</div>
-            <div class="option-grid">
-              <div class="option-card" onclick="selectOption(this,'device','iphone')"><div class="opt-icon">📱</div><div class="opt-label">iPhone</div></div>
-              <div class="option-card" onclick="selectOption(this,'device','android')"><div class="opt-icon">🤖</div><div class="opt-label">Android</div></div>
-            </div>
-          </div>
-          <div>
-            <div class="form-label" style="margin-bottom:8px">Computer</div>
-            <div class="option-grid">
-              <div class="option-card" onclick="selectOption(this,'computer','mac')"><div class="opt-icon">🍎</div><div class="opt-label">Mac</div></div>
-              <div class="option-card" onclick="selectOption(this,'computer','pc')"><div class="opt-icon">💻</div><div class="opt-label">Windows</div></div>
-            </div>
-          </div>
+        <label class="form-label">Phone</label>
+        <div class="option-grid">
+          <div class="option-card" onclick="selectOption(this,'device','iphone')"><div class="opt-icon">📱</div><div class="opt-label">iPhone</div></div>
+          <div class="option-card" onclick="selectOption(this,'device','android')"><div class="opt-icon">🤖</div><div class="opt-label">Android</div></div>
         </div>
       </div>
-
       <button class="btn btn-copper btn-full btn-lg" onclick="nextStep()">Continue</button>
       <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="prevStep()">Back</button>
     </div>
 
-    <!-- Step 4: Personality questionnaire -->
+    <!-- Step 4: Personality quiz -->
     <div class="step-panel" id="step-4">
       <h1 class="step-title">The real you</h1>
-      <p class="step-subtitle">25 quick questions that power your AI compatibility match. Honest answers = better matches.</p>
-
-      <div id="quiz-container">
-        <!-- Questions rendered by JS -->
-      </div>
-
+      <p class="step-subtitle">Quick questions that power your compatibility match. Honest answers = better matches.</p>
+      <div id="quiz-container"></div>
       <div style="display:flex;gap:10px">
         <button class="btn btn-outline flex-1" onclick="prevStep()">Back</button>
         <button class="btn btn-copper flex-1 btn-lg" onclick="nextStep()">Continue</button>
@@ -383,79 +259,29 @@
     <div class="step-panel" id="step-5">
       <h1 class="step-title">Your dealbreakers</h1>
       <p class="step-subtitle">Be honest about what doesn't work for you. This protects everyone's time.</p>
-
       <div class="section-label" style="margin-bottom:12px">My dealbreakers</div>
       <div id="dealbreaker-list">
-        <div class="dealbreaker-item">
-          <div class="dealbreaker-label">Smoker</div>
-          <div class="toggle" onclick="toggleDealbreaker(this,'smoker')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="dealbreaker-item">
-          <div class="dealbreaker-label">Heavy drinker</div>
-          <div class="toggle" onclick="toggleDealbreaker(this,'heavy_drinker')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="dealbreaker-item">
-          <div class="dealbreaker-label">Has children</div>
-          <div class="toggle" onclick="toggleDealbreaker(this,'has_kids')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="dealbreaker-item">
-          <div class="dealbreaker-label">Wants children</div>
-          <div class="toggle" onclick="toggleDealbreaker(this,'wants_kids')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="dealbreaker-item">
-          <div class="dealbreaker-label">Different religion</div>
-          <div class="toggle" onclick="toggleDealbreaker(this,'diff_religion')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="dealbreaker-item">
-          <div class="dealbreaker-label">Different politics</div>
-          <div class="toggle" onclick="toggleDealbreaker(this,'diff_politics')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="dealbreaker-item">
-          <div class="dealbreaker-label">Long distance</div>
-          <div class="toggle" onclick="toggleDealbreaker(this,'long_distance')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="dealbreaker-item">
-          <div class="dealbreaker-label">No pets allowed</div>
-          <div class="toggle" onclick="toggleDealbreaker(this,'no_pets')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="dealbreaker-item">
-          <div class="dealbreaker-label">Never reads books</div>
-          <div class="toggle" onclick="toggleDealbreaker(this,'no_reading')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="dealbreaker-item">
-          <div class="dealbreaker-label">Bad tipper</div>
-          <div class="toggle" onclick="toggleDealbreaker(this,'bad_tipper')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="dealbreaker-item">
-          <div class="dealbreaker-label">Pineapple on pizza</div>
-          <div class="toggle" onclick="toggleDealbreaker(this,'pineapple_pizza')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="dealbreaker-item">
-          <div class="dealbreaker-label">Talks during movies</div>
-          <div class="toggle" onclick="toggleDealbreaker(this,'talks_movies')"><div class="toggle-thumb"></div></div>
-        </div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Smoker</div><div class="toggle" onclick="toggleDealbreaker(this,'smoker')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Heavy drinker</div><div class="toggle" onclick="toggleDealbreaker(this,'heavy_drinker')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Has children</div><div class="toggle" onclick="toggleDealbreaker(this,'has_kids')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Wants children</div><div class="toggle" onclick="toggleDealbreaker(this,'wants_kids')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Different religion</div><div class="toggle" onclick="toggleDealbreaker(this,'diff_religion')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Different politics</div><div class="toggle" onclick="toggleDealbreaker(this,'diff_politics')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Long distance</div><div class="toggle" onclick="toggleDealbreaker(this,'long_distance')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">No pets allowed</div><div class="toggle" onclick="toggleDealbreaker(this,'no_pets')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Never reads books</div><div class="toggle" onclick="toggleDealbreaker(this,'no_reading')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Bad tipper</div><div class="toggle" onclick="toggleDealbreaker(this,'bad_tipper')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Pineapple on pizza</div><div class="toggle" onclick="toggleDealbreaker(this,'pineapple_pizza')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Talks during movies</div><div class="toggle" onclick="toggleDealbreaker(this,'talks_movies')"><div class="toggle-thumb"></div></div></div>
       </div>
-
       <div class="divider" style="margin:20px 0"></div>
-
-      <div class="section-label" style="margin-bottom:12px">Your hot takes (3 unpopular opinions)</div>
-      <div class="hot-takes-input">
-        <div class="hot-take-num">1</div>
-        <input type="text" class="form-input" id="hot-take-1" placeholder="An opinion people disagree with..." style="border:none;padding:0;font-size:13px" />
-      </div>
-      <div class="hot-takes-input">
-        <div class="hot-take-num">2</div>
-        <input type="text" class="form-input" id="hot-take-2" placeholder="Another hot take..." style="border:none;padding:0;font-size:13px" />
-      </div>
-      <div class="hot-takes-input">
-        <div class="hot-take-num">3</div>
-        <input type="text" class="form-input" id="hot-take-3" placeholder="Your third hot take..." style="border:none;padding:0;font-size:13px" />
-      </div>
-
+      <div class="section-label" style="margin-bottom:12px">Your hot takes (up to 3)</div>
+      <div class="hot-takes-input"><div class="hot-take-num">1</div><input type="text" class="form-input" id="hot-take-1" placeholder="An opinion people disagree with..." style="border:none;padding:0;font-size:13px" /></div>
+      <div class="hot-takes-input"><div class="hot-take-num">2</div><input type="text" class="form-input" id="hot-take-2" placeholder="Another hot take..." style="border:none;padding:0;font-size:13px" /></div>
+      <div class="hot-takes-input"><div class="hot-take-num">3</div><input type="text" class="form-input" id="hot-take-3" placeholder="Your third hot take..." style="border:none;padding:0;font-size:13px" /></div>
       <div class="divider" style="margin:20px 0"></div>
       <div class="section-label" style="margin-bottom:12px">Bucket list (up to 5 things)</div>
       <input type="text" class="form-input" id="bucket-list" placeholder="e.g. See Northern Lights, Learn to surf, Visit Japan..." style="margin-bottom:16px" />
-
       <button class="btn btn-copper btn-full btn-lg" onclick="nextStep()">Continue</button>
       <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="prevStep()">Back</button>
     </div>
@@ -464,43 +290,27 @@
     <div class="step-panel" id="step-6">
       <h1 class="step-title">Your photos</h1>
       <p class="step-subtitle">Real photos only. Your main photo will be verified against your ID selfie.</p>
-
       <div class="photo-grid">
-        <div class="photo-slot" id="photo-0" onclick="triggerPhotoUpload(0)">
-          <div class="add-icon">+</div>
-        </div>
-        <div class="photo-slot" id="photo-1" onclick="triggerPhotoUpload(1)">
-          <div class="add-icon">+</div>
-        </div>
-        <div class="photo-slot" id="photo-2" onclick="triggerPhotoUpload(2)">
-          <div class="add-icon">+</div>
-        </div>
-        <div class="photo-slot" id="photo-3" onclick="triggerPhotoUpload(3)">
-          <div class="add-icon">+</div>
-        </div>
-        <div class="photo-slot" id="photo-4" onclick="triggerPhotoUpload(4)">
-          <div class="add-icon">+</div>
-        </div>
-        <div class="photo-slot" id="photo-5" onclick="triggerPhotoUpload(5)">
-          <div class="add-icon">+</div>
-        </div>
+        <div class="photo-slot" id="photo-0" onclick="triggerPhotoUpload(0)"><div class="add-icon">+</div></div>
+        <div class="photo-slot" id="photo-1" onclick="triggerPhotoUpload(1)"><div class="add-icon">+</div></div>
+        <div class="photo-slot" id="photo-2" onclick="triggerPhotoUpload(2)"><div class="add-icon">+</div></div>
+        <div class="photo-slot" id="photo-3" onclick="triggerPhotoUpload(3)"><div class="add-icon">+</div></div>
+        <div class="photo-slot" id="photo-4" onclick="triggerPhotoUpload(4)"><div class="add-icon">+</div></div>
+        <div class="photo-slot" id="photo-5" onclick="triggerPhotoUpload(5)"><div class="add-icon">+</div></div>
       </div>
-      <div class="form-hint" style="text-align:center;margin:12px 0">First photo is your main profile photo</div>
-      <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)" />
-
+      <div class="form-hint" style="text-align:center;margin:12px 0">First photo is your main profile photo. Max 10MB each.</div>
+      <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handlePhotoUpload(event)" />
       <div class="form-group" style="margin-top:20px">
         <label class="form-label">Your bio</label>
-        <textarea class="form-input form-textarea" id="bio" placeholder="Write something real. What makes you you? What are you looking for?" rows="4"></textarea>
+        <textarea class="form-input form-textarea" id="bio" placeholder="Write something real. What makes you you? What are you looking for?" rows="4" maxlength="300"></textarea>
         <div class="form-hint" id="bio-count">0 / 300 characters</div>
       </div>
-
       <div class="form-group">
         <label class="form-label">Your current obsession</label>
         <input type="text" class="form-input" id="current-obsession" placeholder="What are you into right now? Show, hobby, food..." />
         <div class="form-hint">Updates any time. Keeps your profile alive.</div>
       </div>
-
-      <button class="btn btn-copper btn-full btn-lg" onclick="nextStep()">Continue to Verification</button>
+      <button class="btn btn-copper btn-full btn-lg" id="finish-btn" onclick="saveProfile()">Continue to Verification →</button>
       <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="prevStep()">Back</button>
     </div>
 
@@ -513,13 +323,12 @@ import { supabase, showToast } from '/js/supabase.js';
 let currentStep = 0;
 let formData = {};
 let currentPhotoSlot = 0;
-
-const TOTAL_STEPS = 7;
+let uploadedPhotos = []; // { slot, url, path }
 
 const quizQuestions = [
   { id: 'conflict', text: 'When you disagree with someone close, you usually:', options: ['Address it directly right away', 'Wait for the right moment', 'Let it go if it\'s small', 'Need space to process first'] },
   { id: 'social', text: 'On a typical weekend you prefer:', options: ['Big social gatherings', 'Small group of close friends', 'One on one time', 'Mostly solo recharge'] },
-  { id: 'finance', text: 'Your financial philosophy is:', options: ['Saver first, splurge occasionally', 'Balanced spender', 'Live in the moment, money flows', 'Investor mindset, always planning'] },
+  { id: 'finance', text: 'Your financial philosophy is:', options: ['Saver first, splurge occasionally', 'Balanced spender', 'Live in the moment', 'Investor mindset, always planning'] },
   { id: 'family', text: 'Family in your life means:', options: ['Everything, involved daily', 'Very important, regular contact', 'I love them but value independence', 'I\'ve built my own chosen family'] },
   { id: 'future', text: 'In 5 years you see yourself:', options: ['Settled and building something', 'Exploring new opportunities', 'Focused on career and growth', 'Still figuring it out honestly'] },
   { id: 'humor', text: 'Your sense of humor is:', options: ['Dry and deadpan', 'Sarcastic and witty', 'Goofy and silly', 'Dark and unexpected'] },
@@ -540,9 +349,9 @@ function renderQuiz() {
     <div class="form-group" style="margin-bottom:24px">
       <div style="font-size:13px;font-weight:500;color:var(--text-muted);margin-bottom:4px">Question ${i+1} of ${quizQuestions.length}</div>
       <div style="font-size:15px;font-weight:500;color:var(--navy);margin-bottom:12px">${q.text}</div>
-      <div class="option-list" id="quiz-${q.id}">
+      <div class="option-list">
         ${q.options.map(opt => `
-          <div class="option-row" onclick="selectRow(this,'quiz_${q.id}','${opt.replace(/'/g,"\\'")}')">
+          <div class="option-row" onclick="selectRow(this,'quiz_${q.id}','${opt.replace(/'/g, "&#39;")}')">
             <div class="option-row-label">${opt}</div>
             <div class="radio-check"></div>
           </div>
@@ -553,22 +362,19 @@ function renderQuiz() {
 }
 
 window.selectOption = function(el, key, value) {
-  const parent = el.closest('.option-grid');
-  parent.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  el.closest('.option-grid').querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
   formData[key] = value;
 };
 
 window.selectRow = function(el, key, value) {
-  const parent = el.closest('.option-list');
-  parent.querySelectorAll('.option-row').forEach(r => r.classList.remove('selected'));
+  el.closest('.option-list').querySelectorAll('.option-row').forEach(r => r.classList.remove('selected'));
   el.classList.add('selected');
   formData[key] = value;
 };
 
 window.selectChip = function(el, key, value) {
-  const parent = el.closest('.chip-selector');
-  parent.querySelectorAll('.chip-select').forEach(c => c.classList.remove('selected'));
+  el.closest('.chip-selector').querySelectorAll('.chip-select').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
   formData[key] = value;
 };
@@ -583,21 +389,16 @@ window.toggleDealbreaker = function(el, key) {
   }
 };
 
-window.nextStep = async function() {
+window.nextStep = function() {
   if (!validateStep(currentStep)) return;
-  if (currentStep === 6) {
-    await saveProfile();
-    return;
+  if (currentStep < 6) {
+    currentStep++;
+    showStep(currentStep);
   }
-  currentStep++;
-  showStep(currentStep);
 };
 
 window.prevStep = function() {
-  if (currentStep > 0) {
-    currentStep--;
-    showStep(currentStep);
-  }
+  if (currentStep > 0) { currentStep--; showStep(currentStep); }
 };
 
 function showStep(n) {
@@ -625,7 +426,7 @@ function validateStep(step) {
     formData.password = pass;
   }
   if (step === 1) {
-    const name = document.getElementById('first-name').value;
+    const name = document.getElementById('first-name').value.trim();
     const dob = document.getElementById('dob').value;
     if (!name || !dob) { showToast('Please fill in your name and date of birth', 'error'); return false; }
     const age = Math.floor((Date.now() - new Date(dob)) / 31557600000);
@@ -661,7 +462,10 @@ window.handleSignup = async function() {
 };
 
 window.handleGoogleAuth = async function() {
-  const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/pages/signup.html?step=1' } });
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + '/pages/signup.html?step=1' }
+  });
   if (error) showToast(error.message, 'error');
 };
 
@@ -670,32 +474,79 @@ window.triggerPhotoUpload = function(slot) {
   document.getElementById('photo-input').click();
 };
 
-window.handlePhotoUpload = function(e) {
+window.handlePhotoUpload = async function(e) {
   const file = e.target.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    const slot = document.getElementById(`photo-${currentPhotoSlot}`);
-    slot.innerHTML = `<img src="${ev.target.result}" alt="Profile photo" />`;
-    if (!formData.photos) formData.photos = [];
-    formData.photos[currentPhotoSlot] = file;
-  };
-  reader.readAsDataURL(file);
+  e.target.value = '';
+
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('Photo must be under 10MB', 'error');
+    return;
+  }
+
+  const slot = document.getElementById(`photo-${currentPhotoSlot}`);
+  slot.innerHTML = '<div class="uploading-indicator"></div>';
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    showToast('Please create your account first', 'error');
+    slot.innerHTML = '<div class="add-icon">+</div>';
+    return;
+  }
+
+  const ext = file.name.split('.').pop().toLowerCase();
+  const path = `${user.id}/${Date.now()}_${currentPhotoSlot}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('profile-photos')
+    .upload(path, file, { upsert: true });
+
+  if (uploadError) {
+    showToast('Upload failed. Try again.', 'error');
+    slot.innerHTML = '<div class="add-icon">+</div>';
+    return;
+  }
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('profile-photos')
+    .getPublicUrl(path);
+
+  slot.innerHTML = `
+    <img src="${publicUrl}" alt="Photo" />
+    ${currentPhotoSlot === 0 ? '<div class="primary-badge">PRIMARY</div>' : ''}
+  `;
+
+  // Store for profile save
+  uploadedPhotos = uploadedPhotos.filter(p => p.slot !== currentPhotoSlot);
+  uploadedPhotos.push({ slot: currentPhotoSlot, url: publicUrl, path });
+
+  showToast('Photo uploaded!', 'success');
 };
 
-async function saveProfile() {
-  showToast('Saving your profile...', '');
-  formData.hot_takes = [
+window.saveProfile = async function() {
+  const btn = document.getElementById('finish-btn');
+  btn.textContent = 'Saving...';
+  btn.disabled = true;
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    showToast('Session expired. Please start over.', 'error');
+    btn.textContent = 'Continue to Verification →';
+    btn.disabled = false;
+    return;
+  }
+
+  const hot_takes = [
     document.getElementById('hot-take-1').value,
     document.getElementById('hot-take-2').value,
     document.getElementById('hot-take-3').value
   ].filter(Boolean);
-  formData.bio = document.getElementById('bio').value;
-  formData.current_obsession = document.getElementById('current-obsession').value;
-  formData.bucket_list = document.getElementById('bucket-list').value;
 
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) { showToast('Session expired. Please sign in again.', 'error'); return; }
+  const bio = document.getElementById('bio').value;
+  const current_obsession = document.getElementById('current-obsession').value;
+  const bucket_list = document.getElementById('bucket-list').value;
+  const primaryPhoto = uploadedPhotos.find(p => p.slot === 0);
 
   const { error } = await supabase.from('profiles').upsert({
     user_id: user.id,
@@ -710,29 +561,48 @@ async function saveProfile() {
     love_language: formData.love_language,
     attachment_style: formData.attachment,
     device_pref: formData.device,
-    computer_pref: formData.computer,
     dealbreakers: formData.dealbreakers || [],
-    hot_takes: formData.hot_takes,
-    bio: formData.bio,
-    current_obsession: formData.current_obsession,
-    bucket_list: formData.bucket_list,
+    hot_takes,
+    bio,
+    current_obsession,
+    bucket_list,
+    avatar_url: primaryPhoto?.url || null,
     quiz_responses: JSON.stringify(formData),
     is_visible: false,
     is_verified: false,
     created_at: new Date().toISOString()
   });
 
-  if (error) { showToast('Error saving profile: ' + error.message, 'error'); return; }
+  if (error) {
+    showToast('Error saving profile: ' + error.message, 'error');
+    btn.textContent = 'Continue to Verification →';
+    btn.disabled = false;
+    return;
+  }
+
+  // Save photo records
+  if (uploadedPhotos.length > 0) {
+    const photoRecords = uploadedPhotos
+      .sort((a, b) => a.slot - b.slot)
+      .map((p, idx) => ({
+        user_id: user.id,
+        url: p.url,
+        storage_path: p.path,
+        display_order: idx,
+        is_primary: p.slot === 0
+      }));
+    await supabase.from('profile_photos').insert(photoRecords);
+  }
+
   showToast('Profile saved! Time to verify your identity.', 'success');
   setTimeout(() => { window.location.href = '/pages/verify.html'; }, 1500);
-}
+};
 
 document.getElementById('bio').addEventListener('input', function() {
   document.getElementById('bio-count').textContent = `${this.value.length} / 300 characters`;
-  if (this.value.length > 300) this.value = this.value.slice(0, 300);
 });
 
-// Check for step param on load
+// Handle Google OAuth redirect
 const urlParams = new URLSearchParams(window.location.search);
 const stepParam = parseInt(urlParams.get('step'));
 if (stepParam && stepParam > 0) { currentStep = stepParam; showStep(stepParam); }
