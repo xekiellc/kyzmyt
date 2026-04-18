@@ -1,3 +1,9 @@
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: *
+Disallow:
 User-agent: *
 Disallow: /pages/app.html
 Disallow: /pages/messages.html
