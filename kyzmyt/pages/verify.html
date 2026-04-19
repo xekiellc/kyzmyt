@@ -2,50 +2,93 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-9WSYHBGQZZ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-9WSYHBGQZZ');
-</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9WSYHBGQZZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9WSYHBGQZZ');
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kyzmyt — Get Verified</title>
+  <title>Kyzmyt — Verify Your Identity</title>
   <link rel="stylesheet" href="/css/design-system.css" />
   <style>
-    .verify-page { min-height: 100vh; background: var(--cream); }
-    .verify-header { padding: 16px 20px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .verify-content { padding: 24px 20px; max-width: 480px; margin: 0 auto; }
-    .verify-hero { text-align: center; padding: 32px 0 24px; }
-    .verify-icon { width: 72px; height: 72px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; }
-    .verify-title { font-family: var(--font-display); font-size: 32px; color: var(--navy); margin-bottom: 8px; }
-    .verify-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 320px; margin: 0 auto; }
-    .verify-step-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 12px; }
-    .verify-step-header { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
-    .verify-step-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; flex-shrink: 0; }
-    .step-pending { background: var(--cream-mid); color: var(--text-muted); }
-    .step-active { background: var(--copper); color: var(--white); }
-    .step-done { background: var(--success-bg); color: var(--success); }
-    .verify-step-title { font-size: 15px; font-weight: 500; color: var(--navy); }
-    .verify-step-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-    .verify-step-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 14px; }
-    .what-happens { background: var(--cream-mid); border-radius: var(--radius-md); padding: 14px; margin-top: 12px; }
-    .what-title { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
-    .what-item { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.4; }
-    .what-icon { color: var(--copper); flex-shrink: 0; margin-top: 1px; }
-    .status-pending { color: var(--warning); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
-    .status-clear { color: var(--success); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
-    .status-failed { color: var(--danger); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
-    .tamper-notice { background: var(--info-bg); border-radius: var(--radius-md); padding: 12px 14px; margin-top: 12px; display: flex; gap: 10px; }
-    .tamper-text { font-size: 12px; color: var(--info); line-height: 1.5; }
-    .progress-steps { display: flex; justify-content: space-between; margin: 24px 0; position: relative; }
-    .progress-steps::before { content: ''; position: absolute; top: 18px; left: 10%; right: 10%; height: 2px; background: var(--border); }
-    .prog-step { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; position: relative; z-index: 1; }
-    .prog-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; border: 2px solid var(--border); background: var(--cream); color: var(--text-muted); transition: all 0.3s; }
-    .prog-dot.active { border-color: var(--copper); background: var(--copper); color: var(--white); }
-    .prog-dot.done { border-color: var(--success); background: var(--success); color: var(--white); }
-    .prog-label { font-size: 10px; color: var(--text-muted); text-align: center; }
+    .verify-page { min-height: 100vh; background: var(--navy); padding-bottom: 60px; }
+    .verify-header { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
+    .verify-logo { font-family: var(--font-display); font-size: 22px; color: white; }
+    .verify-logo span { color: var(--copper); }
+    .verify-content { max-width: 480px; margin: 0 auto; padding: 32px 20px; }
+
+    /* Triple layer progress */
+    .triple-header { text-align: center; margin-bottom: 40px; }
+    .triple-title { font-family: var(--font-display); font-size: 28px; color: white; margin-bottom: 8px; }
+    .triple-sub { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.6; }
+    .triple-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(184,115,51,0.12); border: 1px solid rgba(184,115,51,0.25); border-radius: 99px; padding: 5px 14px; font-size: 11px; color: var(--copper); margin-bottom: 20px; letter-spacing: 0.5px; }
+
+    .layer-stack { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+    .layer-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 18px 20px; display: flex; gap: 14px; align-items: flex-start; transition: all 0.3s ease; }
+    .layer-card.active { border-color: rgba(184,115,51,0.4); background: rgba(184,115,51,0.06); }
+    .layer-card.passed { border-color: rgba(46,125,50,0.4); background: rgba(46,125,50,0.06); }
+    .layer-card.failed { border-color: rgba(198,40,40,0.4); background: rgba(198,40,40,0.06); }
+    .layer-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.4); transition: all 0.3s ease; }
+    .layer-card.active .layer-num { background: rgba(184,115,51,0.2); color: var(--copper); }
+    .layer-card.passed .layer-num { background: rgba(46,125,50,0.2); color: #81c784; }
+    .layer-card.failed .layer-num { background: rgba(198,40,40,0.2); color: #ef9a9a; }
+    .layer-body { flex: 1; }
+    .layer-name { font-size: 14px; font-weight: 600; color: white; margin-bottom: 3px; }
+    .layer-desc { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.5; margin-bottom: 6px; }
+    .layer-provider { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .layer-status { font-size: 11px; font-weight: 500; margin-top: 6px; }
+    .layer-card.active .layer-status { color: var(--copper); }
+    .layer-card.passed .layer-status { color: #81c784; }
+    .layer-card.failed .layer-status { color: #ef9a9a; }
+    .layer-confidence { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+    .layer-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+
+    /* Steps */
+    .step-section { display: none; }
+    .step-section.active { display: block; }
+
+    .step-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 28px 24px; margin-bottom: 16px; }
+    .step-eyebrow { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--copper); margin-bottom: 10px; font-weight: 500; }
+    .step-title { font-family: var(--font-display); font-size: 22px; color: white; margin-bottom: 8px; }
+    .step-desc { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.65; margin-bottom: 20px; }
+
+    .upload-zone { border: 2px dashed rgba(255,255,255,0.15); border-radius: 14px; padding: 36px 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; margin-bottom: 16px; position: relative; }
+    .upload-zone:hover { border-color: var(--copper); background: rgba(184,115,51,0.05); }
+    .upload-zone.has-file { border-color: rgba(46,125,50,0.5); background: rgba(46,125,50,0.05); }
+    .upload-icon { font-size: 32px; margin-bottom: 10px; }
+    .upload-label { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+    .upload-sub { font-size: 12px; color: rgba(255,255,255,0.3); }
+    .upload-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .upload-preview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; margin-top: 12px; display: none; }
+
+    .camera-container { border-radius: 14px; overflow: hidden; background: #000; margin-bottom: 16px; position: relative; }
+    .camera-video { width: 100%; display: block; border-radius: 14px; }
+    .camera-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    .face-guide { width: 180px; height: 220px; border: 2px solid rgba(184,115,51,0.6); border-radius: 50%; box-shadow: 0 0 0 4000px rgba(0,0,0,0.4); }
+    .camera-canvas { display: none; }
+    .camera-preview { width: 100%; border-radius: 14px; display: none; }
+
+    .micro-list { list-style: none; margin-bottom: 20px; }
+    .micro-list li { display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgba(255,255,255,0.4); padding: 4px 0; }
+    .micro-check { color: var(--copper); font-size: 10px; }
+
+    .processing-state { text-align: center; padding: 40px 20px; }
+    .processing-spinner { width: 48px; height: 48px; border: 3px solid rgba(184,115,51,0.2); border-top-color: var(--copper); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .processing-title { font-family: var(--font-display); font-size: 22px; color: white; margin-bottom: 8px; }
+    .processing-sub { font-size: 13px; color: rgba(255,255,255,0.4); }
+    .processing-layer { font-size: 12px; color: var(--copper); margin-top: 12px; }
+
+    .approved-state { text-align: center; padding: 40px 20px; }
+    .approved-icon { font-size: 56px; margin-bottom: 20px; }
+    .approved-title { font-family: var(--font-display); font-size: 28px; color: white; margin-bottom: 8px; }
+    .approved-sub { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 28px; line-height: 1.6; }
+
+    .security-note { background: rgba(184,115,51,0.06); border: 1px solid rgba(184,115,51,0.12); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+    .security-note-title { font-size: 11px; font-weight: 600; color: var(--copper); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .security-note-text { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -54,249 +97,445 @@
 
 <div class="verify-page">
   <div class="verify-header">
-    <a href="/" class="nav-logo" style="font-family:var(--font-display);font-size:22px;font-weight:600;color:var(--navy)">Kyzm<span style="color:var(--copper)">yt</span></a>
-    <a href="/pages/app.html" style="font-size:13px;color:var(--text-muted)">Skip for now</a>
+    <div class="verify-logo">Kyzm<span>yt</span></div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-left:auto">Identity Verification</div>
   </div>
 
   <div class="verify-content">
 
-    <div class="verify-hero">
-      <div class="verify-icon">🛡️</div>
-      <h1 class="verify-title">Get verified</h1>
-      <p class="verify-sub">Two steps. Protects you and everyone else on the platform. No exceptions.</p>
+    <!-- Triple layer display — always visible -->
+    <div class="triple-header">
+      <div class="triple-badge">✦ Triple Verification System</div>
+      <div class="triple-title">Three layers.<br>No exceptions.</div>
+      <div class="triple-sub">AWS · Microsoft Azure · Criminal Background Check<br>All three must pass before you appear in anyone's feed.</div>
     </div>
 
-    <div class="progress-steps">
-      <div class="prog-step">
-        <div class="prog-dot active" id="prog-id">🪪</div>
-        <div class="prog-label">ID Check</div>
-      </div>
-      <div class="prog-step">
-        <div class="prog-dot" id="prog-bg">🔍</div>
-        <div class="prog-label">Background</div>
-      </div>
-      <div class="prog-step">
-        <div class="prog-dot" id="prog-done">✓</div>
-        <div class="prog-label">Verified</div>
-      </div>
-    </div>
-
-    <!-- Step 1: ID Verification -->
-    <div id="panel-id" class="verify-step-card">
-      <div class="verify-step-header">
-        <div class="verify-step-num step-active">1</div>
-        <div>
-          <div class="verify-step-title">Identity verification</div>
-          <div class="verify-step-sub">Government ID + liveness selfie</div>
+    <div class="layer-stack">
+      <div class="layer-card" id="layer1-card">
+        <div class="layer-num">1</div>
+        <div class="layer-body">
+          <div class="layer-name">Government ID + Facial Match</div>
+          <div class="layer-desc">Your face must match your government-issued ID in real time.</div>
+          <div class="layer-provider">Powered by AWS Rekognition</div>
+          <div class="layer-status" id="layer1-status">Waiting</div>
+          <div class="layer-confidence" id="layer1-confidence"></div>
         </div>
+        <div class="layer-icon" id="layer1-icon">⏳</div>
       </div>
-      <div class="verify-step-desc">
-        We use Stripe Identity to verify your government-issued ID against a real-time selfie. This confirms you are a real human and that you are who you say you are.
-      </div>
-      <div class="what-happens">
-        <div class="what-title">What happens</div>
-        <div class="what-item"><span class="what-icon">→</span>You photograph your driver's license or passport</div>
-        <div class="what-item"><span class="what-icon">→</span>You take a quick liveness selfie</div>
-        <div class="what-item"><span class="what-icon">→</span>Stripe verifies they match in seconds</div>
-        <div class="what-item"><span class="what-icon">→</span>We store a verified flag — not your ID documents</div>
-      </div>
-      <div class="tamper-notice" style="margin-top:12px">
-        <div style="font-size:18px">🔒</div>
-        <div class="tamper-text">Your ID documents go to Stripe's secure servers, not us. We only receive a verified/not verified result. We never store your ID.</div>
-      </div>
-      <button class="btn btn-copper btn-full btn-lg" style="margin-top:16px" onclick="startIDVerification()">
-        <span id="id-btn-text">Verify My Identity</span>
-        <span id="id-spinner" class="spinner hidden"></span>
-      </button>
-    </div>
 
-    <!-- Step 2: Background Check -->
-    <div id="panel-bg" class="verify-step-card" style="opacity:0.5;pointer-events:none">
-      <div class="verify-step-header">
-        <div class="verify-step-num step-pending" id="bg-step-num">2</div>
-        <div>
-          <div class="verify-step-title">Background check</div>
-          <div class="verify-step-sub" id="bg-step-sub">Complete ID verification first</div>
+      <div class="layer-card" id="layer2-card">
+        <div class="layer-num">2</div>
+        <div class="layer-body">
+          <div class="layer-name">Independent Facial Confirmation</div>
+          <div class="layer-desc">A second independent system confirms the match.</div>
+          <div class="layer-provider">Powered by Microsoft Azure Face API</div>
+          <div class="layer-status" id="layer2-status">Waiting</div>
+          <div class="layer-confidence" id="layer2-confidence"></div>
         </div>
+        <div class="layer-icon" id="layer2-icon">⏳</div>
       </div>
-      <div class="verify-step-desc" id="bg-desc">
-        A real criminal background check powered by Checkr. We check national criminal records, sex offender registry, felony and misdemeanor history. Results go directly from Checkr to our servers — you cannot alter them.
-      </div>
-      <div class="what-happens">
-        <div class="what-title">What we check</div>
-        <div class="what-item"><span class="what-icon">→</span>National criminal database</div>
-        <div class="what-item"><span class="what-icon">→</span>Sex offender registry (all 50 states)</div>
-        <div class="what-item"><span class="what-icon">→</span>Felony and misdemeanor records</div>
-        <div class="what-item"><span class="what-icon">→</span>Global watchlist</div>
-      </div>
-      <div class="tamper-notice" style="margin-top:12px">
-        <div style="font-size:18px">🔒</div>
-        <div class="tamper-text">Results are sent directly from Checkr to our database via secure webhook. You have zero ability to edit, dispute, or alter the result. A background check badge on a profile is 100% tamper-proof.</div>
-      </div>
-      <div id="bg-status" style="margin-top:12px"></div>
-      <button class="btn btn-copper btn-full btn-lg" style="margin-top:16px" id="bg-btn" onclick="startBackgroundCheck()">
-        Run Background Check
-      </button>
-    </div>
 
-    <!-- Optional: Financial Badge -->
-    <div class="verify-step-card" style="border-style:dashed">
-      <div class="verify-step-header">
-        <div class="verify-step-num" style="background:var(--warning-bg);color:var(--warning)">+</div>
-        <div>
-          <div class="verify-step-title">Financial verified badge <span style="font-size:11px;color:var(--text-muted)">(optional)</span></div>
-          <div class="verify-step-sub">Show your financial stability</div>
+      <div class="layer-card" id="layer3-card">
+        <div class="layer-num">3</div>
+        <div class="layer-body">
+          <div class="layer-name">Criminal Background Check</div>
+          <div class="layer-desc">National database, sex offender registry, felony and misdemeanor history.</div>
+          <div class="layer-provider">Powered by Certn</div>
+          <div class="layer-status" id="layer3-status">Waiting</div>
         </div>
+        <div class="layer-icon" id="layer3-icon">⏳</div>
       </div>
-      <div class="verify-step-desc">
-        Connect your bank account via Plaid to receive a Financial Verified badge on your profile. Shows bank account confirmation and income range. Your actual data stays private — only the badge is public.
-      </div>
-      <button class="btn btn-outline btn-full" onclick="startFinancialVerification()">
-        Get Financial Badge
-      </button>
     </div>
 
-    <!-- Verified state (hidden until done) -->
-    <div id="verified-panel" class="hidden" style="text-align:center;padding:32px 0">
-      <div style="width:80px;height:80px;border-radius:50%;background:var(--success-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:36px">✓</div>
-      <h2 style="font-family:var(--font-display);font-size:32px;color:var(--navy);margin-bottom:8px">You're verified!</h2>
-      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:24px">Your background cleared. You're now visible to verified members near you.</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:28px">
-        <div class="badge badge-verified">✓ ID Verified</div>
-        <div class="badge badge-background">✓ Background Clear</div>
+    <!-- Step 1: Upload ID -->
+    <div class="step-section active" id="step-id">
+      <div class="step-card">
+        <div class="step-eyebrow">Step 1 of 3</div>
+        <div class="step-title">Upload your government ID</div>
+        <div class="step-desc">Driver's license, passport, or state ID. Must be current and not expired. Both sides if applicable.</div>
+
+        <div class="upload-zone" id="id-upload-zone">
+          <input type="file" class="upload-input" id="id-file" accept="image/jpeg,image/png,image/webp" onchange="handleIDUpload(event)" />
+          <div class="upload-icon">🪪</div>
+          <div class="upload-label">Tap to upload your ID</div>
+          <div class="upload-sub">JPEG, PNG, or WebP · Max 10MB</div>
+          <img id="id-preview" class="upload-preview" />
+        </div>
+
+        <ul class="micro-list">
+          <li><span class="micro-check">✦</span> Your ID is encrypted immediately on upload</li>
+          <li><span class="micro-check">✦</span> Never shared with other members</li>
+          <li><span class="micro-check">✦</span> Used only for identity verification</li>
+          <li><span class="micro-check">✦</span> Does not affect your credit score</li>
+        </ul>
+
+        <button class="btn btn-copper btn-full btn-lg" onclick="proceedToSelfie()" id="id-next-btn" disabled>Continue to Live Selfie →</button>
       </div>
-      <a href="/pages/app.html" class="btn btn-copper btn-lg btn-full">Find My Kyzmyt →</a>
+    </div>
+
+    <!-- Step 2: Live selfie -->
+    <div class="step-section" id="step-selfie">
+      <div class="step-card">
+        <div class="step-eyebrow">Step 2 of 3</div>
+        <div class="step-title">Take a live selfie</div>
+        <div class="step-desc">Position your face within the oval. This confirms you are the person on the ID — in real time. No uploaded photos accepted.</div>
+
+        <div class="camera-container" id="camera-container">
+          <video id="camera-video" class="camera-video" autoplay muted playsinline></video>
+          <div class="camera-overlay">
+            <div class="face-guide"></div>
+          </div>
+          <canvas id="camera-canvas" class="camera-canvas"></canvas>
+        </div>
+        <img id="selfie-preview" class="camera-preview" />
+
+        <ul class="micro-list">
+          <li><span class="micro-check">✦</span> Look directly at the camera</li>
+          <li><span class="micro-check">✦</span> Good lighting — no sunglasses or hats</li>
+          <li><span class="micro-check">✦</span> This is a live check — AI images cannot pass</li>
+        </ul>
+
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-outline flex-1" onclick="retakeSelfie()" id="retake-btn" style="display:none;color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.2)">Retake</button>
+          <button class="btn btn-copper btn-full btn-lg" onclick="captureSelfie()" id="capture-btn">Capture Selfie</button>
+        </div>
+        <button class="btn btn-copper btn-full btn-lg" onclick="proceedToBackground()" id="selfie-next-btn" style="display:none;margin-top:10px">Continue to Background Check →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Background check info -->
+    <div class="step-section" id="step-background">
+      <div class="step-card">
+        <div class="step-eyebrow">Step 3 of 3</div>
+        <div class="step-title">Background check</div>
+        <div class="step-desc">A real criminal background check runs automatically. Results go directly to Kyzmyt — you cannot alter them. This takes 1-5 minutes.</div>
+
+        <div class="security-note">
+          <div class="security-note-title">What we check</div>
+          <div class="security-note-text">National criminal database · Sex offender registry (all 50 states) · Felony convictions · Misdemeanor convictions · Pending charges</div>
+        </div>
+
+        <div class="security-note">
+          <div class="security-note-title">Our policy on old records</div>
+          <div class="security-note-text">Sex offenses and violent felonies are permanent disqualifiers regardless of when they occurred. Non-violent older offenses are reviewed case by case with full transparency.</div>
+        </div>
+
+        <ul class="micro-list">
+          <li><span class="micro-check">✦</span> Results sent directly to Kyzmyt</li>
+          <li><span class="micro-check">✦</span> Never shared with other members</li>
+          <li><span class="micro-check">✦</span> Does not affect your credit score</li>
+          <li><span class="micro-check">✦</span> Takes approximately 1-5 minutes</li>
+        </ul>
+
+        <button class="btn btn-copper btn-full btn-lg" onclick="startVerification()" id="start-verify-btn">Run All Three Verifications ✦</button>
+      </div>
+    </div>
+
+    <!-- Processing state -->
+    <div class="step-section" id="step-processing">
+      <div class="processing-state">
+        <div class="processing-spinner"></div>
+        <div class="processing-title">Verifying your identity</div>
+        <div class="processing-sub">Running all three layers simultaneously.<br>This takes about 2-3 minutes.</div>
+        <div class="processing-layer" id="processing-layer-text">Layer 1: AWS facial recognition running...</div>
+      </div>
+    </div>
+
+    <!-- Approved state -->
+    <div class="step-section" id="step-approved">
+      <div class="approved-state">
+        <div class="approved-icon">✦</div>
+        <div class="approved-title">You're verified.</div>
+        <div class="approved-sub">All three layers passed. Government ID matched. Facial recognition confirmed by two independent systems. Background check clear.<br><br>Welcome to Kyzmyt.</div>
+        <a href="/pages/app.html" class="btn btn-copper btn-lg btn-full">Find My Kyzmyt →</a>
+      </div>
+    </div>
+
+    <!-- Pending state -->
+    <div class="step-section" id="step-pending">
+      <div class="processing-state">
+        <div style="font-size:40px;margin-bottom:20px">⏳</div>
+        <div class="processing-title">Background check running</div>
+        <div class="processing-sub">Your facial verification passed both systems. The background check typically takes 1-5 minutes. We'll email you at <strong id="pending-email"></strong> when it's complete.</div>
+      </div>
+    </div>
+
+    <!-- Review state -->
+    <div class="step-section" id="step-review">
+      <div class="processing-state">
+        <div style="font-size:40px;margin-bottom:20px">👁</div>
+        <div class="processing-title">Under review</div>
+        <div class="processing-sub">Your verification is being reviewed by our team. This typically takes 24-48 hours. We'll email you with the result.</div>
+      </div>
     </div>
 
   </div>
 </div>
 
 <script type="module">
-import { supabase, getUser, showToast } from '/js/supabase.js';
+import { supabase, requireAuth, showToast } from '/js/supabase.js';
 
-let idVerified = false;
-let bgStatus = null;
+let currentUser = null;
+let idPhotoBase64 = null;
+let selfieBase64 = null;
+let stream = null;
 
-window.startIDVerification = async function() {
-  const btn = document.getElementById('id-btn-text');
-  const spinner = document.getElementById('id-spinner');
-  btn.textContent = 'Opening Stripe Identity...';
-  spinner.classList.remove('hidden');
-
-  const user = await getUser();
-  if (!user) { showToast('Please sign in first', 'error'); return; }
-
-  const res = await fetch('/.netlify/functions/create-verification-session', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId: user.id, type: 'id_verification' })
-  });
-
-  const { url, error } = await res.json();
-  spinner.classList.add('hidden');
-
-  if (error) { showToast(error, 'error'); btn.textContent = 'Verify My Identity'; return; }
-
-  window.location.href = url;
-};
-
-window.startBackgroundCheck = async function() {
-  const user = await getUser();
-  if (!user) { showToast('Please sign in first', 'error'); return; }
-
-  document.getElementById('bg-btn').textContent = 'Processing payment...';
-  document.getElementById('bg-btn').disabled = true;
-
-  const res = await fetch('/.netlify/functions/create-background-check', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId: user.id })
-  });
-
-  const { checkoutUrl, error } = await res.json();
-  if (error) { showToast(error, 'error'); return; }
-  window.location.href = checkoutUrl;
-};
-
-window.startFinancialVerification = async function() {
-  const user = await getUser();
-  if (!user) { showToast('Please sign in first', 'error'); return; }
-
-  const res = await fetch('/.netlify/functions/create-plaid-link', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId: user.id })
-  });
-
-  const { linkToken, error } = await res.json();
-  if (error) { showToast(error, 'error'); return; }
-  showToast('Plaid integration opening...', '');
-};
-
-async function checkVerificationStatus() {
-  const user = await getUser();
+async function init() {
+  const user = await requireAuth();
   if (!user) return;
+  currentUser = user;
 
-  const { data: verification } = await supabase
-    .from('verifications')
-    .select('*')
-    .eq('user_id', user.id)
-    .single();
+  // Check if already verified or in progress
+  await checkExistingStatus();
+}
 
-  if (!verification) return;
+async function checkExistingStatus() {
+  const res = await fetch(`/.netlify/functions/verify-identity-status?userId=${currentUser.id}`);
+  const data = await res.json();
 
-  if (verification.id_verified) {
-    idVerified = true;
-    document.getElementById('panel-id').innerHTML = `
-      <div class="verify-step-header">
-        <div class="verify-step-num step-done">✓</div>
-        <div>
-          <div class="verify-step-title">Identity verified</div>
-          <div class="status-clear">✓ Your identity has been confirmed</div>
-        </div>
-      </div>`;
-    document.getElementById('panel-bg').style.opacity = '1';
-    document.getElementById('panel-bg').style.pointerEvents = 'auto';
-    document.getElementById('bg-step-num').className = 'verify-step-num step-active';
-    document.getElementById('bg-step-sub').textContent = 'Ready to run';
-    document.getElementById('prog-id').className = 'prog-dot done';
-    document.getElementById('prog-bg').className = 'prog-dot active';
-  }
-
-  if (verification.background_status === 'pending') {
-    document.getElementById('bg-status').innerHTML = '<div class="status-pending">⏳ Background check processing — usually 10–30 minutes</div>';
-    document.getElementById('bg-btn').textContent = 'Processing...';
-    document.getElementById('bg-btn').disabled = true;
-    setTimeout(checkVerificationStatus, 30000);
-  }
-
-  if (verification.background_clear === true) {
-    bgStatus = 'clear';
-    document.getElementById('panel-id').style.display = 'none';
-    document.getElementById('panel-bg').style.display = 'none';
-    document.getElementById('verified-panel').classList.remove('hidden');
-    document.getElementById('prog-id').className = 'prog-dot done';
-    document.getElementById('prog-bg').className = 'prog-dot done';
-    document.getElementById('prog-done').className = 'prog-dot done';
-
-    await supabase.from('profiles').update({ is_visible: true, is_verified: true }).eq('user_id', user.id);
-  }
-
-  if (verification.background_clear === false) {
-    document.getElementById('bg-status').innerHTML = '<div class="status-failed">✗ Background check did not clear. You cannot join Kyzmyt.</div>';
-    document.getElementById('bg-btn').style.display = 'none';
+  if (data.status === 'approved') {
+    showStep('approved');
+    updateLayerCards(data.layers);
+  } else if (data.status === 'pending') {
+    showStep('pending');
+    document.getElementById('pending-email').textContent = currentUser.email;
+    pollForCompletion();
+  } else if (data.status === 'review') {
+    showStep('review');
   }
 }
 
-const params = new URLSearchParams(window.location.search);
-if (params.get('id_verified') === 'true') {
-  showToast('Identity verified! Now complete your background check.', 'success');
-}
-if (params.get('bg_paid') === 'true') {
-  showToast('Payment received. Background check is running...', 'success');
+function showStep(stepName) {
+  document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
+  document.getElementById(`step-${stepName}`)?.classList.add('active');
 }
 
-checkVerificationStatus();
+function updateLayerCards(layers) {
+  if (!layers) return;
+
+  // Layer 1 AWS
+  if (layers.aws?.passed === true) {
+    setLayerPassed('layer1', `${layers.aws.confidence}% confidence`);
+  } else if (layers.aws?.passed === false) {
+    setLayerFailed('layer1', 'Match failed');
+  }
+
+  // Layer 2 Azure
+  if (layers.azure?.passed === true) {
+    setLayerPassed('layer2', `${layers.azure.confidence}% confidence`);
+  } else if (layers.azure?.passed === false) {
+    setLayerFailed('layer2', 'Match failed');
+  }
+
+  // Layer 3 Certn
+  if (layers.certn?.passed === true) {
+    setLayerPassed('layer3', 'Background clear');
+  } else if (layers.certn?.status === 'pending') {
+    setLayerActive('layer3', 'Running...');
+  } else if (layers.certn?.passed === false) {
+    setLayerFailed('layer3', 'Not clear');
+  }
+}
+
+function setLayerActive(id, statusText) {
+  document.getElementById(`${id}-card`).className = 'layer-card active';
+  document.getElementById(`${id}-status`).textContent = statusText;
+  document.getElementById(`${id}-icon`).textContent = '⟳';
+}
+
+function setLayerPassed(id, confidenceText) {
+  document.getElementById(`${id}-card`).className = 'layer-card passed';
+  document.getElementById(`${id}-status`).textContent = '✓ Passed';
+  document.getElementById(`${id}-icon`).textContent = '✓';
+  if (document.getElementById(`${id}-confidence`)) {
+    document.getElementById(`${id}-confidence`).textContent = confidenceText;
+  }
+}
+
+function setLayerFailed(id, reason) {
+  document.getElementById(`${id}-card`).className = 'layer-card failed';
+  document.getElementById(`${id}-status`).textContent = `✕ ${reason}`;
+  document.getElementById(`${id}-icon`).textContent = '✕';
+}
+
+// ── ID UPLOAD ─────────────────────────────────────────────────────────────────
+
+window.handleIDUpload = function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) { showToast('File must be under 10MB', 'error'); return; }
+
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const dataUrl = ev.target.result;
+    idPhotoBase64 = dataUrl.split(',')[1];
+
+    const preview = document.getElementById('id-preview');
+    preview.src = dataUrl;
+    preview.style.display = 'block';
+
+    document.getElementById('id-upload-zone').classList.add('has-file');
+    document.getElementById('id-next-btn').disabled = false;
+    showToast('ID uploaded successfully', 'success');
+  };
+  reader.readAsDataURL(file);
+};
+
+window.proceedToSelfie = async function() {
+  if (!idPhotoBase64) { showToast('Please upload your ID first', 'error'); return; }
+  showStep('selfie');
+  await startCamera();
+};
+
+// ── CAMERA ────────────────────────────────────────────────────────────────────
+
+async function startCamera() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }
+    });
+    document.getElementById('camera-video').srcObject = stream;
+  } catch (err) {
+    showToast('Camera access required for verification', 'error');
+  }
+}
+
+window.captureSelfie = function() {
+  const video = document.getElementById('camera-video');
+  const canvas = document.getElementById('camera-canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+  selfieBase64 = dataUrl.split(',')[1];
+
+  const preview = document.getElementById('selfie-preview');
+  preview.src = dataUrl;
+  preview.style.display = 'block';
+
+  document.getElementById('camera-container').style.display = 'none';
+  document.getElementById('capture-btn').style.display = 'none';
+  document.getElementById('retake-btn').style.display = 'inline-flex';
+  document.getElementById('selfie-next-btn').style.display = 'block';
+
+  if (stream) { stream.getTracks().forEach(t => t.stop()); }
+  showToast('Selfie captured', 'success');
+};
+
+window.retakeSelfie = async function() {
+  selfieBase64 = null;
+  document.getElementById('selfie-preview').style.display = 'none';
+  document.getElementById('camera-container').style.display = 'block';
+  document.getElementById('capture-btn').style.display = 'block';
+  document.getElementById('retake-btn').style.display = 'none';
+  document.getElementById('selfie-next-btn').style.display = 'none';
+  await startCamera();
+};
+
+window.proceedToBackground = function() {
+  if (!selfieBase64) { showToast('Please capture your selfie first', 'error'); return; }
+  showStep('background');
+};
+
+// ── RUN VERIFICATION ──────────────────────────────────────────────────────────
+
+window.startVerification = async function() {
+  if (!idPhotoBase64 || !selfieBase64) {
+    showToast('Please complete all steps first', 'error');
+    return;
+  }
+
+  showStep('processing');
+  setLayerActive('layer1', 'Running AWS facial recognition...');
+
+  const processingText = document.getElementById('processing-layer-text');
+
+  // Get user profile for name/dob
+  const { data: profile } = await supabase.from('profiles').select('*').eq('user_id', currentUser.id).single();
+
+  try {
+    processingText.textContent = 'Layer 1: AWS Rekognition running...';
+
+    const response = await fetch('/.netlify/functions/verify-identity', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: currentUser.id,
+        idPhotoBase64,
+        selfieBase64,
+        firstName: profile?.first_name || profile?.display_name?.split(' ')[0] || '',
+        lastName: profile?.last_name || profile?.display_name?.split(' ').slice(1).join(' ') || '',
+        dob: profile?.date_of_birth || '',
+        zipCode: profile?.zipcode || ''
+      })
+    });
+
+    const result = await response.json();
+
+    // Update layer cards with results
+    if (result.results?.layer1_aws) {
+      const l1 = result.results.layer1_aws;
+      if (l1.passed) {
+        setLayerPassed('layer1', `${l1.confidence}% confidence`);
+        processingText.textContent = 'Layer 1 passed ✓ Running Layer 2: Azure...';
+        setLayerActive('layer2', 'Running Azure Face API...');
+      } else {
+        setLayerFailed('layer1', 'Facial match failed');
+        showStep('background');
+        showToast('Facial match failed. Please try again with better lighting.', 'error');
+        return;
+      }
+    }
+
+    if (result.results?.layer2_azure) {
+      const l2 = result.results.layer2_azure;
+      if (l2.passed) {
+        setLayerPassed('layer2', `${l2.confidence}% confidence`);
+        processingText.textContent = 'Layer 2 passed ✓ Running Layer 3: Background check...';
+        setLayerActive('layer3', 'Background check running...');
+      } else if (result.results?.flagged_for_review) {
+        setLayerFailed('layer2', 'System disagreement');
+        showStep('review');
+        return;
+      }
+    }
+
+    if (result.results?.layer3_certn?.status === 'pending') {
+      // Background check is async — poll for completion
+      showStep('pending');
+      document.getElementById('pending-email').textContent = currentUser.email;
+      pollForCompletion();
+    } else if (result.results?.overall_passed) {
+      setLayerPassed('layer3', 'Background clear');
+      showStep('approved');
+    }
+
+  } catch (err) {
+    showToast('Verification error. Please try again.', 'error');
+    showStep('background');
+  }
+};
+
+// ── POLL FOR COMPLETION ───────────────────────────────────────────────────────
+
+async function pollForCompletion() {
+  const poll = setInterval(async () => {
+    const res = await fetch(`/.netlify/functions/verify-identity-status?userId=${currentUser.id}`);
+    const data = await res.json();
+
+    if (data.status === 'approved') {
+      clearInterval(poll);
+      setLayerPassed('layer3', 'Background clear');
+      showStep('approved');
+    } else if (data.status === 'review') {
+      clearInterval(poll);
+      showStep('review');
+    }
+  }, 10000); // Poll every 10 seconds
+}
+
+init();
 </script>
 
 </body>
