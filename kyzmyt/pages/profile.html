@@ -24,14 +24,12 @@
     .profile-hero-sub { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 16px; }
     .badge-strip-hero { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
     .compat-hint { background: rgba(184,115,51,0.15); border: 1px solid rgba(184,115,51,0.3); border-radius: var(--radius-full); padding: 6px 14px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.7); }
-
-    /* Stats bar */
     .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--white); border-bottom: 1px solid var(--border); margin-bottom: 8px; }
     .stat-item { padding: 14px 8px; text-align: center; border-right: 1px solid var(--border); }
     .stat-item:last-child { border-right: none; }
     .stat-num { font-family: var(--font-display); font-size: 24px; font-weight: 600; color: var(--navy); line-height: 1; }
     .stat-lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px; }
-
+    .completeness-section { background: var(--white); margin-bottom: 8px; padding: 14px 16px; }
     .profile-section { background: var(--white); margin-bottom: 8px; }
     .section-header { padding: 16px 16px 12px; display: flex; justify-content: space-between; align-items: center; }
     .section-h3 { font-family: var(--font-display); font-size: 20px; color: var(--navy); }
@@ -42,8 +40,6 @@
     .info-label { font-size: 13px; color: var(--text-muted); }
     .info-value { font-size: 13px; font-weight: 500; color: var(--navy); text-align: right; max-width: 200px; }
     .hot-take-display { background: var(--cream-mid); border-left: 3px solid var(--copper); padding: 10px 12px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 13px; color: var(--text-secondary); font-style: italic; margin-bottom: 8px; line-height: 1.5; }
-
-    /* Photo grid */
     .photo-grid-profile { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
     .photo-thumb { aspect-ratio: 3/4; border-radius: var(--radius-md); overflow: hidden; background: var(--cream-mid); cursor: pointer; position: relative; }
     .photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -55,7 +51,6 @@
     .photo-uploading { display: flex; align-items: center; justify-content: center; height: 100%; background: rgba(184,115,51,0.1); }
     .photo-uploading::after { content: ''; width: 24px; height: 24px; border: 2px solid var(--copper); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     .obsession-card { background: var(--copper-pale); border: 1px solid rgba(184,115,51,0.2); border-radius: var(--radius-md); padding: 14px; display: flex; gap: 10px; align-items: flex-start; }
     .obsession-icon { font-size: 22px; flex-shrink: 0; }
     .visibility-toggle { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--white); margin-bottom: 8px; }
@@ -67,18 +62,12 @@
     .sub-features li::before { content: '✓'; color: var(--copper); }
     .upgrade-card { background: var(--copper); border-radius: var(--radius-lg); padding: 20px; margin: 0 16px 8px; }
     .danger-zone { background: var(--white); margin-bottom: 8px; }
-
-    /* Referral */
     .referral-code-display { background: var(--navy); border-radius: var(--radius-md); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .referral-code { font-family: var(--font-display); font-size: 22px; color: var(--copper); letter-spacing: 2px; }
-
-    /* Notification toggles */
     .notif-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
     .notif-row:last-child { border-bottom: none; }
     .notif-label { font-size: 13px; color: var(--navy); }
     .notif-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-
-    /* Modals */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
     .modal-overlay.hidden { display: none; }
     .modal { background: var(--white); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 24px 20px 40px; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; }
@@ -86,19 +75,13 @@
     .chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
     .chip-option { padding: 6px 14px; border-radius: 99px; border: 1.5px solid var(--border); font-size: 13px; color: var(--text-muted); cursor: pointer; transition: all 0.15s; user-select: none; }
     .chip-option.selected { border-color: var(--copper); background: var(--copper-pale); color: var(--copper); font-weight: 500; }
-    .modal select, .modal input[type="text"], .modal input[type="email"], .modal input[type="password"], .modal textarea {
-      width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-md);
-      font-family: var(--font-body); font-size: 14px; color: var(--navy); background: var(--cream);
-      outline: none; transition: border-color 0.2s; margin-bottom: 4px;
-    }
+    .modal select, .modal input[type="text"], .modal input[type="email"], .modal input[type="password"], .modal textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-md); font-family: var(--font-body); font-size: 14px; color: var(--navy); background: var(--cream); outline: none; transition: border-color 0.2s; margin-bottom: 4px; }
     .modal select:focus, .modal input:focus, .modal textarea:focus { border-color: var(--copper); }
     .modal-label { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; display: block; margin-top: 16px; }
     .modal-label:first-child { margin-top: 0; }
     .hot-take-input-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
     .hot-take-input-row input { flex: 1; margin-bottom: 0; }
     .hot-take-remove { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--border); background: none; cursor: pointer; color: var(--text-muted); font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-
-    /* Toggle */
     .toggle { width: 44px; height: 24px; background: var(--border-mid); border-radius: var(--radius-full); position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
     .toggle.on { background: var(--copper); }
     .toggle-thumb { width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; box-shadow: var(--shadow-sm); }
@@ -148,6 +131,18 @@
         <div class="stat-num" id="stat-superconnects">—</div>
         <div class="stat-lbl">Super Connects</div>
       </div>
+    </div>
+
+    <!-- Profile completeness -->
+    <div class="completeness-section" id="completeness-section" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:500;color:var(--navy)">Profile strength</div>
+        <div style="font-size:13px;font-weight:600;color:var(--copper)" id="completeness-pct">0%</div>
+      </div>
+      <div style="height:6px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:8px">
+        <div id="completeness-fill" style="height:100%;background:var(--copper);border-radius:99px;transition:width 0.5s ease;width:0%"></div>
+      </div>
+      <div id="completeness-tip" style="font-size:12px;color:var(--text-muted)"></div>
     </div>
 
     <!-- Visibility -->
@@ -263,38 +258,23 @@
       </div>
       <div class="section-body">
         <div class="notif-row">
-          <div>
-            <div class="notif-label">New matches</div>
-            <div class="notif-sub">When someone connects with you</div>
-          </div>
+          <div><div class="notif-label">New matches</div><div class="notif-sub">When someone connects with you</div></div>
           <div class="toggle on" id="notif-matches" onclick="toggleNotif(this,'matches')"><div class="toggle-thumb"></div></div>
         </div>
         <div class="notif-row">
-          <div>
-            <div class="notif-label">New messages</div>
-            <div class="notif-sub">When a match sends you a message</div>
-          </div>
+          <div><div class="notif-label">New messages</div><div class="notif-sub">When a match sends you a message</div></div>
           <div class="toggle on" id="notif-messages" onclick="toggleNotif(this,'messages')"><div class="toggle-thumb"></div></div>
         </div>
         <div class="notif-row">
-          <div>
-            <div class="notif-label">Profile likes</div>
-            <div class="notif-sub">When someone likes your profile</div>
-          </div>
+          <div><div class="notif-label">Profile likes</div><div class="notif-sub">When someone likes your profile</div></div>
           <div class="toggle on" id="notif-likes" onclick="toggleNotif(this,'likes')"><div class="toggle-thumb"></div></div>
         </div>
         <div class="notif-row">
-          <div>
-            <div class="notif-label">Community posts</div>
-            <div class="notif-sub">New forum activity</div>
-          </div>
+          <div><div class="notif-label">Community posts</div><div class="notif-sub">New forum activity</div></div>
           <div class="toggle" id="notif-community" onclick="toggleNotif(this,'community')"><div class="toggle-thumb"></div></div>
         </div>
         <div class="notif-row">
-          <div>
-            <div class="notif-label">Date check-in reminders</div>
-            <div class="notif-sub">Safety check-in alerts</div>
-          </div>
+          <div><div class="notif-label">Date check-in reminders</div><div class="notif-sub">Safety check-in alerts</div></div>
           <div class="toggle on" id="notif-safety" onclick="toggleNotif(this,'safety')"><div class="toggle-thumb"></div></div>
         </div>
       </div>
@@ -324,22 +304,13 @@
     <!-- Subscription -->
     <div id="subscription-section" style="padding:0 0 8px"></div>
 
-    <!-- Verification status -->
+    <!-- Verification -->
     <div class="profile-section">
       <div class="section-header"><div class="section-h3">Verification</div></div>
       <div class="section-body">
-        <div class="info-row">
-          <span class="info-label">ID Verified</span>
-          <span id="verif-id" class="badge">—</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Background Check</span>
-          <span id="verif-bg" class="badge">—</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Financial Badge</span>
-          <span id="verif-fin" class="badge">—</span>
-        </div>
+        <div class="info-row"><span class="info-label">ID Verified</span><span id="verif-id" class="badge">—</span></div>
+        <div class="info-row"><span class="info-label">Background Check</span><span id="verif-bg" class="badge">—</span></div>
+        <div class="info-row"><span class="info-label">Financial Badge</span><span id="verif-fin" class="badge">—</span></div>
         <a href="/pages/verify.html" class="btn btn-outline btn-full" style="margin-top:8px">Manage Verification</a>
       </div>
     </div>
@@ -493,7 +464,7 @@
 </div>
 
 <script type="module">
-import { supabase, requireVerified, updateProfile, getVerification, showToast, getInitials, avatarColor, signOut as authSignOut, formatRelativeTime } from '/js/supabase.js';
+import { supabase, requireVerified, updateProfile, getVerification, showToast, getInitials, avatarColor, signOut as authSignOut, formatRelativeTime, calculateProfileCompleteness } from '/js/supabase.js';
 
 let currentUser = null;
 let currentProfile = null;
@@ -518,17 +489,30 @@ async function init() {
   await loadStats();
   await loadReferral();
   loadNotificationPrefs();
+  showCompletenessIndicator();
 
-  // Show email in account settings
   document.getElementById('account-email').textContent = currentUser.email || '—';
   if (currentProfile?.created_at) {
     document.getElementById('member-since').textContent = new Date(currentProfile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   }
 }
 
+function showCompletenessIndicator() {
+  const { score, missing } = calculateProfileCompleteness(currentProfile, userPhotos.length);
+  if (score < 100) {
+    document.getElementById('completeness-section').style.display = 'block';
+    document.getElementById('completeness-pct').textContent = score + '%';
+    setTimeout(() => {
+      document.getElementById('completeness-fill').style.width = score + '%';
+    }, 100);
+    if (missing.length > 0) {
+      document.getElementById('completeness-tip').textContent = '→ Next: ' + missing[0];
+    }
+  }
+}
+
 function renderProfile(p) {
   if (!p) return;
-
   const heroAvatar = document.getElementById('hero-avatar');
   if (p.avatar_url) {
     heroAvatar.innerHTML = `<img src="${p.avatar_url}" alt="Profile" style="width:100%;height:100%;object-fit:cover;" />`;
@@ -536,22 +520,17 @@ function renderProfile(p) {
     heroAvatar.style.background = avatarColor(p.display_name);
     heroAvatar.textContent = getInitials(p.display_name);
   }
-
   document.getElementById('hero-name').textContent = `${p.display_name || 'You'}${p.age ? ', ' + p.age : ''}`;
   document.getElementById('hero-sub').textContent = p.status_label?.replace(/_/g, ' ') || 'Kyzmyt member';
-
   const badges = [];
   if (p.is_verified) badges.push('<span class="badge badge-verified">✓ ID Verified</span>');
   if (p.background_clear) badges.push('<span class="badge badge-background">✓ Background Clear</span>');
   if (p.has_financial_badge) badges.push('<span class="badge badge-financial">✓ Financial</span>');
   document.getElementById('hero-badges').innerHTML = badges.join('');
-
   document.getElementById('compat-hint-text').textContent = p.is_visible ? 'Your profile is live and active' : 'Profile paused — not visible';
-
   const toggle = document.getElementById('visibility-toggle');
   if (p.is_visible) toggle.classList.add('on');
   document.getElementById('visibility-status').textContent = p.is_visible ? 'Visible to verified members' : 'Hidden — tap to go live';
-
   document.getElementById('bio-display').textContent = p.bio || 'No bio yet. Tell people who you are.';
   if (p.current_obsession) {
     document.getElementById('obsession-card').style.display = 'flex';
@@ -559,21 +538,18 @@ function renderProfile(p) {
   } else {
     document.getElementById('obsession-card').style.display = 'none';
   }
-
   const htContainer = document.getElementById('hot-takes-display');
   if (p.hot_takes?.length) {
     htContainer.innerHTML = p.hot_takes.filter(Boolean).map(h => `<div class="hot-take-display">"${h}"</div>`).join('');
   } else {
     htContainer.innerHTML = '<div style="font-size:13px;color:var(--text-muted)">No hot takes yet. Add some spice.</div>';
   }
-
   document.getElementById('val-politics').textContent = p.politics || '—';
   document.getElementById('val-religion').textContent = p.religion || '—';
   document.getElementById('val-love').textContent = p.love_language?.replace(/_/g, ' ') || '—';
   document.getElementById('val-attach').textContent = p.attachment_style || '—';
   document.getElementById('val-device').textContent = p.device_pref || '—';
   document.getElementById('val-status').textContent = p.status_label?.replace(/_/g, ' ') || '—';
-
   const dbContainer = document.getElementById('dealbreakers-display');
   if (p.dealbreakers?.length) {
     dbContainer.innerHTML = p.dealbreakers.map(d => `<span class="chip">${d.replace(/_/g, ' ')}</span>`).join('');
@@ -582,34 +558,24 @@ function renderProfile(p) {
   }
 }
 
-// ── STATS ────────────────────────────────────────────────
-
 async function loadStats() {
   const [matchesRes, superRes] = await Promise.all([
     supabase.from('matches').select('id', { count: 'exact' }).or(`user_a.eq.${currentUser.id},user_b.eq.${currentUser.id}`),
     supabase.from('super_connect_balance').select('balance').eq('user_id', currentUser.id).single()
   ]);
-
   document.getElementById('stat-matches').textContent = matchesRes.count || 0;
   document.getElementById('stat-superconnects').textContent = superRes.data?.balance || 0;
-
-  // Profile views — from a profile_views table if it exists, otherwise show placeholder
   const { count: views } = await supabase.from('profile_views').select('id', { count: 'exact' }).eq('viewed_user_id', currentUser.id);
   document.getElementById('stat-views').textContent = views || 0;
 }
 
-// ── REFERRAL ─────────────────────────────────────────────
-
 async function loadReferral() {
   let { data: referral } = await supabase.from('referrals').select('*').eq('user_id', currentUser.id).single();
-
   if (!referral) {
-    // Generate a referral code
     const code = 'KYZ' + currentProfile?.display_name?.slice(0, 3).toUpperCase() + Math.floor(1000 + Math.random() * 9000);
     const { data: newRef } = await supabase.from('referrals').insert({ user_id: currentUser.id, code, uses: 0 }).select().single();
     referral = newRef;
   }
-
   document.getElementById('referral-code').textContent = referral?.code || '—';
   document.getElementById('referral-count').textContent = referral?.uses || 0;
   document.getElementById('boosts-earned').textContent = referral?.uses || 0;
@@ -622,17 +588,13 @@ window.copyReferralCode = function() {
   showToast('Referral link copied!', 'success');
 };
 
-// ── NOTIFICATIONS ─────────────────────────────────────────
-
 function loadNotificationPrefs() {
   const prefs = JSON.parse(localStorage.getItem('kyzmyt_notif_prefs') || '{}');
   const defaults = { matches: true, messages: true, likes: true, community: false, safety: true };
   const merged = { ...defaults, ...prefs };
   Object.entries(merged).forEach(([key, val]) => {
     const el = document.getElementById(`notif-${key}`);
-    if (el) {
-      if (val) el.classList.add('on'); else el.classList.remove('on');
-    }
+    if (el) { if (val) el.classList.add('on'); else el.classList.remove('on'); }
   });
 }
 
@@ -643,8 +605,6 @@ window.toggleNotif = function(el, key) {
   localStorage.setItem('kyzmyt_notif_prefs', JSON.stringify(prefs));
   showToast(el.classList.contains('on') ? 'Notifications enabled' : 'Notifications disabled', 'success');
 };
-
-// ── ACCOUNT SETTINGS ──────────────────────────────────────
 
 window.editEmail = () => document.getElementById('email-modal').classList.remove('hidden');
 window.editPassword = () => document.getElementById('password-modal').classList.remove('hidden');
@@ -669,8 +629,6 @@ window.savePassword = async function() {
   document.getElementById('password-modal').classList.add('hidden');
 };
 
-// ── PHOTOS ──────────────────────────────────────────────
-
 async function loadPhotos() {
   const { data } = await supabase.from('profile_photos').select('*').eq('user_id', currentUser.id).order('display_order', { ascending: true });
   userPhotos = data || [];
@@ -684,10 +642,7 @@ function renderPhotoGrid() {
   userPhotos.slice(0, MAX).forEach((photo, idx) => {
     const div = document.createElement('div');
     div.className = 'photo-thumb';
-    div.innerHTML = `
-      <img src="${photo.url}" alt="Photo ${idx + 1}" />
-      ${idx === 0 ? '<div class="photo-primary">PRIMARY</div>' : ''}
-      <button class="photo-delete" onclick="deletePhoto('${photo.id}', event)" title="Remove">✕</button>`;
+    div.innerHTML = `<img src="${photo.url}" alt="Photo ${idx + 1}" />${idx === 0 ? '<div class="photo-primary">PRIMARY</div>' : ''}<button class="photo-delete" onclick="deletePhoto('${photo.id}', event)" title="Remove">✕</button>`;
     grid.appendChild(div);
   });
   for (let i = userPhotos.length; i < MAX; i++) {
@@ -707,17 +662,14 @@ window.handlePhotoUpload = async function(e) {
   e.target.value = '';
   if (userPhotos.length >= 6) { showToast('Max 6 photos. Remove one first.', 'error'); return; }
   if (file.size > 10 * 1024 * 1024) { showToast('Photo must be under 10MB', 'error'); return; }
-
   const grid = document.getElementById('photo-grid');
   const slots = grid.querySelectorAll('.photo-thumb');
   const emptySlot = Array.from(slots).find(s => s.querySelector('.add'));
   if (emptySlot) emptySlot.innerHTML = '<div class="photo-uploading"></div>';
-
   const ext = file.name.split('.').pop().toLowerCase();
   const path = `${currentUser.id}/${Date.now()}.${ext}`;
   const { error: uploadError } = await supabase.storage.from('profile-photos').upload(path, file, { upsert: false });
   if (uploadError) { showToast('Upload failed. Try again.', 'error'); renderPhotoGrid(); return; }
-
   const { data: { publicUrl } } = supabase.storage.from('profile-photos').getPublicUrl(path);
   const { data: photoRecord } = await supabase.from('profile_photos').insert({ user_id: currentUser.id, url: publicUrl, storage_path: path, display_order: userPhotos.length, is_primary: userPhotos.length === 0 }).select().single();
   if (userPhotos.length === 0) {
@@ -726,6 +678,7 @@ window.handlePhotoUpload = async function(e) {
   }
   userPhotos.push(photoRecord);
   renderPhotoGrid();
+  showCompletenessIndicator();
   showToast('Photo uploaded!', 'success');
 };
 
@@ -760,8 +713,6 @@ window.handleAvatarUpload = async function(e) {
   showToast('Photo updated!', 'success');
 };
 
-// ── BIO ──────────────────────────────────────────────────
-
 window.editBio = function() {
   const bioEdit = document.getElementById('bio-edit');
   bioEdit.value = currentProfile?.bio || '';
@@ -779,10 +730,9 @@ window.saveBio = async function() {
   currentProfile = { ...currentProfile, bio, current_obsession: obsession };
   renderProfile(currentProfile);
   document.getElementById('bio-modal').classList.add('hidden');
+  showCompletenessIndicator();
   showToast('Bio saved!', 'success');
 };
-
-// ── HOT TAKES ────────────────────────────────────────────
 
 window.editHotTakes = function() {
   const container = document.getElementById('hot-takes-inputs');
@@ -808,10 +758,9 @@ window.saveHotTakes = async function() {
   currentProfile = { ...currentProfile, hot_takes };
   renderProfile(currentProfile);
   document.getElementById('hottakes-modal').classList.add('hidden');
+  showCompletenessIndicator();
   showToast('Hot takes saved!', 'success');
 };
-
-// ── VALUES ───────────────────────────────────────────────
 
 window.editValues = function() {
   document.getElementById('val-politics-edit').value = currentProfile?.politics || '';
@@ -837,17 +786,14 @@ window.saveValues = async function() {
   currentProfile = { ...currentProfile, ...updates };
   renderProfile(currentProfile);
   document.getElementById('values-modal').classList.add('hidden');
+  showCompletenessIndicator();
   showToast('Values saved!', 'success');
 };
-
-// ── DEALBREAKERS ─────────────────────────────────────────
 
 window.editDealbreakers = function() {
   const current = currentProfile?.dealbreakers || [];
   const container = document.getElementById('dealbreakers-chips');
-  container.innerHTML = DEALBREAKER_OPTIONS.map(opt => `
-    <div class="chip-option ${current.includes(opt) ? 'selected' : ''}" onclick="toggleChip(this)">${opt}</div>
-  `).join('');
+  container.innerHTML = DEALBREAKER_OPTIONS.map(opt => `<div class="chip-option ${current.includes(opt) ? 'selected' : ''}" onclick="toggleChip(this)">${opt}</div>`).join('');
   document.getElementById('dealbreakers-modal').classList.remove('hidden');
 };
 
@@ -860,10 +806,9 @@ window.saveDealbreakers = async function() {
   currentProfile = { ...currentProfile, dealbreakers: selected };
   renderProfile(currentProfile);
   document.getElementById('dealbreakers-modal').classList.add('hidden');
+  showCompletenessIndicator();
   showToast('Dealbreakers saved!', 'success');
 };
-
-// ── SHARED ───────────────────────────────────────────────
 
 window.closeModal = function(id, e) {
   if (!e || e.target === document.getElementById(id))
@@ -900,12 +845,7 @@ async function loadSubscription() {
       <div class="subscription-card" style="margin:8px 16px">
         <div class="sub-tier">Current plan</div>
         <div class="sub-name">${sub.tier === 'concierge' ? 'Concierge' : 'Member'}</div>
-        <ul class="sub-features">
-          <li>Full messaging</li>
-          <li>Appear in searches</li>
-          <li>Compatibility scores</li>
-          <li>Community access</li>
-        </ul>
+        <ul class="sub-features"><li>Full messaging</li><li>Appear in searches</li><li>Compatibility scores</li><li>Community access</li></ul>
         <button class="btn btn-outline btn-full btn-sm" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.2)" onclick="manageSubscription()">Manage plan</button>
       </div>`;
   } else {
@@ -913,33 +853,21 @@ async function loadSubscription() {
       <div class="upgrade-card" style="margin:8px 16px">
         <div class="sub-tier" style="color:rgba(255,255,255,0.7)">Upgrade to unlock everything</div>
         <div class="sub-name" style="color:white">Member Plan</div>
-        <ul class="sub-features">
-          <li>Full messaging access</li>
-          <li>Appear in verified searches</li>
-          <li>AI compatibility scores</li>
-          <li>Community forums and events</li>
-          <li>Date safety check-in</li>
-        </ul>
+        <ul class="sub-features"><li>Full messaging access</li><li>Appear in verified searches</li><li>AI compatibility scores</li><li>Community forums and events</li><li>Date safety check-in</li></ul>
         <button class="btn btn-full btn-lg" style="background:white;color:var(--copper);font-weight:500" onclick="subscribe()">Subscribe Now</button>
       </div>`;
   }
 }
 
 window.subscribe = async function() {
-  const res = await fetch('/.netlify/functions/create-subscription', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId: currentUser.id, tier: 'member' })
-  });
+  const res = await fetch('/.netlify/functions/create-subscription', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: currentUser.id, tier: 'member' }) });
   const { url, error } = await res.json();
   if (error) { showToast(error, 'error'); return; }
   window.location.href = url;
 };
 
 window.manageSubscription = async function() {
-  const portal = await fetch('/.netlify/functions/customer-portal', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId: currentUser.id })
-  });
+  const portal = await fetch('/.netlify/functions/customer-portal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: currentUser.id }) });
   const { url } = await portal.json();
   if (url) window.location.href = url;
 };
