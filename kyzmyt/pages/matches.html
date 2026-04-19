@@ -55,19 +55,16 @@
 
   <div class="matches-content">
 
-    <!-- New matches row -->
     <div id="new-matches-section" style="display:none">
       <div class="section-label" style="margin-bottom:10px">New matches ✦</div>
       <div class="new-matches-row" id="new-matches-row"></div>
     </div>
 
-    <!-- Who liked you (blurred for non-subscribers) -->
     <div id="liked-you-section" class="likes-you-section" style="display:none">
       <div class="section-label" style="margin-bottom:10px">People who liked you</div>
       <div id="liked-you-container"></div>
     </div>
 
-    <!-- All matches -->
     <div>
       <div class="section-label" style="margin-bottom:10px">All matches</div>
       <div id="matches-list">
@@ -81,7 +78,6 @@
   </div>
 </div>
 
-<!-- Bottom nav -->
 <nav class="nav-bottom">
   <button class="nav-item" onclick="location.href='/pages/app.html'"><div class="nav-icon">⊙</div><div class="nav-label">Discover</div></button>
   <button class="nav-item active" onclick="location.href='/pages/matches.html'"><div class="nav-icon">♡</div><div class="nav-label">Matches</div></button>
@@ -164,10 +160,17 @@ async function loadMatches() {
 }
 
 async function loadLikes() {
-  const { data: likes } = await supabase.from('likes').select('from_user, profiles!likes_from_user_fkey(display_name)').eq('to_user', currentUser.id);
+  const { data: likes } = await supabase
+    .from('likes')
+    .select('from_user, profiles!likes_from_user_fkey(display_name)')
+    .eq('to_user', currentUser.id);
   if (!likes?.length) return;
 
-  const { data: sub } = await supabase.from('subscriptions').select('status').eq('user_id', currentUser.id).single();
+  const { data: sub } = await supabase
+    .from('subscriptions')
+    .select('status')
+    .eq('user_id', currentUser.id)
+    .single();
   const isSubscriber = sub?.status === 'active';
 
   document.getElementById('liked-you-section').style.display = 'block';
@@ -179,7 +182,7 @@ async function loadLikes() {
         <div style="font-size:24px;margin-bottom:8px">👀</div>
         <div style="font-family:var(--font-display);font-size:20px;color:white;margin-bottom:6px">${likes.length} ${likes.length === 1 ? 'person has' : 'people have'} liked you</div>
         <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:16px">Subscribe to see who they are and connect.</div>
-        <a href="/pages/profile.html" class="btn btn-copper btn-full">Unlock — $29/mo</a>
+        <a href="/pages/profile.html" class="btn btn-copper btn-full">Unlock Matches</a>
       </div>
       ${likes.slice(0, 3).map(() => `
         <div class="blurred-profile">
@@ -209,7 +212,10 @@ function getOther(match) {
     : (match['profiles!matches_user_a_fkey'] || {});
 }
 
-window.goToMessage = (matchId) => { window.location.href = `/pages/messages.html?match=${matchId}`; };
+window.goToMessage = (matchId) => {
+  window.location.href = `/pages/messages.html?match=${matchId}`;
+};
+
 window.connectBack = async (userId) => {
   const { likeProfile } = await import('/js/supabase.js');
   const { matched } = await likeProfile(currentUser.id, userId);
