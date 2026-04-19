@@ -97,7 +97,7 @@ ${'='.repeat(50)}
       },
       body: JSON.stringify({
         from: 'Kyzmyt Safety <hello@kyzmyt.com>',
-        to: 'zach@xekie.com',
+        to: 'hello@kyzmyt.com',
         subject,
         text: emailBody
       })
