@@ -73,6 +73,8 @@
     .empty-icon { font-size: 48px; margin-bottom: 16px; }
     .empty-title { font-family: var(--font-display); font-size: 28px; color: var(--navy); margin-bottom: 8px; }
     .empty-sub { font-size: 14px; color: var(--text-muted); }
+    .completeness-banner { background: var(--copper-pale); border: 1px solid rgba(184,115,51,0.3); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 14px; display: flex; gap: 12px; align-items: center; cursor: pointer; }
+    .completeness-banner:hover { background: rgba(184,115,51,0.15); }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes cardOut { to { transform: translateX(-120%); opacity: 0; } }
     @keyframes cardOutRight { to { transform: translateX(120%); opacity: 0; } }
@@ -96,11 +98,21 @@
 
   <div class="feed-content">
 
+    <!-- Profile completeness banner -->
+    <div id="completeness-banner" style="display:none" class="completeness-banner" onclick="location.href='/pages/profile.html'">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:500;color:var(--copper);margin-bottom:4px">Complete your profile to get more matches</div>
+        <div style="height:4px;background:rgba(184,115,51,0.2);border-radius:99px;overflow:hidden">
+          <div id="banner-fill" style="height:100%;background:var(--copper);border-radius:99px;transition:width 0.5s ease;width:0%"></div>
+        </div>
+        <div style="font-size:11px;color:var(--copper);margin-top:4px" id="banner-tip"></div>
+      </div>
+      <div style="font-size:18px;color:var(--copper)">→</div>
+    </div>
+
     <!-- Stories row -->
     <div class="section-label" style="margin-bottom:8px">Active now</div>
-    <div class="stories-row" id="stories-row">
-      <!-- Populated by JS -->
-    </div>
+    <div class="stories-row" id="stories-row"></div>
 
     <!-- Filter chips -->
     <div class="filter-section">
@@ -158,7 +170,6 @@
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:20px">Filter matches</h3>
-
     <div class="form-group">
       <label class="form-label">Age range</label>
       <div style="display:flex;gap:12px">
@@ -225,7 +236,7 @@
 <div id="match-modal" class="matched-overlay hidden">
   <div class="matched-card">
     <div class="matched-title">It's a kyzmyt!</div>
-    <div class="matched-sub" id="match-message">You and <strong id="match-name"></strong> both connected. Say something real.</div>
+    <div class="matched-sub">You and <strong id="match-name"></strong> both connected. Say something real.</div>
     <div class="matched-avatars">
       <div class="avatar avatar-xl avatar-copper" id="my-avatar"></div>
       <div style="font-size:24px;margin:0 8px">💫</div>
@@ -239,7 +250,7 @@
 </div>
 
 <script type="module">
-import { supabase, requireVerified, getDiscoverFeed, likeProfile, calculateCompatibility, showToast, getInitials, avatarColor, formatRelativeTime, getStories } from '/js/supabase.js';
+import { supabase, requireVerified, getDiscoverFeed, likeProfile, calculateCompatibility, calculateProfileCompleteness, showToast, getInitials, avatarColor, formatRelativeTime, getStories, getActiveStatus } from '/js/supabase.js';
 
 let currentUser = null;
 let currentProfile = null;
@@ -255,6 +266,24 @@ async function init() {
   await loadStories();
   await loadFeed();
   checkMessages();
+  checkProfileCompleteness();
+}
+
+async function checkProfileCompleteness() {
+  const { data: photos } = await supabase
+    .from('profile_photos')
+    .select('id')
+    .eq('user_id', currentUser.id);
+
+  const { score, missing } = calculateProfileCompleteness(currentProfile, (photos || []).length);
+
+  if (score < 100) {
+    document.getElementById('completeness-banner').style.display = 'flex';
+    document.getElementById('banner-fill').style.width = score + '%';
+    if (missing.length > 0) {
+      document.getElementById('banner-tip').textContent = `Next: ${missing[0]}`;
+    }
+  }
 }
 
 async function loadStories() {
@@ -297,21 +326,21 @@ function renderProfileCard(profile) {
   const compatClass = compat >= 85 ? 'high' : compat >= 65 ? 'medium' : 'low';
   const initials = getInitials(profile.display_name);
   const color = avatarColor(profile.display_name);
-
   const photos = profile.profile_photos || [];
   const hasPhoto = photos.length > 0;
+  const activeStatus = getActiveStatus(profile.last_active);
 
   return `
     <div class="profile-card" id="card-${profile.id}">
       <div class="card-photo">
         ${hasPhoto
           ? `<img src="${photos[0].url}" alt="${profile.display_name}" loading="lazy" />`
-          : `<div class="card-photo-placeholder"><div class="avatar avatar-xl" style="background:${color};width:96px;height:96px;font-size:36px;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center">${initials}</div></div>`
+          : `<div class="card-photo-placeholder"><div style="background:${color};width:96px;height:96px;font-size:36px;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display)">${initials}</div></div>`
         }
         <div class="photo-overlay">
           <div class="status-pill">
-            <div class="status-live"></div>
-            ${profile.status_label ? profile.status_label.replace(/_/g,' ') : 'Looking for connection'}
+            <div class="status-live" style="${activeStatus ? `background:${activeStatus.color}` : ''}"></div>
+            ${activeStatus ? activeStatus.label : (profile.status_label ? profile.status_label.replace(/_/g,' ') : 'Looking for connection')}
           </div>
           <div class="card-name">${profile.display_name}, ${profile.age}</div>
           <div class="card-location">📍 ${profile.city || 'Northeast Ohio'} · ${Math.floor(Math.random() * 25) + 1} miles away</div>
@@ -323,7 +352,6 @@ function renderProfileCard(profile) {
         ${verif.id_verified ? '<span class="badge badge-verified">✓ ID Verified</span>' : ''}
         ${verif.background_clear ? '<span class="badge badge-background">✓ Background Clear</span>' : ''}
         ${verif.financial_verified ? '<span class="badge badge-financial">✓ Financially Verified</span>' : ''}
-        ${verif.photo_real ? '<span class="badge badge-photo">✓ Photo Real</span>' : ''}
       </div>
 
       <div class="card-main">
@@ -384,9 +412,7 @@ window.passProfile = function(profileId) {
 window.connectProfile = async function(profileId, name) {
   const card = document.getElementById(`card-${profileId}`);
   card.style.animation = 'cardOutRight 0.3s ease forwards';
-
   const { matched } = await likeProfile(currentUser.id, profileId);
-
   if (matched) {
     currentMatchId = profileId;
     document.getElementById('match-name').textContent = name;
@@ -410,7 +436,6 @@ window.superlikeProfile = async function(profileId) {
 window.setFilter = function(el, type) {
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
-  // Apply quick filters
   if (type === 'high_compat') filters.min_compat = 80;
   else if (type === 'financial') filters.financial_verified = true;
   else { delete filters.min_compat; delete filters.financial_verified; }
@@ -439,7 +464,11 @@ window.viewStory = (id) => showToast('Stories feature coming soon!', '');
 
 async function checkMessages() {
   if (!currentUser) return;
-  const { count } = await supabase.from('messages').select('id', { count: 'exact' }).eq('read_at', null).neq('sender_id', currentUser.id);
+  const { count } = await supabase
+    .from('messages')
+    .select('id', { count: 'exact' })
+    .is('read_at', null)
+    .neq('sender_id', currentUser.id);
   if (count > 0) {
     document.getElementById('nav-msg-badge').style.display = 'flex';
     document.getElementById('nav-msg-badge').textContent = count > 9 ? '9+' : count;
