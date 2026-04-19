@@ -50,7 +50,9 @@ export async function requireVerified() {
     return null;
   }
   // Update last_active
-  await supabase.from('profiles').update({ last_active: new Date().toISOString() }).eq('user_id', user.id);
+  await supabase.from('profiles')
+    .update({ last_active: new Date().toISOString() })
+    .eq('user_id', user.id);
   return { user, profile };
 }
 
@@ -107,10 +109,7 @@ export function calculateProfileCompleteness(profile, photoCount = 0) {
     if (c.key === 'photos') {
       if (photoCount > 0) score += c.weight;
       else missing.push(c.label);
-    } else if (c.key === 'hot_takes') {
-      if (profile[c.key]?.length > 0) score += c.weight;
-      else missing.push(c.label);
-    } else if (c.key === 'dealbreakers') {
+    } else if (c.key === 'hot_takes' || c.key === 'dealbreakers') {
       if (profile[c.key]?.length > 0) score += c.weight;
       else missing.push(c.label);
     } else {
@@ -122,10 +121,36 @@ export function calculateProfileCompleteness(profile, photoCount = 0) {
   return { score, missing };
 }
 
+// ── Daily match limit ─────────────────────────────────────────────────────────
+
+export async function getDailyConnectCount(userId) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const { count } = await supabase
+    .from('likes')
+    .select('id', { count: 'exact' })
+    .eq('from_user', userId)
+    .gte('created_at', today.toISOString());
+  return count || 0;
+}
+
+export const DAILY_CONNECT_LIMIT = 15;
+
+// ── Pass feedback ─────────────────────────────────────────────────────────────
+
+export async function recordPass(fromUserId, toUserId, reason = null) {
+  await supabase.from('likes').insert({
+    from_user: fromUserId,
+    to_user: toUserId,
+    is_pass: true,
+    pass_reason: reason,
+    created_at: new Date().toISOString()
+  });
+}
+
 // ── Discover feed ─────────────────────────────────────────────────────────────
 
 export async function getDiscoverFeed(userId, filters = {}) {
-  // Get blocked user IDs
   const { data: blocks } = await supabase
     .from('blocks')
     .select('blocked_id, blocker_id')
@@ -135,7 +160,6 @@ export async function getDiscoverFeed(userId, filters = {}) {
     b.blocker_id === userId ? b.blocked_id : b.blocker_id
   );
 
-  // Get already liked user IDs
   const { data: liked } = await supabase
     .from('likes')
     .select('to_user')
@@ -151,7 +175,6 @@ export async function getDiscoverFeed(userId, filters = {}) {
     .neq('user_id', userId)
     .limit(filters.limit || 20);
 
-  // Exclude blocked and already liked
   if (excludeIds.length > 0) {
     query = query.not('user_id', 'in', `(${excludeIds.join(',')})`);
   }
@@ -160,9 +183,37 @@ export async function getDiscoverFeed(userId, filters = {}) {
   if (filters.religion) query = query.eq('religion', filters.religion);
   if (filters.min_age) query = query.gte('age', filters.min_age);
   if (filters.max_age) query = query.lte('age', filters.max_age);
+  if (filters.nearby) {
+    // Sort by last_active for nearby now mode
+    const { data, error } = await query.order('last_active', { ascending: false, nullsFirst: false });
+    return { data: data || [], error };
+  }
 
   const { data, error } = await query.order('last_active', { ascending: false, nullsFirst: false });
   return { data: data || [], error };
+}
+
+// ── Why you matched ───────────────────────────────────────────────────────────
+
+export function getMatchReasons(profileA, profileB) {
+  const reasons = [];
+  if (profileA.politics && profileB.politics && profileA.politics === profileB.politics)
+    reasons.push(`You're both ${profileA.politics}`);
+  if (profileA.religion && profileB.religion && profileA.religion === profileB.religion)
+    reasons.push(`You share the same faith — ${profileA.religion}`);
+  if (profileA.love_language && profileB.love_language && profileA.love_language === profileB.love_language)
+    reasons.push(`Same love language: ${profileA.love_language}`);
+  if (profileA.attachment_style && profileB.attachment_style && profileA.attachment_style === profileB.attachment_style)
+    reasons.push(`Both ${profileA.attachment_style} attachment style`);
+  if (profileA.device_pref && profileB.device_pref && profileA.device_pref === profileB.device_pref)
+    reasons.push(`You're both ${profileA.device_pref} people`);
+  if (profileA.dealbreakers?.length && profileB.dealbreakers?.length) {
+    const noConflict = !profileA.dealbreakers.some(d => profileB[d]) && !profileB.dealbreakers.some(d => profileA[d]);
+    if (noConflict) reasons.push('No dealbreaker conflicts — you\'re compatible on the hard stuff');
+  }
+  if (profileA.current_obsession && profileB.current_obsession)
+    reasons.push(`You're both into things right now — good energy`);
+  return reasons.slice(0, 3);
 }
 
 // ── Matching ──────────────────────────────────────────────────────────────────
@@ -170,7 +221,7 @@ export async function getDiscoverFeed(userId, filters = {}) {
 export async function likeProfile(fromUserId, toUserId) {
   const { data, error } = await supabase
     .from('likes')
-    .insert({ from_user: fromUserId, to_user: toUserId })
+    .insert({ from_user: fromUserId, to_user: toUserId, created_at: new Date().toISOString() })
     .select()
     .single();
   if (error) return { matched: false, error };
@@ -180,6 +231,7 @@ export async function likeProfile(fromUserId, toUserId) {
     .select('id')
     .eq('from_user', toUserId)
     .eq('to_user', fromUserId)
+    .eq('is_pass', false)
     .single();
 
   if (mutual) {
@@ -256,6 +308,19 @@ export function subscribeToMessages(matchId, callback) {
       filter: `match_id=eq.${matchId}`
     }, callback)
     .subscribe();
+}
+
+export async function getConversationStrength(matchId) {
+  const { count } = await supabase
+    .from('messages')
+    .select('id', { count: 'exact' })
+    .eq('match_id', matchId);
+  const msgs = count || 0;
+  if (msgs >= 50) return { score: 100, label: 'Strong connection' };
+  if (msgs >= 20) return { score: 75, label: 'Building something' };
+  if (msgs >= 10) return { score: 50, label: 'Getting there' };
+  if (msgs >= 3) return { score: 25, label: 'Just started' };
+  return { score: 10, label: 'Say hello' };
 }
 
 // ── Compatibility score ────────────────────────────────────────────────────────
@@ -362,6 +427,19 @@ export async function getStories() {
     .order('created_at', { ascending: false });
   return data || [];
 }
+
+// ── Icebreaker questions ──────────────────────────────────────────────────────
+
+export const ICEBREAKER_QUESTIONS = [
+  'Two truths and a lie about me:',
+  'The skill I\'m quietly proud of:',
+  'My most controversial food opinion:',
+  'The last thing that genuinely made me laugh:',
+  'A place I\'d move to tomorrow if I could:',
+  'My go-to karaoke song:',
+  'Something most people don\'t know about me:',
+  'The hobby I\'d pursue if money weren\'t a factor:',
+];
 
 // ── UI helpers ────────────────────────────────────────────────────────────────
 
