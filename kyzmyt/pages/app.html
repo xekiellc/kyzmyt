@@ -24,6 +24,18 @@
     .notif-badge { position: absolute; top: -2px; right: -2px; width: 16px; height: 16px; border-radius: 50%; background: var(--copper); color: var(--white); font-size: 9px; font-weight: 500; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); }
     .feed-content { padding: 12px 16px; max-width: 480px; margin: 0 auto; }
     .filter-section { margin-bottom: 14px; }
+
+    /* Daily limit bar */
+    .daily-limit-bar { background: var(--white); border-radius: var(--radius-lg); padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); }
+    .limit-track { flex: 1; height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .limit-fill { height: 100%; background: var(--copper); border-radius: 99px; transition: width 0.3s ease; }
+    .limit-label { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+
+    /* Nearby now toggle */
+    .nearby-toggle { display: flex; background: var(--white); border-radius: var(--radius-full); padding: 4px; margin-bottom: 14px; border: 1px solid var(--border); gap: 4px; }
+    .nearby-btn { flex: 1; padding: 8px; border-radius: var(--radius-full); font-size: 12px; font-weight: 500; text-align: center; cursor: pointer; color: var(--text-muted); transition: all 0.2s; border: none; background: none; font-family: var(--font-body); }
+    .nearby-btn.active { background: var(--navy); color: var(--white); }
+
     .profile-card { background: var(--white); border-radius: var(--radius-xl); border: 1px solid var(--border); overflow: hidden; margin-bottom: 14px; box-shadow: var(--shadow-sm); }
     .card-photo { height: 280px; background: var(--navy); position: relative; overflow: hidden; }
     .card-photo img { width: 100%; height: 100%; object-fit: cover; }
@@ -42,6 +54,9 @@
     .card-bio { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 12px; }
     .card-section-title { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; }
     .hot-take { background: var(--cream-mid); border-left: 3px solid var(--copper); padding: 8px 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 12px; color: var(--text-secondary); font-style: italic; margin-bottom: 6px; }
+    .icebreaker-answer { background: var(--navy); border-radius: var(--radius-md); padding: 10px 12px; margin-bottom: 6px; }
+    .icebreaker-q { font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 3px; }
+    .icebreaker-a { font-size: 13px; color: var(--white); font-style: italic; }
     .detail-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
     .detail-chip { padding: 5px 12px; background: var(--cream-mid); border-radius: var(--radius-full); font-size: 11px; color: var(--text-secondary); border: 1px solid var(--border); }
     .compat-breakdown { background: var(--cream-mid); border-radius: var(--radius-md); padding: 12px; margin-bottom: 12px; }
@@ -51,6 +66,13 @@
     .compat-bar-wrap { flex: 1; margin: 0 10px; height: 4px; background: var(--border); border-radius: var(--radius-full); overflow: hidden; }
     .compat-bar { height: 100%; background: var(--copper); border-radius: var(--radius-full); }
     .compat-val { color: var(--navy); font-weight: 500; min-width: 28px; text-align: right; }
+
+    /* Why you matched */
+    .match-reasons { background: rgba(184,115,51,0.08); border: 1px solid rgba(184,115,51,0.2); border-radius: var(--radius-md); padding: 12px; margin-bottom: 12px; }
+    .match-reason-title { font-size: 10px; font-weight: 500; color: var(--copper); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+    .match-reason-item { font-size: 12px; color: var(--text-secondary); padding: 3px 0; display: flex; gap: 6px; align-items: flex-start; }
+    .match-reason-item::before { content: '✦'; color: var(--copper); font-size: 10px; margin-top: 1px; flex-shrink: 0; }
+
     .card-actions { display: flex; gap: 10px; padding: 12px 14px; border-top: 1px solid var(--border); align-items: center; }
     .btn-pass { flex: 1; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-mid); background: var(--white); font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; font-family: var(--font-body); }
     .btn-pass:hover { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
@@ -58,11 +80,12 @@
     .btn-superlike:hover { background: var(--copper); }
     .btn-connect { flex: 2; padding: 12px; border-radius: var(--radius-md); border: none; background: var(--navy); font-size: 13px; font-weight: 500; color: var(--white); cursor: pointer; transition: all 0.2s; font-family: var(--font-body); }
     .btn-connect:hover { background: var(--navy-mid); transform: translateY(-1px); }
+    .btn-connect:disabled { background: var(--border-mid); cursor: not-allowed; transform: none; }
+
     .matched-overlay { position: fixed; inset: 0; background: rgba(15,30,61,0.85); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 24px; }
     .matched-card { background: var(--white); border-radius: var(--radius-xl); padding: 32px 24px; text-align: center; max-width: 360px; width: 100%; animation: fadeIn 0.4s ease; }
     .matched-title { font-family: var(--font-display); font-size: 48px; color: var(--copper); margin-bottom: 8px; }
-    .matched-sub { font-size: 15px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.5; }
-    .matched-avatars { display: flex; justify-content: center; align-items: center; gap: -12px; margin-bottom: 24px; }
+    .matched-reasons { text-align: left; background: var(--cream-mid); border-radius: var(--radius-md); padding: 12px; margin: 16px 0; }
     .stories-row { display: flex; gap: 10px; overflow-x: auto; padding: 4px 0 8px; margin-bottom: 14px; }
     .stories-row::-webkit-scrollbar { display: none; }
     .story-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex-shrink: 0; }
@@ -72,9 +95,15 @@
     .empty-state { text-align: center; padding: 60px 20px; }
     .empty-icon { font-size: 48px; margin-bottom: 16px; }
     .empty-title { font-family: var(--font-display); font-size: 28px; color: var(--navy); margin-bottom: 8px; }
-    .empty-sub { font-size: 14px; color: var(--text-muted); }
+    .empty-sub { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
     .completeness-banner { background: var(--copper-pale); border: 1px solid rgba(184,115,51,0.3); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 14px; display: flex; gap: 12px; align-items: center; cursor: pointer; }
-    .completeness-banner:hover { background: rgba(184,115,51,0.15); }
+
+    /* Profile preview modal */
+    .preview-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .preview-modal.hidden { display: none; }
+    .preview-inner { background: var(--cream); border-radius: var(--radius-xl); max-width: 400px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .preview-header { padding: 14px 16px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+
     @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes cardOut { to { transform: translateX(-120%); opacity: 0; } }
     @keyframes cardOutRight { to { transform: translateX(120%); opacity: 0; } }
@@ -88,6 +117,7 @@
   <div class="app-header">
     <div class="app-logo">Kyzm<span>yt</span></div>
     <div class="header-actions">
+      <div class="icon-btn" onclick="showProfilePreview()" title="Preview your profile">👁</div>
       <div class="icon-btn" onclick="openFilters()">⚙</div>
       <div class="icon-btn" onclick="location.href='/pages/messages.html'">
         ✉
@@ -110,6 +140,20 @@
       <div style="font-size:18px;color:var(--copper)">→</div>
     </div>
 
+    <!-- Daily connect limit -->
+    <div class="daily-limit-bar" id="limit-bar">
+      <div class="limit-track">
+        <div class="limit-fill" id="limit-fill" style="width:0%"></div>
+      </div>
+      <div class="limit-label" id="limit-label">Loading...</div>
+    </div>
+
+    <!-- Nearby now / All toggle -->
+    <div class="nearby-toggle">
+      <button class="nearby-btn active" id="btn-all" onclick="switchFeedMode('all')">All Verified</button>
+      <button class="nearby-btn" id="btn-nearby" onclick="switchFeedMode('nearby')">⚡ Active Now</button>
+    </div>
+
     <!-- Stories row -->
     <div class="section-label" style="margin-bottom:8px">Active now</div>
     <div class="stories-row" id="stories-row"></div>
@@ -117,13 +161,11 @@
     <!-- Filter chips -->
     <div class="filter-section">
       <div class="filter-bar" id="filter-bar">
-        <div class="chip active" onclick="setFilter(this,'all')">All Verified</div>
-        <div class="chip" onclick="setFilter(this,'bg')">Background ✓</div>
+        <div class="chip active" onclick="setFilter(this,'all')">All</div>
         <div class="chip" onclick="setFilter(this,'financial')">Financial ✓</div>
         <div class="chip" onclick="setFilter(this,'high_compat')">High Match</div>
         <div class="chip" onclick="setFilter(this,'politics')">My Politics</div>
         <div class="chip" onclick="setFilter(this,'religion')">My Faith</div>
-        <div class="chip" onclick="setFilter(this,'no_kids')">No Kids</div>
         <div class="chip" onclick="setFilter(this,'iphone')">iPhone</div>
       </div>
     </div>
@@ -142,26 +184,21 @@
 <!-- Bottom nav -->
 <nav class="nav-bottom">
   <button class="nav-item active" onclick="location.href='/pages/app.html'">
-    <div class="nav-icon">⊙</div>
-    <div class="nav-label">Discover</div>
+    <div class="nav-icon">⊙</div><div class="nav-label">Discover</div>
   </button>
   <button class="nav-item" onclick="location.href='/pages/matches.html'" style="position:relative">
-    <div class="nav-icon">♡</div>
-    <div class="nav-label">Matches</div>
+    <div class="nav-icon">♡</div><div class="nav-label">Matches</div>
     <div class="nav-badge" id="matches-badge" style="display:none"></div>
   </button>
   <button class="nav-item" onclick="location.href='/pages/messages.html'" style="position:relative">
-    <div class="nav-icon">✉</div>
-    <div class="nav-label">Messages</div>
+    <div class="nav-icon">✉</div><div class="nav-label">Messages</div>
     <div class="nav-badge" id="nav-msg-badge" style="display:none"></div>
   </button>
   <button class="nav-item" onclick="location.href='/pages/community.html'">
-    <div class="nav-icon">⊕</div>
-    <div class="nav-label">Community</div>
+    <div class="nav-icon">⊕</div><div class="nav-label">Community</div>
   </button>
   <button class="nav-item" onclick="location.href='/pages/profile.html'">
-    <div class="nav-icon">◎</div>
-    <div class="nav-label">Profile</div>
+    <div class="nav-icon">◎</div><div class="nav-label">Profile</div>
   </button>
 </nav>
 
@@ -176,11 +213,6 @@
         <input type="number" class="form-input" id="min-age" placeholder="Min" value="25" min="18" max="80" style="flex:1" />
         <input type="number" class="form-input" id="max-age" placeholder="Max" value="55" min="18" max="80" style="flex:1" />
       </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Distance (miles)</label>
-      <input type="range" id="distance-range" min="5" max="100" value="25" style="width:100%;accent-color:var(--copper)" oninput="document.getElementById('distance-val').textContent=this.value" />
-      <div class="range-labels"><span>5 mi</span><span id="distance-val">25</span> mi<span>100 mi</span></div>
     </div>
     <div class="form-group">
       <label class="form-label">Politics</label>
@@ -207,22 +239,6 @@
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">Has children</label>
-      <select class="form-input form-select" id="filter-kids">
-        <option value="">Any</option>
-        <option value="no">No children</option>
-        <option value="yes">Has children</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Device preference</label>
-      <select class="form-input form-select" id="filter-device">
-        <option value="">Any</option>
-        <option value="iphone">iPhone only</option>
-        <option value="android">Android only</option>
-      </select>
-    </div>
-    <div class="form-group">
       <label class="form-label">Minimum compatibility score</label>
       <input type="range" id="min-compat" min="0" max="100" value="0" style="width:100%;accent-color:var(--copper)" oninput="document.getElementById('compat-val').textContent=this.value+'%'" />
       <div class="range-labels"><span>0%</span><span id="compat-val">0%</span><span>100%</span></div>
@@ -232,16 +248,30 @@
   </div>
 </div>
 
+<!-- Pass feedback modal -->
+<div id="pass-modal" class="modal-overlay hidden" onclick="closePassModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h3 style="font-family:var(--font-display);font-size:22px;margin-bottom:8px">Why are you passing?</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px">Optional — helps us find better matches for you.</p>
+    <div style="display:flex;flex-direction:column;gap:8px" id="pass-reasons">
+      <button class="btn btn-outline btn-full" onclick="submitPass('Too far away')">Too far away</button>
+      <button class="btn btn-outline btn-full" onclick="submitPass('Not my type')">Not my type</button>
+      <button class="btn btn-outline btn-full" onclick="submitPass('Dealbreaker')">Dealbreaker conflict</button>
+      <button class="btn btn-outline btn-full" onclick="submitPass('Already know them')">Already know them</button>
+      <button class="btn btn-outline btn-full" onclick="submitPass('Photos unclear')">Photos unclear</button>
+      <button class="btn btn-ghost btn-full" onclick="submitPass(null)">Skip — no reason</button>
+    </div>
+  </div>
+</div>
+
 <!-- Match celebration modal -->
 <div id="match-modal" class="matched-overlay hidden">
   <div class="matched-card">
     <div class="matched-title">It's a kyzmyt!</div>
-    <div class="matched-sub">You and <strong id="match-name"></strong> both connected. Say something real.</div>
-    <div class="matched-avatars">
-      <div class="avatar avatar-xl avatar-copper" id="my-avatar"></div>
-      <div style="font-size:24px;margin:0 8px">💫</div>
-      <div class="avatar avatar-xl avatar-navy" id="their-avatar"></div>
-    </div>
+    <div style="font-size:15px;color:var(--text-secondary);margin-bottom:12px;line-height:1.5">You and <strong id="match-name"></strong> both connected.</div>
+    <div class="matched-reasons" id="match-reasons-display"></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:20px">Say something real.</div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-outline flex-1" onclick="closeMatch()">Keep Browsing</button>
       <button class="btn btn-copper flex-1" onclick="goToMessage()">Send Message</button>
@@ -249,40 +279,64 @@
   </div>
 </div>
 
+<!-- Profile preview modal -->
+<div id="preview-modal" class="preview-modal hidden">
+  <div class="preview-inner">
+    <div class="preview-header">
+      <div style="font-size:14px;font-weight:500;color:var(--navy)">Your profile — as others see it</div>
+      <button onclick="closePreview()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted)">✕</button>
+    </div>
+    <div id="preview-content"></div>
+  </div>
+</div>
+
 <script type="module">
-import { supabase, requireVerified, getDiscoverFeed, likeProfile, calculateCompatibility, calculateProfileCompleteness, showToast, getInitials, avatarColor, formatRelativeTime, getStories, getActiveStatus } from '/js/supabase.js';
+import { supabase, requireVerified, getDiscoverFeed, likeProfile, recordPass, calculateCompatibility, calculateProfileCompleteness, getDailyConnectCount, DAILY_CONNECT_LIMIT, getMatchReasons, showToast, getInitials, avatarColor, formatRelativeTime, getStories, getActiveStatus, ICEBREAKER_QUESTIONS } from '/js/supabase.js';
 
 let currentUser = null;
 let currentProfile = null;
 let profiles = [];
 let filters = {};
 let currentMatchId = null;
+let currentMatchProfile = null;
+let pendingPassProfileId = null;
+let dailyCount = 0;
+let feedMode = 'all';
 
 async function init() {
   const result = await requireVerified();
   if (!result) return;
   currentUser = result.user;
   currentProfile = result.profile;
+  await loadDailyLimit();
   await loadStories();
   await loadFeed();
   checkMessages();
   checkProfileCompleteness();
 }
 
+async function loadDailyLimit() {
+  dailyCount = await getDailyConnectCount(currentUser.id);
+  updateLimitBar();
+}
+
+function updateLimitBar() {
+  const pct = Math.min((dailyCount / DAILY_CONNECT_LIMIT) * 100, 100);
+  document.getElementById('limit-fill').style.width = pct + '%';
+  const remaining = Math.max(DAILY_CONNECT_LIMIT - dailyCount, 0);
+  document.getElementById('limit-label').textContent = remaining > 0
+    ? `${remaining} connects left today`
+    : 'Daily limit reached — come back tomorrow';
+  document.getElementById('limit-fill').style.background = remaining <= 3 ? 'var(--danger)' : 'var(--copper)';
+}
+
 async function checkProfileCompleteness() {
-  const { data: photos } = await supabase
-    .from('profile_photos')
-    .select('id')
-    .eq('user_id', currentUser.id);
-
+  const { data: photos } = await supabase.from('profile_photos').select('id').eq('user_id', currentUser.id);
   const { score, missing } = calculateProfileCompleteness(currentProfile, (photos || []).length);
-
   if (score < 100) {
     document.getElementById('completeness-banner').style.display = 'flex';
     document.getElementById('banner-fill').style.width = score + '%';
-    if (missing.length > 0) {
-      document.getElementById('banner-tip').textContent = `Next: ${missing[0]}`;
-    }
+    if (missing.length > 0) document.getElementById('banner-tip').textContent = `Next: ${missing[0]}`;
   }
 }
 
@@ -293,25 +347,25 @@ async function loadStories() {
   row.innerHTML = stories.map(s => `
     <div class="story-item" onclick="viewStory('${s.id}')">
       <div class="story-ring">
-        <div class="story-avatar" style="background:${avatarColor(s.profiles?.display_name)}">
-          ${getInitials(s.profiles?.display_name)}
-        </div>
+        <div class="story-avatar" style="background:${avatarColor(s.profiles?.display_name)}">${getInitials(s.profiles?.display_name)}</div>
       </div>
       <div class="story-name">${s.profiles?.display_name || 'Member'}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 async function loadFeed() {
   const container = document.getElementById('feed-container');
-  const { data, error } = await getDiscoverFeed(currentUser.id, filters);
+  container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted)"><div class="spinner" style="margin:0 auto 12px"></div><div style="font-size:13px">Finding verified members...</div></div>`;
+
+  const feedFilters = { ...filters, nearby: feedMode === 'nearby' };
+  const { data, error } = await getDiscoverFeed(currentUser.id, feedFilters);
 
   if (error || !data.length) {
     container.innerHTML = `
       <div class="empty-state">
-        <div class="empty-icon">🔍</div>
-        <div class="empty-title">No one nearby yet</div>
-        <div class="empty-sub">Try expanding your filters or check back soon as more members join.</div>
+        <div class="empty-icon">${feedMode === 'nearby' ? '⚡' : '🔍'}</div>
+        <div class="empty-title">${feedMode === 'nearby' ? 'Nobody active right now' : 'You\'ve seen everyone nearby'}</div>
+        <div class="empty-sub">${feedMode === 'nearby' ? 'Check back soon — members open the app throughout the day.' : 'New verified members join daily. Check back soon, or try expanding your filters.'}</div>
       </div>`;
     return;
   }
@@ -329,6 +383,9 @@ function renderProfileCard(profile) {
   const photos = profile.profile_photos || [];
   const hasPhoto = photos.length > 0;
   const activeStatus = getActiveStatus(profile.last_active);
+  const reasons = currentProfile ? getMatchReasons(currentProfile, profile) : [];
+  const icebreakers = profile.icebreaker_answers || {};
+  const isLimitReached = dailyCount >= DAILY_CONNECT_LIMIT;
 
   return `
     <div class="profile-card" id="card-${profile.id}">
@@ -357,12 +414,28 @@ function renderProfileCard(profile) {
       <div class="card-main">
         ${profile.bio ? `<div class="card-bio">${profile.bio.slice(0, 140)}${profile.bio.length > 140 ? '...' : ''}</div>` : ''}
 
-        ${profile.hot_takes?.length ? `
-          <div class="card-section-title">Hot takes</div>
-          ${profile.hot_takes.slice(0, 2).map(h => `<div class="hot-take">"${h}"</div>`).join('')}
+        ${Object.keys(icebreakers).length > 0 ? `
+          <div class="card-section-title">In their own words</div>
+          ${Object.entries(icebreakers).slice(0, 2).map(([q, a]) => `
+            <div class="icebreaker-answer">
+              <div class="icebreaker-q">${q}</div>
+              <div class="icebreaker-a">${a}</div>
+            </div>`).join('')}
         ` : ''}
 
-        <div class="card-section-title" style="margin-top:12px">About them</div>
+        ${profile.hot_takes?.length ? `
+          <div class="card-section-title" style="margin-top:10px">Hot takes</div>
+          ${profile.hot_takes.slice(0, 1).map(h => `<div class="hot-take">"${h}"</div>`).join('')}
+        ` : ''}
+
+        ${reasons.length > 0 ? `
+          <div class="match-reasons">
+            <div class="match-reason-title">Why you match</div>
+            ${reasons.map(r => `<div class="match-reason-item">${r}</div>`).join('')}
+          </div>
+        ` : ''}
+
+        <div class="card-section-title">About them</div>
         <div class="detail-chips">
           ${profile.politics ? `<div class="detail-chip">${profile.politics}</div>` : ''}
           ${profile.religion ? `<div class="detail-chip">${profile.religion}</div>` : ''}
@@ -387,9 +460,11 @@ function renderProfileCard(profile) {
       </div>
 
       <div class="card-actions">
-        <button class="btn-pass" onclick="passProfile('${profile.id}')">Pass</button>
+        <button class="btn-pass" onclick="initPass('${profile.id}')">Pass</button>
         <button class="btn-superlike" onclick="superlikeProfile('${profile.id}')">★</button>
-        <button class="btn-connect" onclick="connectProfile('${profile.id}', '${profile.display_name}')">Connect</button>
+        <button class="btn-connect" onclick="connectProfile('${profile.id}', '${profile.display_name}')" ${isLimitReached ? 'disabled title="Daily limit reached"' : ''}>
+          ${isLimitReached ? '🔒 Limit reached' : 'Connect'}
+        </button>
       </div>
     </div>`;
 }
@@ -403,21 +478,56 @@ function renderCompatRow(label, score) {
     </div>`;
 }
 
-window.passProfile = function(profileId) {
-  const card = document.getElementById(`card-${profileId}`);
-  card.style.animation = 'cardOut 0.3s ease forwards';
-  setTimeout(() => card.remove(), 300);
+// ── Pass with feedback ────────────────────────────────────────────────────────
+
+window.initPass = function(profileId) {
+  pendingPassProfileId = profileId;
+  document.getElementById('pass-modal').classList.remove('hidden');
 };
 
+window.closePassModal = (e) => {
+  if (!e || e.target === document.getElementById('pass-modal'))
+    document.getElementById('pass-modal').classList.add('hidden');
+};
+
+window.submitPass = async function(reason) {
+  document.getElementById('pass-modal').classList.add('hidden');
+  if (!pendingPassProfileId) return;
+  const card = document.getElementById(`card-${pendingPassProfileId}`);
+  if (card) { card.style.animation = 'cardOut 0.3s ease forwards'; setTimeout(() => card.remove(), 300); }
+  await recordPass(currentUser.id, pendingPassProfileId, reason);
+  pendingPassProfileId = null;
+};
+
+// ── Connect ───────────────────────────────────────────────────────────────────
+
 window.connectProfile = async function(profileId, name) {
+  if (dailyCount >= DAILY_CONNECT_LIMIT) {
+    showToast('Daily connect limit reached. Come back tomorrow!', 'error');
+    return;
+  }
+
   const card = document.getElementById(`card-${profileId}`);
   card.style.animation = 'cardOutRight 0.3s ease forwards';
+
+  const matchedProfile = profiles.find(p => p.id === profileId || p.user_id === profileId);
   const { matched } = await likeProfile(currentUser.id, profileId);
+  dailyCount++;
+  updateLimitBar();
+
   if (matched) {
     currentMatchId = profileId;
+    currentMatchProfile = matchedProfile;
     document.getElementById('match-name').textContent = name;
-    document.getElementById('my-avatar').textContent = getInitials(currentProfile?.display_name);
-    document.getElementById('their-avatar').textContent = getInitials(name);
+
+    const reasons = currentProfile && matchedProfile ? getMatchReasons(currentProfile, matchedProfile) : [];
+    const reasonsEl = document.getElementById('match-reasons-display');
+    if (reasons.length > 0) {
+      reasonsEl.innerHTML = reasons.map(r => `<div style="font-size:12px;color:var(--text-secondary);padding:3px 0;display:flex;gap:6px"><span style="color:var(--copper)">✦</span>${r}</div>`).join('');
+    } else {
+      reasonsEl.style.display = 'none';
+    }
+
     document.getElementById('match-modal').classList.remove('hidden');
   } else {
     showToast(`You connected with ${name}!`, 'success');
@@ -426,12 +536,72 @@ window.connectProfile = async function(profileId, name) {
 };
 
 window.superlikeProfile = async function(profileId) {
+  if (dailyCount >= DAILY_CONNECT_LIMIT) { showToast('Daily limit reached!', 'error'); return; }
   const card = document.getElementById(`card-${profileId}`);
   card.style.border = '2px solid var(--copper)';
-  await supabase.from('likes').insert({ from_user: currentUser.id, to_user: profileId, is_superlike: true });
+  await supabase.from('likes').insert({ from_user: currentUser.id, to_user: profileId, is_superlike: true, created_at: new Date().toISOString() });
+  dailyCount++;
+  updateLimitBar();
   showToast('Super connect sent! ★', 'copper');
   setTimeout(() => { card.style.animation = 'cardOutRight 0.3s ease forwards'; setTimeout(() => card.remove(), 300); }, 500);
 };
+
+// ── Feed mode ─────────────────────────────────────────────────────────────────
+
+window.switchFeedMode = function(mode) {
+  feedMode = mode;
+  document.getElementById('btn-all').classList.toggle('active', mode === 'all');
+  document.getElementById('btn-nearby').classList.toggle('active', mode === 'nearby');
+  loadFeed();
+};
+
+// ── Profile preview ───────────────────────────────────────────────────────────
+
+window.showProfilePreview = async function() {
+  const { data: photos } = await supabase.from('profile_photos').select('*').eq('user_id', currentUser.id).order('display_order');
+  const p = currentProfile;
+  const initials = getInitials(p?.display_name);
+  const color = avatarColor(p?.display_name);
+  const hasPhoto = photos?.length > 0;
+
+  document.getElementById('preview-content').innerHTML = `
+    <div style="background:var(--navy);height:220px;position:relative;overflow:hidden">
+      ${hasPhoto
+        ? `<img src="${photos[0].url}" style="width:100%;height:100%;object-fit:cover" />`
+        : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--navy),#1e3a5f)"><div style="background:${color};width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:28px;color:white">${initials}</div></div>`
+      }
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:16px 14px 12px;background:linear-gradient(to top,rgba(15,30,61,0.85),transparent)">
+        <div style="font-family:var(--font-display);font-size:24px;color:white">${p?.display_name || 'You'}, ${p?.age || ''}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px">📍 Your city · distance shown to others</div>
+      </div>
+      <div style="position:absolute;top:10px;right:10px;background:var(--copper);color:white;border-radius:99px;padding:5px 10px;font-family:var(--font-display);font-size:14px;font-weight:600">—%</div>
+    </div>
+    <div style="padding:14px;background:white;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--border)">
+      ${p?.is_verified ? '<span class="badge badge-verified">✓ ID Verified</span>' : ''}
+      <span class="badge badge-background">✓ Background Clear</span>
+    </div>
+    <div style="padding:14px">
+      ${p?.bio ? `<div style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:12px">${p.bio}</div>` : '<div style="font-size:13px;color:var(--text-muted);font-style:italic;margin-bottom:12px">No bio yet. Add one to get more matches.</div>'}
+      ${p?.hot_takes?.length ? `<div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin-bottom:6px">Hot takes</div>${p.hot_takes.slice(0,2).map(h => `<div style="background:var(--cream-mid);border-left:3px solid var(--copper);padding:8px 10px;border-radius:0 4px 4px 0;font-size:12px;color:var(--text-secondary);font-style:italic;margin-bottom:6px">"${h}"</div>`).join('')}` : ''}
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+        ${p?.politics ? `<span style="padding:5px 12px;background:var(--cream-mid);border-radius:99px;font-size:11px;color:var(--text-secondary);border:1px solid var(--border)">${p.politics}</span>` : ''}
+        ${p?.religion ? `<span style="padding:5px 12px;background:var(--cream-mid);border-radius:99px;font-size:11px;color:var(--text-secondary);border:1px solid var(--border)">${p.religion}</span>` : ''}
+        ${p?.love_language ? `<span style="padding:5px 12px;background:var(--cream-mid);border-radius:99px;font-size:11px;color:var(--text-secondary);border:1px solid var(--border)">${p.love_language}</span>` : ''}
+        ${p?.device_pref ? `<span style="padding:5px 12px;background:var(--cream-mid);border-radius:99px;font-size:11px;color:var(--text-secondary);border:1px solid var(--border)">${p.device_pref}</span>` : ''}
+      </div>
+      ${p?.current_obsession ? `<div style="background:var(--copper-pale);border-radius:var(--radius-md);padding:10px 12px;font-size:12px;color:var(--copper);font-weight:500;margin-top:12px">🔥 Currently obsessed with: ${p.current_obsession}</div>` : ''}
+    </div>
+    <div style="padding:14px;border-top:1px solid var(--border);text-align:center">
+      <a href="/pages/profile.html" style="font-size:13px;color:var(--copper);font-weight:500">Edit your profile →</a>
+    </div>
+  `;
+
+  document.getElementById('preview-modal').classList.remove('hidden');
+};
+
+window.closePreview = () => document.getElementById('preview-modal').classList.add('hidden');
+
+// ── Filters ───────────────────────────────────────────────────────────────────
 
 window.setFilter = function(el, type) {
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -464,11 +634,7 @@ window.viewStory = (id) => showToast('Stories feature coming soon!', '');
 
 async function checkMessages() {
   if (!currentUser) return;
-  const { count } = await supabase
-    .from('messages')
-    .select('id', { count: 'exact' })
-    .is('read_at', null)
-    .neq('sender_id', currentUser.id);
+  const { count } = await supabase.from('messages').select('id', { count: 'exact' }).is('read_at', null).neq('sender_id', currentUser.id);
   if (count > 0) {
     document.getElementById('nav-msg-badge').style.display = 'flex';
     document.getElementById('nav-msg-badge').textContent = count > 9 ? '9+' : count;
