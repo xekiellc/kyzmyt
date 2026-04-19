@@ -13,7 +13,7 @@ exports.handler = async (event) => {
   }
 
   const SUPABASE_URL = process.env.SUPABASE_URL || 'https://gnknifxhzriqwugmvoxf.supabase.co';
-  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   const res = await fetch(`${SUPABASE_URL}/rest/v1/verifications?user_id=eq.${userId}`, {
     headers: {
