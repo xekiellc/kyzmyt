@@ -23,17 +23,14 @@
     .thread-list { flex: 1; overflow-y: auto; padding: 8px 0; }
     .thread-item { display: flex; gap: 12px; padding: 14px 16px; cursor: pointer; transition: background 0.2s; border-bottom: 1px solid var(--border); }
     .thread-item:hover { background: var(--cream-mid); }
-    .thread-item.active { background: var(--copper-pale); }
     .thread-body { flex: 1; min-width: 0; }
     .thread-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
     .thread-name { font-size: 14px; font-weight: 500; color: var(--navy); }
     .thread-time { font-size: 11px; color: var(--text-muted); }
     .thread-preview { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .thread-preview.unread { color: var(--navy); font-weight: 500; }
-    .unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--copper); flex-shrink: 0; margin-top: 4px; }
-    .badge-mini { display: flex; gap: 4px; margin-top: 4px; }
     .active-indicator { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; }
     .active-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .badge-mini { display: flex; gap: 4px; margin-top: 4px; }
     .chat-container { display: flex; flex-direction: column; height: 100vh; }
     .chat-messages { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 80px; display: flex; flex-direction: column; gap: 12px; }
     .msg-group { display: flex; flex-direction: column; gap: 4px; }
@@ -44,17 +41,26 @@
     .msg-time.mine { text-align: right; }
     .msg-read { font-size: 10px; color: var(--copper); text-align: right; margin-right: 4px; }
     .chat-input-area { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); padding: 10px 14px; padding-bottom: max(10px, env(safe-area-inset-bottom)); display: flex; gap: 10px; align-items: flex-end; }
-    .chat-input { flex: 1; border: 1px solid var(--border-mid); border-radius: 20px; padding: 10px 16px; font-family: var(--font-body); font-size: 14px; resize: none; max-height: 120px; outline: none; background: var(--cream); color: var(--text-primary); }
+    .chat-input { flex: 1; border: 1px solid var(--border-mid); border-radius: 20px; padding: 10px 16px; font-family: var(--font-body); font-size: 14px; resize: none; max-height: 120px; outline: none; background: var(--cream); }
     .chat-input:focus { border-color: var(--copper); }
     .send-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--copper); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 16px; color: var(--white); transition: all 0.2s; }
-    .send-btn:hover { background: var(--copper-light); transform: scale(1.05); }
+    .send-btn:hover { transform: scale(1.05); }
     .icebreaker-bar { background: var(--copper-pale); border: 1px solid rgba(184,115,51,0.2); border-radius: var(--radius-md); padding: 10px 14px; margin: 8px 0; display: flex; gap: 10px; align-items: flex-start; }
-    .icebreaker-icon { font-size: 18px; flex-shrink: 0; }
-    .icebreaker-text { font-size: 12px; color: var(--copper); line-height: 1.5; }
-    .icebreaker-use { font-size: 12px; color: var(--copper); font-weight: 500; cursor: pointer; text-decoration: underline; }
     .match-header-card { background: var(--white); border-bottom: 1px solid var(--border); padding: 14px 16px; display: flex; gap: 12px; align-items: center; }
-    .match-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
     .compat-inline { font-size: 13px; color: var(--copper); font-weight: 500; }
+
+    /* Connection strength */
+    .connection-strength { background: var(--cream-mid); border-radius: var(--radius-md); padding: 10px 14px; margin: 8px 0; display: flex; align-items: center; gap: 10px; }
+    .strength-track { flex: 1; height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .strength-fill { height: 100%; background: var(--copper); border-radius: 99px; transition: width 1s ease; }
+    .strength-label { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+
+    /* Date ideas */
+    .date-ideas-bar { background: var(--navy); border-radius: var(--radius-md); padding: 12px 14px; margin: 8px 0; }
+    .date-idea-item { font-size: 13px; color: rgba(255,255,255,0.8); padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; gap: 8px; cursor: pointer; transition: color 0.2s; }
+    .date-idea-item:last-child { border-bottom: none; }
+    .date-idea-item:hover { color: var(--copper); }
+
     .checkin-btn { background: var(--danger-bg); border: 1px solid rgba(198,40,40,0.3); border-radius: var(--radius-md); padding: 10px 14px; font-size: 12px; color: var(--danger); cursor: pointer; display: flex; align-items: center; gap: 8px; margin: 8px 0; }
     .unmatch-btn { background: none; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 14px; font-size: 12px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; margin: 4px 0; text-align: left; font-family: var(--font-body); }
     .unmatch-btn:hover { border-color: var(--danger); color: var(--danger); }
@@ -64,7 +70,7 @@
 
 <div id="toast-container" class="toast-container"></div>
 
-<!-- Thread list view -->
+<!-- Thread list -->
 <div id="threads-view" class="msg-page">
   <div class="msg-header">
     <button class="back-btn" onclick="location.href='/pages/app.html'">←</button>
@@ -90,6 +96,7 @@
       <div class="msg-header-name" id="chat-name">—</div>
       <div class="msg-header-status" id="chat-status">Verified member</div>
     </div>
+    <div class="icon-btn" onclick="generateDateIdeas()" style="flex-shrink:0;font-size:14px" title="Plan a date">🗓</div>
     <div class="icon-btn" onclick="showSafetyOptions()" style="flex-shrink:0">🛡</div>
   </div>
 
@@ -97,7 +104,6 @@
     <div class="avatar avatar-lg avatar-copper" id="match-their-avatar"></div>
     <div style="flex:1">
       <div style="font-size:13px;font-weight:500;color:var(--navy)" id="match-their-name"></div>
-      <div class="match-badges" id="match-badges"></div>
       <div class="compat-inline" id="match-compat"></div>
     </div>
   </div>
@@ -117,7 +123,7 @@
     <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:16px">Safety options</h3>
     <div class="checkin-btn" onclick="setupCheckin()">
       📍 Set up date check-in
-      <div style="font-size:11px;color:var(--text-muted);margin-top:2px">We'll check in during your date and alert a trusted contact if you don't respond</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:2px">We'll check in and alert a trusted contact if you don't respond</div>
     </div>
     <button class="unmatch-btn" onclick="doUnmatch()">💔 Unmatch this person</button>
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
@@ -132,7 +138,7 @@
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:8px">Date check-in</h3>
-    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.5">Set a check-in time for your date. If you don't respond, we'll alert your trusted contact.</p>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.5">Set a check-in time. If you don't respond, we'll alert your trusted contact.</p>
     <div class="form-group">
       <label class="form-label">Check-in time</label>
       <input type="datetime-local" class="form-input" id="checkin-time" />
@@ -141,15 +147,23 @@
       <label class="form-label">Trusted contact phone number</label>
       <input type="tel" class="form-input" id="trusted-contact" placeholder="+1 (555) 000-0000" />
     </div>
-    <div style="background:var(--info-bg);border-radius:var(--radius-md);padding:12px;font-size:12px;color:var(--info);margin-bottom:16px">
-      At your check-in time, we'll send you a text. If you don't reply within 15 minutes, your trusted contact receives your last known location.
-    </div>
     <button class="btn btn-copper btn-full btn-lg" onclick="saveCheckin()">Set Check-in</button>
   </div>
 </div>
 
+<!-- Date ideas modal -->
+<div id="date-modal" class="modal-overlay hidden" onclick="closeDateModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:8px">Date ideas</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Based on your profiles. Tap one to suggest it.</p>
+    <div id="date-ideas-list"></div>
+    <button class="btn btn-ghost btn-full" style="margin-top:12px" onclick="closeDateModal()">Close</button>
+  </div>
+</div>
+
 <script type="module">
-import { supabase, requireVerified, getMatches, getMessages, sendMessage, markMessagesRead, unmatch, subscribeToMessages, createCheckin, showToast, getInitials, avatarColor, formatRelativeTime, calculateCompatibility, getActiveStatus } from '/js/supabase.js';
+import { supabase, requireVerified, getMatches, getMessages, sendMessage, markMessagesRead, unmatch, subscribeToMessages, createCheckin, getConversationStrength, showToast, getInitials, avatarColor, formatRelativeTime, calculateCompatibility, getActiveStatus } from '/js/supabase.js';
 
 let currentUser = null;
 let currentProfile = null;
@@ -170,7 +184,6 @@ async function init() {
   const matchParam = params.get('match');
   if (matchParam) openChat(matchParam);
 
-  // Use icebreaker from compatibility page if set
   const icebreaker = sessionStorage.getItem('kyzmyt_icebreaker');
   if (icebreaker) {
     document.getElementById('msg-input').value = icebreaker;
@@ -196,12 +209,11 @@ async function loadThreads() {
 
   list.innerHTML = matches.map(m => {
     const other = getOther(m);
-    const initials = getInitials(other.display_name);
     const color = avatarColor(other.display_name);
     const activeStatus = getActiveStatus(other.last_active);
     return `
       <div class="thread-item" onclick="openChat('${m.id}')">
-        <div class="avatar avatar-md" style="background:${color};color:white;width:44px;height:44px;font-family:var(--font-display);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;border-radius:50%;flex-shrink:0">${initials}</div>
+        <div style="background:${color};color:white;width:44px;height:44px;font-family:var(--font-display);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;border-radius:50%;flex-shrink:0">${getInitials(other.display_name)}</div>
         <div class="thread-body">
           <div class="thread-top">
             <div class="thread-name">${other.display_name || 'Member'}</div>
@@ -209,9 +221,7 @@ async function loadThreads() {
           </div>
           ${activeStatus ? `<div class="active-indicator"><div class="active-dot" style="background:${activeStatus.color}"></div><span style="font-size:11px;color:${activeStatus.color}">${activeStatus.label}</span></div>` : ''}
           <div class="thread-preview">You matched — say something real</div>
-          <div class="badge-mini">
-            <span class="badge badge-verified" style="font-size:9px;padding:2px 5px">✓ Verified</span>
-          </div>
+          <div class="badge-mini"><span class="badge badge-verified" style="font-size:9px;padding:2px 5px">✓ Verified</span></div>
         </div>
       </div>`;
   }).join('');
@@ -229,7 +239,6 @@ window.openChat = async function(matchId) {
   document.getElementById('chat-name').textContent = other.display_name || 'Member';
   document.getElementById('chat-status').textContent = activeStatus ? activeStatus.label : 'Verified member';
   if (activeStatus) document.getElementById('chat-status').style.color = activeStatus.color;
-
   document.getElementById('chat-avatar').textContent = getInitials(other.display_name);
   document.getElementById('chat-avatar').style.background = avatarColor(other.display_name);
   document.getElementById('match-their-avatar').textContent = getInitials(other.display_name);
@@ -246,8 +255,6 @@ window.openChat = async function(matchId) {
 
   await loadMessages();
   subscribeToNewMessages();
-
-  // Mark messages as read
   await markMessagesRead(matchId, currentUser.id);
 };
 
@@ -275,12 +282,26 @@ async function loadMessages() {
         <div style="font-size:32px;margin-bottom:8px">💫</div>
         <div style="font-size:13px;color:var(--text-muted)">You matched! Be the first to say something real.</div>
       </div>
-      <div id="icebreaker-container"></div>`;
+      <div id="icebreaker-container"></div>
+      <div id="strength-container"></div>`;
     generateIcebreaker();
     return;
   }
 
-  container.innerHTML = `<div id="icebreaker-container"></div>` + msgs.map((m, idx) => renderMessage(m, msgs, idx)).join('');
+  // Show connection strength if 3+ messages
+  let strengthHtml = '';
+  if (msgs.length >= 3) {
+    const strength = await getConversationStrength(currentMatchId);
+    strengthHtml = `
+      <div class="connection-strength">
+        <div style="font-size:12px;color:var(--text-muted)">Connection strength:</div>
+        <div class="strength-track"><div class="strength-fill" style="width:${strength.score}%"></div></div>
+        <div class="strength-label">${strength.label}</div>
+      </div>`;
+  }
+
+  container.innerHTML = `<div id="icebreaker-container"></div>${strengthHtml}` +
+    msgs.map((m, idx) => renderMessage(m, msgs, idx)).join('');
   container.scrollTop = container.scrollHeight;
 }
 
@@ -288,7 +309,6 @@ function renderMessage(msg, allMsgs, idx) {
   const isMine = msg.sender_id === currentUser.id;
   const isLast = idx === allMsgs.length - 1;
   const isRead = msg.read_at !== null;
-
   return `
     <div class="msg-group" style="align-items:${isMine ? 'flex-end' : 'flex-start'}">
       <div class="msg-bubble ${isMine ? 'msg-mine' : 'msg-theirs'}">${escapeHTML(msg.content)}</div>
@@ -307,9 +327,8 @@ function subscribeToNewMessages() {
     const container = document.getElementById('chat-messages');
     const msgs = await getMessages(currentMatchId);
     const idx = msgs.findIndex(m => m.id === payload.new.id);
-    container.insertAdjacentHTML('beforeend', renderMessage(payload.new, msgs, idx));
+    container.insertAdjacentHTML('beforeend', renderMessage(payload.new, msgs, idx >= 0 ? idx : msgs.length - 1));
     container.scrollTop = container.scrollHeight;
-    // Mark as read if it's from the other person
     if (payload.new.sender_id !== currentUser.id) {
       await markMessagesRead(currentMatchId, currentUser.id);
     }
@@ -322,51 +341,84 @@ window.sendMsg = async function() {
   if (!content) return;
   input.value = '';
   autoResize(input);
-
   const { data: msg, error } = await sendMessage(currentMatchId, currentUser.id, content);
   if (error) { showToast('Failed to send message', 'error'); return; }
-
-  // Optimistically render
   const container = document.getElementById('chat-messages');
   const msgs = await getMessages(currentMatchId);
-  const idx = msgs.length - 1;
-  container.insertAdjacentHTML('beforeend', renderMessage(msg, msgs, idx));
+  container.insertAdjacentHTML('beforeend', renderMessage(msg, msgs, msgs.length - 1));
   container.scrollTop = container.scrollHeight;
 };
 
-window.handleMsgKeydown = function(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
-};
-
-window.autoResize = function(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-};
+window.handleMsgKeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } };
+window.autoResize = (el) => { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; };
 
 async function generateIcebreaker() {
   const container = document.getElementById('icebreaker-container');
   if (!container) return;
   const icebreakers = [
     "What's the last thing you were genuinely excited about?",
-    "Coffee order — and that tells me everything I need to know about you.",
-    "What's something on your bucket list that would surprise most people?",
-    "What's one opinion you hold that most people would disagree with?",
+    "Coffee order — and that tells me everything.",
+    "What's on your bucket list that would surprise most people?",
     "Best meal you've ever had — go.",
+    "What's one opinion you hold that most people disagree with?",
   ];
   const random = icebreakers[Math.floor(Math.random() * icebreakers.length)];
   container.innerHTML = `
     <div class="icebreaker-bar">
-      <div class="icebreaker-icon">💡</div>
+      <div class="icebreaker-icon" style="font-size:18px;flex-shrink:0">💡</div>
       <div>
-        <div class="icebreaker-text">"${random}"</div>
-        <div class="icebreaker-use" onclick="useIcebreaker('${random.replace(/'/g,"\\'")}')">Use this opener →</div>
+        <div style="font-size:12px;color:var(--copper);line-height:1.5">"${random}"</div>
+        <div style="font-size:12px;color:var(--copper);font-weight:500;cursor:pointer;text-decoration:underline;margin-top:4px" onclick="useIcebreaker('${random.replace(/'/g,"\\'")}')">Use this opener →</div>
       </div>
     </div>`;
 }
 
-window.useIcebreaker = function(text) {
-  document.getElementById('msg-input').value = text;
+window.useIcebreaker = (text) => { document.getElementById('msg-input').value = text; document.getElementById('msg-input').focus(); };
+
+// ── Date ideas ────────────────────────────────────────────────────────────────
+
+window.generateDateIdeas = async function() {
+  const other = currentOtherUser;
+  const ideas = generateLocalDateIdeas(currentProfile, other);
+  const list = document.getElementById('date-ideas-list');
+  list.innerHTML = ideas.map(idea => `
+    <div class="date-idea-item" onclick="suggestDate('${idea.replace(/'/g,"\\'")}')">
+      <span>${idea.split(' ')[0]}</span>
+      <span>${idea.split(' ').slice(1).join(' ')}</span>
+    </div>`).join('');
+  document.getElementById('date-modal').classList.remove('hidden');
+};
+
+function generateLocalDateIdeas(profileA, profileB) {
+  const ideas = [
+    '☕ Coffee at a local café — low pressure, easy to extend',
+    '🌿 Walk through Cuyahoga Valley National Park',
+    '🍺 Trivia night at a local bar',
+    '🎨 Paint and sip class — fun and creative',
+    '🌾 West Side Market on a Saturday morning',
+    '🎳 Bowling — low stakes, competitive energy',
+    '🍕 Pizza and a walk around Ohio City',
+    '🎬 Drive-in movie at a local spot',
+    '🧗 Indoor climbing — adventurous first date',
+    '🍦 Ice cream and a sunset walk',
+  ];
+  // Add personalized ones based on profiles
+  if (profileA?.religion === profileB?.religion && profileA?.religion)
+    ideas.unshift(`🙏 Attend a ${profileA.religion} event together`);
+  if (profileA?.device_pref === 'iPhone' && profileB?.device_pref === 'iPhone')
+    ideas.push('📱 iPhone photo walk — see who takes better shots');
+  return ideas.slice(0, 6);
+}
+
+window.suggestDate = function(idea) {
+  document.getElementById('msg-input').value = `How about this for a date idea: ${idea}`;
   document.getElementById('msg-input').focus();
+  document.getElementById('date-modal').classList.add('hidden');
+};
+
+window.closeDateModal = (e) => {
+  if (!e || e.target === document.getElementById('date-modal'))
+    document.getElementById('date-modal').classList.add('hidden');
 };
 
 // ── Safety ────────────────────────────────────────────────────────────────────
@@ -404,7 +456,7 @@ window.reportUser = async function() {
 };
 
 window.blockUser = async function() {
-  if (!confirm('Block this person? They will no longer be able to contact you.')) return;
+  if (!confirm('Block this person?')) return;
   await supabase.from('blocks').insert({ blocker_id: currentUser.id, blocked_id: currentOtherUser?.user_id });
   await unmatch(currentMatchId, currentUser.id);
   showToast('User blocked.', 'success');
