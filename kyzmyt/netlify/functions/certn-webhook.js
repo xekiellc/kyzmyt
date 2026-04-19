@@ -16,13 +16,12 @@ exports.handler = async (event) => {
   }
 
   const SUPABASE_URL = process.env.SUPABASE_URL || 'https://gnknifxhzriqwugmvoxf.supabase.co';
-  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  // Extract result from Certn webhook payload
   const orderId = payload.id || payload.order_id;
-  const status = payload.status; // 'COMPLETE', 'PENDING', 'ERROR'
+  const status = payload.status;
   const userId = payload.external_id;
-  const result = payload.result; // 'CLEAR', 'CONSIDER', 'SUSPENDED'
+  const result = payload.result;
 
   if (!userId) {
     console.error('No external_id in Certn webhook payload');
@@ -33,7 +32,6 @@ exports.handler = async (event) => {
   const flaggedForReview = result === 'CONSIDER';
   const permanentBlock = result === 'SUSPENDED';
 
-  // Update verifications table
   await fetch(`${SUPABASE_URL}/rest/v1/verifications?user_id=eq.${userId}`, {
     method: 'PATCH',
     headers: {
@@ -53,7 +51,6 @@ exports.handler = async (event) => {
     })
   });
 
-  // If clear — auto-approve the member
   if (backgroundClear) {
     await fetch(`${SUPABASE_URL}/rest/v1/profiles?user_id=eq.${userId}`, {
       method: 'PATCH',
@@ -70,11 +67,9 @@ exports.handler = async (event) => {
       })
     });
 
-    // Send welcome email via Resend
     await sendVerificationEmail(userId, 'approved');
   }
 
-  // If suspended (serious offense) — permanent block
   if (permanentBlock) {
     await fetch(`${SUPABASE_URL}/rest/v1/profiles?user_id=eq.${userId}`, {
       method: 'PATCH',
@@ -95,10 +90,8 @@ exports.handler = async (event) => {
     await sendVerificationEmail(userId, 'rejected');
   }
 
-  // If consider — flag for human review, don't auto-approve or auto-reject
   if (flaggedForReview) {
     await sendVerificationEmail(userId, 'review');
-    // Admin dashboard will show this in the pending review queue
   }
 
   return {
@@ -111,9 +104,8 @@ async function sendVerificationEmail(userId, outcome) {
   const RESEND_KEY = process.env.RESEND_API_KEY;
   if (!RESEND_KEY) return;
 
-  // Get user email from Supabase
   const SUPABASE_URL = process.env.SUPABASE_URL || 'https://gnknifxhzriqwugmvoxf.supabase.co';
-  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   const profileRes = await fetch(`${SUPABASE_URL}/rest/v1/profiles?user_id=eq.${userId}&select=display_name,email`, {
     headers: {
