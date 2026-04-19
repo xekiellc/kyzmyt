@@ -32,6 +32,8 @@
     .thread-preview.unread { color: var(--navy); font-weight: 500; }
     .unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--copper); flex-shrink: 0; margin-top: 4px; }
     .badge-mini { display: flex; gap: 4px; margin-top: 4px; }
+    .active-indicator { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; }
+    .active-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
     .chat-container { display: flex; flex-direction: column; height: 100vh; }
     .chat-messages { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 80px; display: flex; flex-direction: column; gap: 12px; }
     .msg-group { display: flex; flex-direction: column; gap: 4px; }
@@ -40,6 +42,7 @@
     .msg-theirs { background: var(--white); color: var(--navy); border: 1px solid var(--border); border-radius: 18px 18px 18px 4px; align-self: flex-start; }
     .msg-time { font-size: 10px; color: var(--text-muted); margin: 2px 4px; }
     .msg-time.mine { text-align: right; }
+    .msg-read { font-size: 10px; color: var(--copper); text-align: right; margin-right: 4px; }
     .chat-input-area { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); padding: 10px 14px; padding-bottom: max(10px, env(safe-area-inset-bottom)); display: flex; gap: 10px; align-items: flex-end; }
     .chat-input { flex: 1; border: 1px solid var(--border-mid); border-radius: 20px; padding: 10px 16px; font-family: var(--font-body); font-size: 14px; resize: none; max-height: 120px; outline: none; background: var(--cream); color: var(--text-primary); }
     .chat-input:focus { border-color: var(--copper); }
@@ -49,19 +52,12 @@
     .icebreaker-icon { font-size: 18px; flex-shrink: 0; }
     .icebreaker-text { font-size: 12px; color: var(--copper); line-height: 1.5; }
     .icebreaker-use { font-size: 12px; color: var(--copper); font-weight: 500; cursor: pointer; text-decoration: underline; }
-    .safety-bar { background: var(--danger-bg); border: 1px solid rgba(198,40,40,0.2); border-radius: var(--radius-md); padding: 10px 14px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; }
-    .safety-text { font-size: 12px; color: var(--danger); }
     .match-header-card { background: var(--white); border-bottom: 1px solid var(--border); padding: 14px 16px; display: flex; gap: 12px; align-items: center; }
     .match-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
     .compat-inline { font-size: 13px; color: var(--copper); font-weight: 500; }
-    .date-dare { background: var(--navy); border-radius: var(--radius-md); padding: 14px; margin: 12px 0; color: var(--white); }
-    .dare-label { font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
-    .dare-text { font-size: 14px; line-height: 1.5; }
-    .dare-actions { display: flex; gap: 8px; margin-top: 10px; }
-    .dare-btn { flex: 1; padding: 8px; border-radius: var(--radius-md); font-size: 12px; font-weight: 500; cursor: pointer; border: none; font-family: var(--font-body); }
-    .dare-accept { background: var(--copper); color: var(--white); }
-    .dare-skip { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
     .checkin-btn { background: var(--danger-bg); border: 1px solid rgba(198,40,40,0.3); border-radius: var(--radius-md); padding: 10px 14px; font-size: 12px; color: var(--danger); cursor: pointer; display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+    .unmatch-btn { background: none; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 14px; font-size: 12px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; margin: 4px 0; text-align: left; font-family: var(--font-body); }
+    .unmatch-btn:hover { border-color: var(--danger); color: var(--danger); }
   </style>
 </head>
 <body>
@@ -77,7 +73,6 @@
       <div class="msg-header-status" id="thread-count">Loading...</div>
     </div>
   </div>
-
   <div class="thread-list" id="thread-list">
     <div style="text-align:center;padding:40px;color:var(--text-muted)">
       <div class="spinner" style="margin:0 auto 12px"></div>
@@ -98,7 +93,6 @@
     <div class="icon-btn" onclick="showSafetyOptions()" style="flex-shrink:0">🛡</div>
   </div>
 
-  <!-- Match info header -->
   <div class="match-header-card" id="match-info-header">
     <div class="avatar avatar-lg avatar-copper" id="match-their-avatar"></div>
     <div style="flex:1">
@@ -108,9 +102,7 @@
     </div>
   </div>
 
-  <div class="chat-messages" id="chat-messages">
-    <!-- Messages rendered by JS -->
-  </div>
+  <div class="chat-messages" id="chat-messages"></div>
 
   <div class="chat-input-area">
     <textarea class="chat-input" id="msg-input" placeholder="Say something real..." rows="1" onkeydown="handleMsgKeydown(event)" oninput="autoResize(this)"></textarea>
@@ -127,14 +119,15 @@
       📍 Set up date check-in
       <div style="font-size:11px;color:var(--text-muted);margin-top:2px">We'll check in during your date and alert a trusted contact if you don't respond</div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+    <button class="unmatch-btn" onclick="doUnmatch()">💔 Unmatch this person</button>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
       <button class="btn btn-outline btn-full" onclick="reportUser()">Report this profile</button>
       <button class="btn btn-danger btn-full" onclick="blockUser()">Block this person</button>
     </div>
   </div>
 </div>
 
-<!-- Check-in setup modal -->
+<!-- Check-in modal -->
 <div id="checkin-modal" class="modal-overlay hidden" onclick="closeCheckin(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
@@ -156,12 +149,13 @@
 </div>
 
 <script type="module">
-import { supabase, requireVerified, getMatches, getMessages, sendMessage, subscribeToMessages, createCheckin, showToast, getInitials, avatarColor, formatRelativeTime, calculateCompatibility } from '/js/supabase.js';
+import { supabase, requireVerified, getMatches, getMessages, sendMessage, markMessagesRead, unmatch, subscribeToMessages, createCheckin, showToast, getInitials, avatarColor, formatRelativeTime, calculateCompatibility, getActiveStatus } from '/js/supabase.js';
 
 let currentUser = null;
 let currentProfile = null;
 let currentMatchId = null;
 let currentMatch = null;
+let currentOtherUser = null;
 let messageSubscription = null;
 let matches = [];
 
@@ -172,10 +166,16 @@ async function init() {
   currentProfile = result.profile;
   await loadThreads();
 
-  // If coming from match modal
   const params = new URLSearchParams(window.location.search);
   const matchParam = params.get('match');
   if (matchParam) openChat(matchParam);
+
+  // Use icebreaker from compatibility page if set
+  const icebreaker = sessionStorage.getItem('kyzmyt_icebreaker');
+  if (icebreaker) {
+    document.getElementById('msg-input').value = icebreaker;
+    sessionStorage.removeItem('kyzmyt_icebreaker');
+  }
 }
 
 async function loadThreads() {
@@ -195,19 +195,19 @@ async function loadThreads() {
   }
 
   list.innerHTML = matches.map(m => {
-    const other = m.user_a === currentUser.id
-      ? (m['profiles!matches_user_b_fkey'] || {})
-      : (m['profiles!matches_user_a_fkey'] || {});
+    const other = getOther(m);
     const initials = getInitials(other.display_name);
     const color = avatarColor(other.display_name);
+    const activeStatus = getActiveStatus(other.last_active);
     return `
       <div class="thread-item" onclick="openChat('${m.id}')">
-        <div class="avatar avatar-md" style="background:${color};color:white;width:44px;height:44px;font-family:var(--font-display);font-size:16px;font-weight:600">${initials}</div>
+        <div class="avatar avatar-md" style="background:${color};color:white;width:44px;height:44px;font-family:var(--font-display);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;border-radius:50%;flex-shrink:0">${initials}</div>
         <div class="thread-body">
           <div class="thread-top">
             <div class="thread-name">${other.display_name || 'Member'}</div>
             <div class="thread-time">${formatRelativeTime(m.matched_at)}</div>
           </div>
+          ${activeStatus ? `<div class="active-indicator"><div class="active-dot" style="background:${activeStatus.color}"></div><span style="font-size:11px;color:${activeStatus.color}">${activeStatus.label}</span></div>` : ''}
           <div class="thread-preview">You matched — say something real</div>
           <div class="badge-mini">
             <span class="badge badge-verified" style="font-size:9px;padding:2px 5px">✓ Verified</span>
@@ -221,12 +221,15 @@ window.openChat = async function(matchId) {
   currentMatchId = matchId;
   const match = matches.find(m => m.id === matchId);
   currentMatch = match;
+  currentOtherUser = getOther(match);
 
-  const other = match?.user_a === currentUser.id
-    ? (match['profiles!matches_user_b_fkey'] || {})
-    : (match['profiles!matches_user_a_fkey'] || {});
+  const other = currentOtherUser;
+  const activeStatus = getActiveStatus(other.last_active);
 
   document.getElementById('chat-name').textContent = other.display_name || 'Member';
+  document.getElementById('chat-status').textContent = activeStatus ? activeStatus.label : 'Verified member';
+  if (activeStatus) document.getElementById('chat-status').style.color = activeStatus.color;
+
   document.getElementById('chat-avatar').textContent = getInitials(other.display_name);
   document.getElementById('chat-avatar').style.background = avatarColor(other.display_name);
   document.getElementById('match-their-avatar').textContent = getInitials(other.display_name);
@@ -243,14 +246,24 @@ window.openChat = async function(matchId) {
 
   await loadMessages();
   subscribeToNewMessages();
-  generateIcebreaker(other);
+
+  // Mark messages as read
+  await markMessagesRead(matchId, currentUser.id);
 };
 
 window.showThreads = function() {
   document.getElementById('chat-view').classList.add('hidden');
   document.getElementById('threads-view').classList.remove('hidden');
   if (messageSubscription) { messageSubscription.unsubscribe(); messageSubscription = null; }
+  loadThreads();
 };
+
+function getOther(match) {
+  if (!match) return {};
+  return match.user_a === currentUser.id
+    ? (match['profiles!matches_user_b_fkey'] || {})
+    : (match['profiles!matches_user_a_fkey'] || {});
+}
 
 async function loadMessages() {
   const msgs = await getMessages(currentMatchId);
@@ -262,22 +275,25 @@ async function loadMessages() {
         <div style="font-size:32px;margin-bottom:8px">💫</div>
         <div style="font-size:13px;color:var(--text-muted)">You matched! Be the first to say something real.</div>
       </div>
-      <div id="icebreaker-container"></div>
-      <div id="dare-container"></div>`;
+      <div id="icebreaker-container"></div>`;
     generateIcebreaker();
     return;
   }
 
-  container.innerHTML = `<div id="icebreaker-container"></div><div id="dare-container"></div>` + msgs.map(m => renderMessage(m)).join('');
+  container.innerHTML = `<div id="icebreaker-container"></div>` + msgs.map((m, idx) => renderMessage(m, msgs, idx)).join('');
   container.scrollTop = container.scrollHeight;
 }
 
-function renderMessage(msg) {
+function renderMessage(msg, allMsgs, idx) {
   const isMine = msg.sender_id === currentUser.id;
+  const isLast = idx === allMsgs.length - 1;
+  const isRead = msg.read_at !== null;
+
   return `
     <div class="msg-group" style="align-items:${isMine ? 'flex-end' : 'flex-start'}">
       <div class="msg-bubble ${isMine ? 'msg-mine' : 'msg-theirs'}">${escapeHTML(msg.content)}</div>
       <div class="msg-time ${isMine ? 'mine' : ''}">${formatRelativeTime(msg.sent_at)}</div>
+      ${isMine && isLast && isRead ? '<div class="msg-read">Seen ✓</div>' : ''}
     </div>`;
 }
 
@@ -287,10 +303,16 @@ function escapeHTML(str) {
 
 function subscribeToNewMessages() {
   if (messageSubscription) messageSubscription.unsubscribe();
-  messageSubscription = subscribeToMessages(currentMatchId, (payload) => {
+  messageSubscription = subscribeToMessages(currentMatchId, async (payload) => {
     const container = document.getElementById('chat-messages');
-    container.insertAdjacentHTML('beforeend', renderMessage(payload.new));
+    const msgs = await getMessages(currentMatchId);
+    const idx = msgs.findIndex(m => m.id === payload.new.id);
+    container.insertAdjacentHTML('beforeend', renderMessage(payload.new, msgs, idx));
     container.scrollTop = container.scrollHeight;
+    // Mark as read if it's from the other person
+    if (payload.new.sender_id !== currentUser.id) {
+      await markMessagesRead(currentMatchId, currentUser.id);
+    }
   });
 }
 
@@ -301,8 +323,15 @@ window.sendMsg = async function() {
   input.value = '';
   autoResize(input);
 
-  const { error } = await sendMessage(currentMatchId, currentUser.id, content);
-  if (error) showToast('Failed to send message', 'error');
+  const { data: msg, error } = await sendMessage(currentMatchId, currentUser.id, content);
+  if (error) { showToast('Failed to send message', 'error'); return; }
+
+  // Optimistically render
+  const container = document.getElementById('chat-messages');
+  const msgs = await getMessages(currentMatchId);
+  const idx = msgs.length - 1;
+  container.insertAdjacentHTML('beforeend', renderMessage(msg, msgs, idx));
+  container.scrollTop = container.scrollHeight;
 };
 
 window.handleMsgKeydown = function(e) {
@@ -314,17 +343,16 @@ window.autoResize = function(el) {
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 };
 
-async function generateIcebreaker(otherProfile) {
+async function generateIcebreaker() {
   const container = document.getElementById('icebreaker-container');
   if (!container) return;
-
   const icebreakers = [
-    "You both have strong opinions about things — what's one thing you'd argue about for hours but still enjoy?",
     "What's the last thing you were genuinely excited about?",
-    "Coffee order and that tells me everything I need to know — what's yours?",
-    "What's something on your bucket list that most people would find surprising?"
+    "Coffee order — and that tells me everything I need to know about you.",
+    "What's something on your bucket list that would surprise most people?",
+    "What's one opinion you hold that most people would disagree with?",
+    "Best meal you've ever had — go.",
   ];
-
   const random = icebreakers[Math.floor(Math.random() * icebreakers.length)];
   container.innerHTML = `
     <div class="icebreaker-bar">
@@ -341,6 +369,8 @@ window.useIcebreaker = function(text) {
   document.getElementById('msg-input').focus();
 };
 
+// ── Safety ────────────────────────────────────────────────────────────────────
+
 window.showSafetyOptions = () => document.getElementById('safety-modal').classList.remove('hidden');
 window.closeSafety = (e) => { if (!e || e.target === document.getElementById('safety-modal')) document.getElementById('safety-modal').classList.add('hidden'); };
 window.setupCheckin = () => { document.getElementById('safety-modal').classList.add('hidden'); document.getElementById('checkin-modal').classList.remove('hidden'); };
@@ -356,17 +386,27 @@ window.saveCheckin = async function() {
   document.getElementById('checkin-modal').classList.add('hidden');
 };
 
+window.doUnmatch = async function() {
+  if (!confirm(`Unmatch with ${currentOtherUser?.display_name || 'this person'}? This cannot be undone.`)) return;
+  const { error } = await unmatch(currentMatchId, currentUser.id);
+  if (error) { showToast('Error unmatching', 'error'); return; }
+  showToast('Unmatched.', 'success');
+  document.getElementById('safety-modal').classList.add('hidden');
+  showThreads();
+};
+
 window.reportUser = async function() {
   const reason = prompt('Please briefly describe your concern:');
   if (!reason) return;
-  await supabase.from('reports').insert({ reporter_id: currentUser.id, reported_id: currentMatchId, reason, created_at: new Date().toISOString() });
+  await supabase.from('reports').insert({ reporter_id: currentUser.id, reported_id: currentOtherUser?.user_id, reason, created_at: new Date().toISOString() });
   showToast('Report submitted. We review all reports within 24 hours.', 'success');
   document.getElementById('safety-modal').classList.add('hidden');
 };
 
 window.blockUser = async function() {
   if (!confirm('Block this person? They will no longer be able to contact you.')) return;
-  await supabase.from('blocks').insert({ blocker_id: currentUser.id, blocked_id: currentMatchId });
+  await supabase.from('blocks').insert({ blocker_id: currentUser.id, blocked_id: currentOtherUser?.user_id });
+  await unmatch(currentMatchId, currentUser.id);
   showToast('User blocked.', 'success');
   showThreads();
 };
