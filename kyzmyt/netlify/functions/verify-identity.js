@@ -70,8 +70,6 @@ exports.handler = async (event) => {
     results.layer2_azure = azureResult;
 
     if (!azureResult.passed) {
-      // AWS passed but Azure failed — disagreement between systems
-      // Flag for human review rather than auto-reject
       results.flagged_for_review = true;
       results.failure_reason = 'AWS/Azure disagreement — flagged for human review';
       await updateSupabase(userId, results);
@@ -94,7 +92,6 @@ exports.handler = async (event) => {
   }
 
   // ── LAYER 3: CERTN BACKGROUND CHECK ──────────────────────────────────────
-  // Only fires if both facial match layers passed
   try {
     const certnResult = await runCertnCheck({ firstName, lastName, dob, ssn4, zipCode, userId });
     results.layer3_certn = certnResult;
@@ -139,19 +136,18 @@ exports.handler = async (event) => {
 async function runAWSFacialMatch(idPhotoBase64, selfieBase64) {
   const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY_ID;
   const AWS_SECRET_KEY = process.env.AWS_SECRET_ACCESS_KEY;
-  const AWS_REGION = process.env.AWS_REGION || 'us-east-1';
+  const AWS_REGION = process.env.KYZMYT_AWS_REGION || 'us-east-1';
 
   if (!AWS_ACCESS_KEY || !AWS_SECRET_KEY) {
     throw new Error('AWS credentials not configured');
   }
 
-  // AWS Rekognition CompareFaces endpoint
   const endpoint = `https://rekognition.${AWS_REGION}.amazonaws.com/`;
 
   const payload = {
     SourceImage: { Bytes: idPhotoBase64 },
     TargetImage: { Bytes: selfieBase64 },
-    SimilarityThreshold: 90 // require 90%+ match confidence
+    SimilarityThreshold: 90
   };
 
   const response = await fetch(endpoint, {
@@ -159,8 +155,6 @@ async function runAWSFacialMatch(idPhotoBase64, selfieBase64) {
     headers: {
       'Content-Type': 'application/x-amz-json-1.1',
       'X-Amz-Target': 'RekognitionService.CompareFaces',
-      // AWS Signature V4 signing handled via AWS SDK in production
-      // For now structured for SDK integration
     },
     body: JSON.stringify(payload)
   });
@@ -192,7 +186,6 @@ async function runAzureFacialMatch(idPhotoBase64, selfieBase64) {
     throw new Error('Azure Face API credentials not configured');
   }
 
-  // Step 1: Detect face in ID photo
   const detectID = await fetch(`${AZURE_ENDPOINT}/face/v1.0/detect?returnFaceId=true`, {
     method: 'POST',
     headers: {
@@ -207,7 +200,6 @@ async function runAzureFacialMatch(idPhotoBase64, selfieBase64) {
   if (!idFaces.length) return { passed: false, confidence: 0, error: 'No face detected in ID photo' };
   const idFaceId = idFaces[0].faceId;
 
-  // Step 2: Detect face in selfie
   const detectSelfie = await fetch(`${AZURE_ENDPOINT}/face/v1.0/detect?returnFaceId=true`, {
     method: 'POST',
     headers: {
@@ -222,7 +214,6 @@ async function runAzureFacialMatch(idPhotoBase64, selfieBase64) {
   if (!selfieFaces.length) return { passed: false, confidence: 0, error: 'No face detected in selfie' };
   const selfieFaceId = selfieFaces[0].faceId;
 
-  // Step 3: Verify faces match
   const verify = await fetch(`${AZURE_ENDPOINT}/face/v1.0/verify`, {
     method: 'POST',
     headers: {
@@ -250,7 +241,6 @@ async function runCertnCheck({ firstName, lastName, dob, ssn4, zipCode, userId }
     throw new Error('Certn API key not configured');
   }
 
-  // Create background check order
   const response = await fetch(`${CERTN_BASE_URL}/v1/orders/`, {
     method: 'POST',
     headers: {
@@ -277,10 +267,8 @@ async function runCertnCheck({ firstName, lastName, dob, ssn4, zipCode, userId }
 
   const data = await response.json();
 
-  // Certn check is async — it fires a webhook when complete
-  // Return pending status — webhook will update Supabase when done
   return {
-    passed: null, // null = pending, true = clear, false = not clear
+    passed: null,
     status: 'pending',
     backgroundClear: null,
     certnOrderId: data.id || data.order_id,
@@ -291,10 +279,10 @@ async function runCertnCheck({ firstName, lastName, dob, ssn4, zipCode, userId }
 // ── SUPABASE UPDATE ───────────────────────────────────────────────────────────
 async function updateSupabase(userId, results) {
   const SUPABASE_URL = process.env.SUPABASE_URL || 'https://gnknifxhzriqwugmvoxf.supabase.co';
-  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!SUPABASE_SERVICE_KEY) {
-    console.error('Supabase service key not configured');
+    console.error('Supabase service role key not configured');
     return;
   }
 
