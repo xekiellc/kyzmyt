@@ -49,6 +49,8 @@ export async function requireVerified() {
     window.location.href = '/pages/verify.html';
     return null;
   }
+  // Update last_active
+  await supabase.from('profiles').update({ last_active: new Date().toISOString() }).eq('user_id', user.id);
   return { user, profile };
 }
 
@@ -83,29 +85,83 @@ export async function getVerification(userId) {
   return data;
 }
 
+// ── Profile completeness ──────────────────────────────────────────────────────
+
+export function calculateProfileCompleteness(profile, photoCount = 0) {
+  const checks = [
+    { key: 'bio', label: 'Add a bio', weight: 15 },
+    { key: 'photos', label: 'Upload at least one photo', weight: 20 },
+    { key: 'hot_takes', label: 'Add hot takes', weight: 10 },
+    { key: 'politics', label: 'Add your politics', weight: 10 },
+    { key: 'religion', label: 'Add your religion', weight: 10 },
+    { key: 'love_language', label: 'Add your love language', weight: 10 },
+    { key: 'attachment_style', label: 'Add your attachment style', weight: 10 },
+    { key: 'dealbreakers', label: 'Set dealbreakers', weight: 10 },
+    { key: 'current_obsession', label: 'Add your current obsession', weight: 5 },
+  ];
+
+  let score = 0;
+  const missing = [];
+
+  checks.forEach(c => {
+    if (c.key === 'photos') {
+      if (photoCount > 0) score += c.weight;
+      else missing.push(c.label);
+    } else if (c.key === 'hot_takes') {
+      if (profile[c.key]?.length > 0) score += c.weight;
+      else missing.push(c.label);
+    } else if (c.key === 'dealbreakers') {
+      if (profile[c.key]?.length > 0) score += c.weight;
+      else missing.push(c.label);
+    } else {
+      if (profile[c.key]) score += c.weight;
+      else missing.push(c.label);
+    }
+  });
+
+  return { score, missing };
+}
+
 // ── Discover feed ─────────────────────────────────────────────────────────────
 
 export async function getDiscoverFeed(userId, filters = {}) {
+  // Get blocked user IDs
+  const { data: blocks } = await supabase
+    .from('blocks')
+    .select('blocked_id, blocker_id')
+    .or(`blocker_id.eq.${userId},blocked_id.eq.${userId}`);
+
+  const blockedIds = (blocks || []).map(b =>
+    b.blocker_id === userId ? b.blocked_id : b.blocker_id
+  );
+
+  // Get already liked user IDs
+  const { data: liked } = await supabase
+    .from('likes')
+    .select('to_user')
+    .eq('from_user', userId);
+
+  const likedIds = (liked || []).map(l => l.to_user);
+  const excludeIds = [...new Set([...blockedIds, ...likedIds, userId])];
+
   let query = supabase
     .from('profiles')
     .select('*, verifications(*), profile_photos(*)')
     .eq('is_visible', true)
-    .eq('verifications.background_clear', true)
-    .eq('verifications.id_verified', true)
     .neq('user_id', userId)
     .limit(filters.limit || 20);
 
-  if (filters.politics) query = query.eq('politics', filters.politics);
-  if (filters.religion) query = query.eq('religion', filters.religion);
-  if (filters.has_kids !== undefined) query = query.eq('has_kids', filters.has_kids);
-  if (filters.device_pref) query = query.eq('device_pref', filters.device_pref);
-  if (filters.min_age) query = query.gte('age', filters.min_age);
-  if (filters.max_age) query = query.lte('age', filters.max_age);
-  if (filters.max_distance) {
-    // distance filtering via PostGIS if enabled, otherwise fallback
+  // Exclude blocked and already liked
+  if (excludeIds.length > 0) {
+    query = query.not('user_id', 'in', `(${excludeIds.join(',')})`);
   }
 
-  const { data, error } = await query.order('created_at', { ascending: false });
+  if (filters.politics) query = query.eq('politics', filters.politics);
+  if (filters.religion) query = query.eq('religion', filters.religion);
+  if (filters.min_age) query = query.gte('age', filters.min_age);
+  if (filters.max_age) query = query.lte('age', filters.max_age);
+
+  const { data, error } = await query.order('last_active', { ascending: false, nullsFirst: false });
   return { data: data || [], error };
 }
 
@@ -119,7 +175,6 @@ export async function likeProfile(fromUserId, toUserId) {
     .single();
   if (error) return { matched: false, error };
 
-  // Check if mutual
   const { data: mutual } = await supabase
     .from('likes')
     .select('id')
@@ -143,8 +198,17 @@ export async function getMatches(userId) {
     .from('matches')
     .select('*, profiles!matches_user_a_fkey(*), profiles!matches_user_b_fkey(*)')
     .or(`user_a.eq.${userId},user_b.eq.${userId}`)
+    .is('unmatched_at', null)
     .order('matched_at', { ascending: false });
   return data || [];
+}
+
+export async function unmatch(matchId, userId) {
+  const { error } = await supabase
+    .from('matches')
+    .update({ unmatched_at: new Date().toISOString(), unmatched_by: userId })
+    .eq('id', matchId);
+  return { error };
 }
 
 // ── Messaging ─────────────────────────────────────────────────────────────────
@@ -161,10 +225,25 @@ export async function getMessages(matchId) {
 export async function sendMessage(matchId, senderId, content) {
   const { data, error } = await supabase
     .from('messages')
-    .insert({ match_id: matchId, sender_id: senderId, content, sent_at: new Date().toISOString() })
+    .insert({
+      match_id: matchId,
+      sender_id: senderId,
+      content,
+      sent_at: new Date().toISOString()
+    })
     .select()
     .single();
   return { data, error };
+}
+
+export async function markMessagesRead(matchId, userId) {
+  const { error } = await supabase
+    .from('messages')
+    .update({ read_at: new Date().toISOString() })
+    .eq('match_id', matchId)
+    .neq('sender_id', userId)
+    .is('read_at', null);
+  return { error };
 }
 
 export function subscribeToMessages(matchId, callback) {
@@ -203,13 +282,11 @@ export function calculateCompatibility(profileA, profileB) {
       total += weight;
       if (profileA[key] === profileB[key]) score += weight;
       else if (key === 'attachment_style') {
-        // Secure pairs well with everything
         if (profileA[key] === 'secure' || profileB[key] === 'secure') score += weight * 0.6;
       }
     }
   }
 
-  // Dealbreaker check - zero score if dealbreaker match
   const dealbreakersA = profileA.dealbreakers || [];
   const dealbreakersB = profileB.dealbreakers || [];
   const conflict = dealbreakersA.some(d => profileB[d] === true) ||
@@ -217,6 +294,21 @@ export function calculateCompatibility(profileA, profileB) {
   if (conflict) return 0;
 
   return total > 0 ? Math.round((score / total) * 100) : 50;
+}
+
+// ── Active status ─────────────────────────────────────────────────────────────
+
+export function getActiveStatus(lastActive) {
+  if (!lastActive) return null;
+  const diff = Date.now() - new Date(lastActive).getTime();
+  const mins = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  if (mins < 5) return { label: 'Active now', color: '#4ade80' };
+  if (mins < 60) return { label: `Active ${mins}m ago`, color: '#4ade80' };
+  if (hours < 24) return { label: 'Active today', color: '#fbbf24' };
+  if (days < 3) return { label: `Active ${days}d ago`, color: '#9ca3af' };
+  return null;
 }
 
 // ── Community ─────────────────────────────────────────────────────────────────
@@ -291,6 +383,7 @@ export function showToast(message, type = '') {
 }
 
 export function formatRelativeTime(dateString) {
+  if (!dateString) return '—';
   const diff = Date.now() - new Date(dateString).getTime();
   const mins = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);
