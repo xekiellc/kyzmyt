@@ -43,6 +43,7 @@
     .revenue-value { font-weight: 500; color: var(--navy); }
     .password-gate { position: fixed; inset: 0; background: var(--navy); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 24px; }
     .password-card { background: white; border-radius: var(--radius-xl); padding: 32px; max-width: 360px; width: 100%; text-align: center; }
+    .error-msg { font-size: 13px; color: var(--danger); margin-top: 8px; display: none; }
   </style>
 </head>
 <body>
@@ -55,19 +56,22 @@
     <div style="font-family:var(--font-display);font-size:32px;color:var(--navy);margin-bottom:8px">Kyzm<span style="color:var(--copper)">yt</span></div>
     <div style="font-size:14px;color:var(--text-secondary);margin-bottom:24px">Admin access only</div>
     <input type="password" id="admin-password" class="form-input" placeholder="Admin password" style="margin-bottom:12px" />
-    <button class="btn btn-navy btn-full" style="background:var(--navy);color:white" onclick="checkAdminPassword()">Enter Dashboard</button>
+    <div class="error-msg" id="error-msg">Incorrect password</div>
+    <button class="btn btn-full" style="background:var(--navy);color:white;margin-top:12px" id="login-btn" onclick="checkAdminPassword()">Enter Dashboard</button>
   </div>
 </div>
 
 <div id="admin-app" class="admin-page hidden">
   <div class="admin-header">
     <div class="admin-logo">Kyzm<span>yt</span> Admin</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.4)" id="admin-last-refresh">Loading...</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <div style="font-size:12px;color:rgba(255,255,255,0.4)" id="admin-last-refresh">Loading...</div>
+      <button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.6)" onclick="adminLogout()">Logout</button>
+    </div>
   </div>
 
   <div class="admin-content">
 
-    <!-- Stats -->
     <div class="stat-grid">
       <div class="stat-card">
         <div class="stat-label">Total Members</div>
@@ -101,7 +105,6 @@
       </div>
     </div>
 
-    <!-- Tabs -->
     <div class="admin-tabs">
       <div class="admin-tab active" onclick="showAdminTab('reports', this)">Reports</div>
       <div class="admin-tab" onclick="showAdminTab('members', this)">Members</div>
@@ -110,7 +113,6 @@
       <div class="admin-tab" onclick="showAdminTab('safety', this)">Safety</div>
     </div>
 
-    <!-- Reports tab -->
     <div id="tab-reports">
       <div id="reports-container">
         <div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3)">
@@ -120,7 +122,6 @@
       </div>
     </div>
 
-    <!-- Members tab -->
     <div id="tab-members" class="hidden">
       <div class="admin-card">
         <div style="display:flex;gap:12px;margin-bottom:16px">
@@ -152,7 +153,6 @@
       </div>
     </div>
 
-    <!-- Verifications tab -->
     <div id="tab-verifications" class="hidden">
       <div class="admin-card">
         <div style="overflow-x:auto">
@@ -175,7 +175,6 @@
       </div>
     </div>
 
-    <!-- Revenue tab -->
     <div id="tab-revenue" class="hidden">
       <div class="admin-card">
         <div style="font-family:var(--font-display);font-size:20px;color:var(--navy);margin-bottom:16px">Revenue overview</div>
@@ -187,19 +186,14 @@
       </div>
     </div>
 
-    <!-- Safety tab -->
     <div id="tab-safety" class="hidden">
       <div class="admin-card" style="margin-bottom:12px">
         <div style="font-family:var(--font-display);font-size:20px;color:var(--navy);margin-bottom:14px">Date check-in alerts</div>
-        <div id="checkin-alerts">
-          <div style="font-size:13px;color:var(--text-muted)">No active alerts</div>
-        </div>
+        <div id="checkin-alerts"><div style="font-size:13px;color:var(--text-muted)">No active alerts</div></div>
       </div>
       <div class="admin-card">
         <div style="font-family:var(--font-display);font-size:20px;color:var(--navy);margin-bottom:14px">Blocked users</div>
-        <div id="blocks-list">
-          <div style="font-size:13px;color:var(--text-muted)">Loading...</div>
-        </div>
+        <div id="blocks-list"><div style="font-size:13px;color:var(--text-muted)">Loading...</div></div>
       </div>
     </div>
 
@@ -209,22 +203,82 @@
 <script type="module">
 import { supabase, showToast, formatRelativeTime } from '/js/supabase.js';
 
-const ADMIN_PASSWORD = 'KyzmytAdmin2026!';
+// ── Session management ────────────────────────────────────────────────────────
 
-window.checkAdminPassword = function() {
-  const pw = document.getElementById('admin-password').value;
-  if (pw === ADMIN_PASSWORD) {
+function getSession() {
+  try {
+    const s = JSON.parse(sessionStorage.getItem('kyzmyt_admin'));
+    if (s && s.expires > Date.now()) return s;
+    sessionStorage.removeItem('kyzmyt_admin');
+    return null;
+  } catch { return null; }
+}
+
+function saveSession(token, expires) {
+  sessionStorage.setItem('kyzmyt_admin', JSON.stringify({ token, expires }));
+}
+
+window.adminLogout = function() {
+  sessionStorage.removeItem('kyzmyt_admin');
+  document.getElementById('admin-app').classList.add('hidden');
+  document.getElementById('password-gate').style.display = 'flex';
+  document.getElementById('admin-password').value = '';
+};
+
+// Check if already logged in this session
+if (getSession()) {
+  document.getElementById('password-gate').style.display = 'none';
+  document.getElementById('admin-app').classList.remove('hidden');
+  loadDashboard();
+}
+
+// ── Login ─────────────────────────────────────────────────────────────────────
+
+window.checkAdminPassword = async function() {
+  const password = document.getElementById('admin-password').value;
+  const btn = document.getElementById('login-btn');
+  const errMsg = document.getElementById('error-msg');
+
+  if (!password) return;
+
+  btn.textContent = 'Checking...';
+  btn.disabled = true;
+  errMsg.style.display = 'none';
+
+  try {
+    const res = await fetch('/.netlify/functions/admin-auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      errMsg.style.display = 'block';
+      btn.textContent = 'Enter Dashboard';
+      btn.disabled = false;
+      return;
+    }
+
+    saveSession(data.token, data.expires);
     document.getElementById('password-gate').style.display = 'none';
     document.getElementById('admin-app').classList.remove('hidden');
     loadDashboard();
-  } else {
-    showToast('Incorrect password', 'error');
+
+  } catch (err) {
+    errMsg.textContent = 'Connection error. Try again.';
+    errMsg.style.display = 'block';
+    btn.textContent = 'Enter Dashboard';
+    btn.disabled = false;
   }
 };
 
 document.getElementById('admin-password').addEventListener('keydown', e => {
   if (e.key === 'Enter') checkAdminPassword();
 });
+
+// ── Dashboard ─────────────────────────────────────────────────────────────────
 
 async function loadDashboard() {
   document.getElementById('admin-last-refresh').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
@@ -245,10 +299,11 @@ async function loadDashboard() {
   document.getElementById('stat-bg-pending').textContent = bgPending.count || 0;
   document.getElementById('stat-subscribers').textContent = subscribers.count || 0;
   document.getElementById('stat-mrr').textContent = `$${((subscribers.count || 0) * 29).toLocaleString()}/mo`;
-
-  // Revenue
   document.getElementById('rev-mrr').textContent = `$${((subscribers.count || 0) * 29).toLocaleString()}`;
-  document.getElementById('rev-total').textContent = `$${((subscribers.count || 0) * 29 + (verified.count || 0) * 30).toLocaleString()}`;
+  document.getElementById('rev-bg').textContent = `$0`;
+  document.getElementById('rev-id').textContent = `$0`;
+  document.getElementById('rev-fin').textContent = `$0`;
+  document.getElementById('rev-total').textContent = `$${((subscribers.count || 0) * 29).toLocaleString()}`;
 
   await loadReports();
   await loadMembers();
@@ -313,7 +368,9 @@ async function loadMembers(search = '', filter = '') {
       <td>
         <div style="display:flex;gap:4px">
           <button class="btn btn-sm btn-outline" onclick="viewMember('${m.user_id}')">View</button>
-          ${!m.ban_reason ? `<button class="btn btn-sm btn-danger" onclick="banMember('${m.user_id}')">Ban</button>` : `<button class="btn btn-sm btn-outline" onclick="unbanMember('${m.user_id}')">Unban</button>`}
+          ${!m.ban_reason
+            ? `<button class="btn btn-sm btn-danger" onclick="banMember('${m.user_id}')">Ban</button>`
+            : `<button class="btn btn-sm btn-outline" onclick="unbanMember('${m.user_id}')">Unban</button>`}
         </div>
       </td>
     </tr>`).join('');
@@ -328,7 +385,7 @@ async function loadVerifications() {
     <tr>
       <td>${v.profiles?.display_name || v.user_id?.slice(0, 8)}</td>
       <td>${v.id_verified ? '✓' : '✗'}</td>
-      <td><span class="badge ${v.background_clear === true ? 'badge-verified' : v.background_clear === false ? '' : 'badge-pending'}">${v.background_status || 'not started'}</span></td>
+      <td><span class="badge ${v.background_clear === true ? 'badge-verified' : 'badge-pending'}">${v.background_status || 'not started'}</span></td>
       <td>${v.financial_verified ? '✓' : '—'}</td>
       <td style="font-size:11px">${v.background_completed_at ? formatRelativeTime(v.background_completed_at) : '—'}</td>
       <td><button class="btn btn-sm btn-outline" onclick="viewVerification('${v.user_id}')">Details</button></td>
@@ -343,7 +400,6 @@ async function loadCheckinAlerts() {
     <div style="background:var(--danger-bg);border-radius:var(--radius-md);padding:12px;margin-bottom:8px">
       <div style="font-weight:500;color:var(--danger);margin-bottom:4px">🚨 Alert: ${a.profiles?.display_name}</div>
       <div style="font-size:12px;color:var(--text-secondary)">Check-in time: ${new Date(a.checkin_time).toLocaleString()}</div>
-      <div style="font-size:12px;color:var(--text-secondary)">Alert sent: ${formatRelativeTime(a.alerted_at)}</div>
       <button class="btn btn-sm btn-danger" style="margin-top:8px" onclick="resolveAlert('${a.id}')">Mark Resolved</button>
     </div>`).join('');
 }
