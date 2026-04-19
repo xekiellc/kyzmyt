@@ -48,22 +48,92 @@
     .icebreaker-bar { background: var(--copper-pale); border: 1px solid rgba(184,115,51,0.2); border-radius: var(--radius-md); padding: 10px 14px; margin: 8px 0; display: flex; gap: 10px; align-items: flex-start; }
     .match-header-card { background: var(--white); border-bottom: 1px solid var(--border); padding: 14px 16px; display: flex; gap: 12px; align-items: center; }
     .compat-inline { font-size: 13px; color: var(--copper); font-weight: 500; }
-
-    /* Connection strength */
     .connection-strength { background: var(--cream-mid); border-radius: var(--radius-md); padding: 10px 14px; margin: 8px 0; display: flex; align-items: center; gap: 10px; }
     .strength-track { flex: 1; height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; }
     .strength-fill { height: 100%; background: var(--copper); border-radius: 99px; transition: width 1s ease; }
     .strength-label { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
-
-    /* Date ideas */
     .date-ideas-bar { background: var(--navy); border-radius: var(--radius-md); padding: 12px 14px; margin: 8px 0; }
     .date-idea-item { font-size: 13px; color: rgba(255,255,255,0.8); padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; gap: 8px; cursor: pointer; transition: color 0.2s; }
     .date-idea-item:last-child { border-bottom: none; }
     .date-idea-item:hover { color: var(--copper); }
-
     .checkin-btn { background: var(--danger-bg); border: 1px solid rgba(198,40,40,0.3); border-radius: var(--radius-md); padding: 10px 14px; font-size: 12px; color: var(--danger); cursor: pointer; display: flex; align-items: center; gap: 8px; margin: 8px 0; }
     .unmatch-btn { background: none; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 14px; font-size: 12px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; margin: 4px 0; text-align: left; font-family: var(--font-body); }
     .unmatch-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* ── REPORT MODAL ── */
+    .report-reason-grid { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .report-reason-btn {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--white);
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--navy);
+      font-family: var(--font-body);
+      text-align: left;
+      transition: all 0.2s;
+      width: 100%;
+    }
+    .report-reason-btn:hover { border-color: #c62828; background: #fff5f5; color: #c62828; }
+    .report-reason-btn.selected { border-color: #c62828; background: #fff5f5; color: #c62828; }
+    .report-reason-icon { font-size: 20px; flex-shrink: 0; }
+    .report-reason-text { flex: 1; }
+    .report-reason-title { font-weight: 600; font-size: 13px; }
+    .report-reason-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .report-reason-btn:hover .report-reason-desc,
+    .report-reason-btn.selected .report-reason-desc { color: rgba(198,40,40,0.7); }
+    .report-detail-input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      resize: none;
+      outline: none;
+      background: var(--cream);
+      margin-top: 4px;
+      box-sizing: border-box;
+    }
+    .report-detail-input:focus { border-color: #c62828; }
+    .report-warning {
+      background: #fff5f5;
+      border: 1px solid #ffcdd2;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 12px;
+      color: #c62828;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .report-submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: #c62828;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      font-family: var(--font-body);
+      margin-top: 4px;
+    }
+    .report-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .report-cancel-btn {
+      width: 100%;
+      padding: 12px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: var(--font-body);
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
@@ -127,9 +197,76 @@
     </div>
     <button class="unmatch-btn" onclick="doUnmatch()">💔 Unmatch this person</button>
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
-      <button class="btn btn-outline btn-full" onclick="reportUser()">Report this profile</button>
+      <button class="btn btn-outline btn-full" onclick="showReportModal()">🚨 Report this person</button>
       <button class="btn btn-danger btn-full" onclick="blockUser()">Block this person</button>
     </div>
+  </div>
+</div>
+
+<!-- ── REPORT MODAL ── -->
+<div id="report-modal" class="modal-overlay hidden" onclick="closeReportModal(event)">
+  <div class="modal" onclick="event.stopPropagation()" style="max-height:90vh;overflow-y:auto">
+    <div class="modal-handle"></div>
+    <h3 style="font-family:var(--font-display);font-size:22px;margin-bottom:6px">Report this person</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:4px">Every report goes to a real Kyzmyt team member — not an automated system. We review all reports.</p>
+
+    <div class="report-reason-grid" id="report-reasons">
+      <button class="report-reason-btn" onclick="selectReportReason('unsolicited_photo', this)">
+        <span class="report-reason-icon">📸</span>
+        <div class="report-reason-text">
+          <div class="report-reason-title">Sent unsolicited explicit photo</div>
+          <div class="report-reason-desc">Received an explicit or inappropriate image without asking for it</div>
+        </div>
+      </button>
+      <button class="report-reason-btn" onclick="selectReportReason('harassment', this)">
+        <span class="report-reason-icon">🚫</span>
+        <div class="report-reason-text">
+          <div class="report-reason-title">Harassment or threatening behavior</div>
+          <div class="report-reason-desc">Threatening messages, intimidation, or repeated unwanted contact</div>
+        </div>
+      </button>
+      <button class="report-reason-btn" onclick="selectReportReason('fake_profile', this)">
+        <span class="report-reason-icon">🎭</span>
+        <div class="report-reason-text">
+          <div class="report-reason-title">Fake or misleading profile</div>
+          <div class="report-reason-desc">Photos or information that don't match who they actually are</div>
+        </div>
+      </button>
+      <button class="report-reason-btn" onclick="selectReportReason('married_relationship', this)">
+        <span class="report-reason-icon">💍</span>
+        <div class="report-reason-text">
+          <div class="report-reason-title">Married or in a relationship</div>
+          <div class="report-reason-desc">Discovered they are not actually single</div>
+        </div>
+      </button>
+      <button class="report-reason-btn" onclick="selectReportReason('scam', this)">
+        <span class="report-reason-icon">💰</span>
+        <div class="report-reason-text">
+          <div class="report-reason-title">Scam or financial manipulation</div>
+          <div class="report-reason-desc">Asking for money, gift cards, or financial information</div>
+        </div>
+      </button>
+      <button class="report-reason-btn" onclick="selectReportReason('other', this)">
+        <span class="report-reason-icon">⚠️</span>
+        <div class="report-reason-text">
+          <div class="report-reason-title">Other concern</div>
+          <div class="report-reason-desc">Something else that made you feel unsafe or uncomfortable</div>
+        </div>
+      </button>
+    </div>
+
+    <div id="report-detail-section" style="display:none;margin-top:4px">
+      <label style="font-size:12px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Additional details <span style="color:var(--text-muted);font-weight:400;text-transform:none">(optional but helpful)</span></label>
+      <textarea class="report-detail-input" id="report-detail" rows="3" placeholder="Describe what happened. This goes directly to our safety team."></textarea>
+    </div>
+
+    <div class="report-warning" id="report-warning" style="display:none">
+      <strong>📸 Unsolicited explicit content is a serious violation.</strong><br>
+      This person will be immediately flagged for priority review. If confirmed, they will be permanently removed from Kyzmyt. Their verified identity means we know exactly who they are.
+    </div>
+
+    <button class="report-submit-btn" id="report-submit-btn" onclick="submitReport()" disabled>Submit Report</button>
+    <button class="report-cancel-btn" onclick="closeReportModal()">Cancel</button>
   </div>
 </div>
 
@@ -172,6 +309,7 @@ let currentMatch = null;
 let currentOtherUser = null;
 let messageSubscription = null;
 let matches = [];
+let selectedReportReason = null;
 
 async function init() {
   const result = await requireVerified();
@@ -288,7 +426,6 @@ async function loadMessages() {
     return;
   }
 
-  // Show connection strength if 3+ messages
   let strengthHtml = '';
   if (msgs.length >= 3) {
     const strength = await getConversationStrength(currentMatchId);
@@ -402,7 +539,6 @@ function generateLocalDateIdeas(profileA, profileB) {
     '🧗 Indoor climbing — adventurous first date',
     '🍦 Ice cream and a sunset walk',
   ];
-  // Add personalized ones based on profiles
   if (profileA?.religion === profileB?.religion && profileA?.religion)
     ideas.unshift(`🙏 Attend a ${profileA.religion} event together`);
   if (profileA?.device_pref === 'iPhone' && profileB?.device_pref === 'iPhone')
@@ -447,12 +583,96 @@ window.doUnmatch = async function() {
   showThreads();
 };
 
-window.reportUser = async function() {
-  const reason = prompt('Please briefly describe your concern:');
-  if (!reason) return;
-  await supabase.from('reports').insert({ reporter_id: currentUser.id, reported_id: currentOtherUser?.user_id, reason, created_at: new Date().toISOString() });
-  showToast('Report submitted. We review all reports within 24 hours.', 'success');
+// ── REPORT SYSTEM ─────────────────────────────────────────────────────────────
+
+window.showReportModal = function() {
+  selectedReportReason = null;
+  document.querySelectorAll('.report-reason-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('report-detail-section').style.display = 'none';
+  document.getElementById('report-warning').style.display = 'none';
+  document.getElementById('report-detail').value = '';
+  document.getElementById('report-submit-btn').disabled = true;
   document.getElementById('safety-modal').classList.add('hidden');
+  document.getElementById('report-modal').classList.remove('hidden');
+};
+
+window.closeReportModal = function(e) {
+  if (!e || e.target === document.getElementById('report-modal'))
+    document.getElementById('report-modal').classList.add('hidden');
+};
+
+window.selectReportReason = function(reason, btn) {
+  selectedReportReason = reason;
+  document.querySelectorAll('.report-reason-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('report-detail-section').style.display = 'block';
+  document.getElementById('report-submit-btn').disabled = false;
+
+  // Show extra warning for unsolicited photo reports
+  if (reason === 'unsolicited_photo') {
+    document.getElementById('report-warning').style.display = 'block';
+  } else {
+    document.getElementById('report-warning').style.display = 'none';
+  }
+};
+
+window.submitReport = async function() {
+  if (!selectedReportReason) return;
+
+  const btn = document.getElementById('report-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  const detail = document.getElementById('report-detail').value.trim();
+  const reportedName = currentOtherUser?.display_name || 'Unknown';
+  const reportedId = currentOtherUser?.user_id;
+
+  try {
+    // Store in Supabase reports table
+    await supabase.from('reports').insert({
+      reporter_id: currentUser.id,
+      reported_id: reportedId,
+      match_id: currentMatchId,
+      reason: selectedReportReason,
+      detail: detail || null,
+      priority: selectedReportReason === 'unsolicited_photo' ? 'high' : 'normal',
+      status: 'pending',
+      created_at: new Date().toISOString()
+    });
+
+    // Fire Netlify function to send alert email to admin
+    await fetch('/.netlify/functions/submit-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        reporterName: currentProfile?.display_name || 'Unknown',
+        reporterId: currentUser.id,
+        reportedName,
+        reportedId,
+        matchId: currentMatchId,
+        reason: selectedReportReason,
+        detail,
+        priority: selectedReportReason === 'unsolicited_photo' ? 'HIGH PRIORITY' : 'Normal'
+      })
+    });
+
+    document.getElementById('report-modal').classList.add('hidden');
+
+    // If unsolicited photo — also auto-flag for immediate review
+    if (selectedReportReason === 'unsolicited_photo') {
+      await supabase.from('profiles')
+        .update({ flagged_for_review: true, flag_reason: 'unsolicited_explicit_content', flagged_at: new Date().toISOString() })
+        .eq('user_id', reportedId);
+      showToast('Report submitted. This person has been flagged for immediate review. 🛡', 'success');
+    } else {
+      showToast('Report submitted. Our team reviews all reports within 24 hours.', 'success');
+    }
+
+  } catch (err) {
+    showToast('Error submitting report. Please email hello@kyzmyt.com directly.', 'error');
+    btn.disabled = false;
+    btn.textContent = 'Submit Report';
+  }
 };
 
 window.blockUser = async function() {
@@ -462,6 +682,8 @@ window.blockUser = async function() {
   showToast('User blocked.', 'success');
   showThreads();
 };
+
+window.reportUser = window.showReportModal;
 
 init();
 </script>
