@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9WSYHBGQZZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9WSYHBGQZZ');
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kyzmyt — Join the Waitlist</title>
+  <meta name="description" content="Apply for early access to Kyzmyt — the first dating platform where every member is background checked, ID verified, and genuinely who they say they are." />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --navy: #0F1E3D;
+      --navy-deep: #0a1628;
+      --navy-mid: #1a2e54;
+      --copper: #B87333;
+      --copper-light: #D4935A;
+      --copper-pale: #F5E6D3;
+      --cream: #FAF8F5;
+      --cream-mid: #F0EDE8;
+      --white: #FFFFFF;
+      --text-muted: #888;
+      --success: #2e7d32;
+    }
+
+    body { margin: 0; font-family: 'DM Sans', -apple-system, sans-serif; background: var(--navy-deep); min-height: 100vh; }
+
+    .page { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; position: relative; overflow: hidden; }
+
+    .glow-a { position: absolute; width: 520px; height: 520px; border-radius: 50%; top: -110px; right: -90px; pointer-events: none; animation: breathe 6s ease-in-out infinite; background: radial-gradient(circle, rgba(184,115,51,0.13) 0%, transparent 68%); }
+    .glow-b { position: absolute; width: 380px; height: 380px; border-radius: 50%; bottom: -90px; left: -70px; pointer-events: none; animation: breathe 8s ease-in-out infinite reverse; background: radial-gradient(circle, rgba(184,115,51,0.08) 0%, transparent 68%); }
+    @keyframes breathe { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.12); } }
+
+    .card { position: relative; z-index: 2; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 40px 32px; max-width: 440px; width: 100%; }
+
+    .logo { font-family: Georgia, 'Times New Roman', serif; font-size: 32px; font-weight: 700; color: var(--white); text-align: center; margin-bottom: 6px; }
+    .logo span { color: var(--copper); }
+    .logo-sub { font-size: 13px; font-style: italic; color: rgba(255,255,255,0.3); text-align: center; margin-bottom: 28px; }
+
+    .card-eyebrow { font-size: 10px; font-weight: 500; color: var(--copper); letter-spacing: 3px; text-transform: uppercase; text-align: center; margin-bottom: 12px; }
+    .card-title { font-family: Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: 700; color: var(--white); text-align: center; margin-bottom: 8px; line-height: 1.25; }
+    .card-sub { font-size: 13px; color: rgba(255,255,255,0.45); text-align: center; line-height: 1.65; margin-bottom: 28px; }
+
+    .trust-strip { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+    .trust-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: rgba(255,255,255,0.3); }
+    .trust-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--copper); opacity: 0.7; }
+
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 13px 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; font-size: 14px; color: var(--white); outline: none; transition: border-color 0.2s; font-family: inherit; }
+    .form-input::placeholder { color: rgba(255,255,255,0.25); }
+    .form-input:focus { border-color: rgba(184,115,51,0.6); background: rgba(255,255,255,0.08); }
+
+    .gender-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .gender-option { padding: 11px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); font-size: 13px; color: rgba(255,255,255,0.5); text-align: center; cursor: pointer; transition: all 0.2s; user-select: none; }
+    .gender-option.selected { border-color: rgba(184,115,51,0.6); background: rgba(184,115,51,0.12); color: var(--copper); font-weight: 500; }
+
+    .btn-submit { width: 100%; padding: 15px; background: var(--copper); border: none; border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--white); cursor: pointer; transition: all 0.2s; font-family: inherit; letter-spacing: 0.3px; margin-top: 4px; }
+    .btn-submit:hover { background: var(--copper-light); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(184,115,51,0.3); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .fine-print { font-size: 11px; color: rgba(255,255,255,0.2); text-align: center; margin-top: 16px; line-height: 1.6; }
+    .fine-print a { color: rgba(255,255,255,0.35); text-decoration: none; }
+
+    .divider { height: 1px; background: rgba(255,255,255,0.08); margin: 20px 0; }
+
+    .already-have { text-align: center; font-size: 13px; color: rgba(255,255,255,0.3); }
+    .already-have a { color: var(--copper); text-decoration: none; }
+
+    /* Success state */
+    .success-state { display: none; text-align: center; padding: 20px 0; }
+    .success-icon { font-size: 52px; margin-bottom: 20px; }
+    .success-title { font-family: Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: 700; color: var(--white); margin-bottom: 10px; }
+    .success-sub { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.7; margin-bottom: 24px; }
+    .success-number { font-family: Georgia, serif; font-size: 48px; font-weight: 700; color: var(--copper); margin: 16px 0 4px; }
+    .success-number-label { font-size: 11px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; }
+    .success-share { background: rgba(184,115,51,0.1); border: 1px solid rgba(184,115,51,0.2); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+    .success-share-label { font-size: 11px; color: var(--copper); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 500; }
+    .success-share-text { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+    .btn-share { width: 100%; padding: 13px; background: transparent; border: 1px solid rgba(184,115,51,0.4); border-radius: 10px; font-size: 13px; font-weight: 500; color: var(--copper); cursor: pointer; transition: all 0.2s; font-family: inherit; margin-bottom: 8px; }
+    .btn-share:hover { background: rgba(184,115,51,0.1); }
+    .btn-home { width: 100%; padding: 13px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; font-size: 13px; color: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.2s; font-family: inherit; text-decoration: none; display: block; }
+    .btn-home:hover { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.6); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .card { animation: fadeUp 0.6s ease forwards; }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <div class="glow-a"></div>
+  <div class="glow-b"></div>
+
+  <div class="card">
+
+    <div class="logo">Kyzm<span>yt</span></div>
+    <div class="logo-sub">like kismet — but real.</div>
+
+    <!-- Form state -->
+    <div id="form-state">
+      <div class="card-eyebrow">Limited Early Access</div>
+      <div class="card-title">Join the founding<br>member waitlist</div>
+      <div class="card-sub">Be first in when we open. Founding members get the best rate we'll ever offer — and access before the public.</div>
+
+      <div class="trust-strip">
+        <div class="trust-item"><div class="trust-dot"></div>Background checked</div>
+        <div class="trust-item"><div class="trust-dot"></div>ID verified</div>
+        <div class="trust-item"><div class="trust-dot"></div>Real people only</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Your name</label>
+        <input type="text" class="form-input" id="wl-name" placeholder="First name is fine" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" class="form-input" id="wl-email" placeholder="your@email.com" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">I identify as</label>
+        <div class="gender-grid">
+          <div class="gender-option" id="gender-man" onclick="selectGender('man')">Man</div>
+          <div class="gender-option" id="gender-woman" onclick="selectGender('woman')">Woman</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">City</label>
+        <input type="text" class="form-input" id="wl-city" placeholder="Cleveland, Akron, Columbus..." />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Why Kyzmyt? <span style="color:rgba(255,255,255,0.2);font-size:10px;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <textarea class="form-input" id="wl-why" placeholder="What frustrated you most about other dating apps?" rows="3" style="resize:none;line-height:1.5"></textarea>
+      </div>
+
+      <button class="btn-submit" id="submit-btn" onclick="submitWaitlist()">Reserve My Spot ✦</button>
+
+      <p class="fine-print">
+        No spam. No selling your data. Ever.<br>
+        By joining you agree to our <a href="/pages/terms.html">Terms</a> and <a href="/pages/privacy.html">Privacy Policy</a>.
+      </p>
+
+      <div class="divider"></div>
+      <div class="already-have">Already have an account? <a href="/pages/login.html">Sign in →</a></div>
+    </div>
+
+    <!-- Success state -->
+    <div class="success-state" id="success-state">
+      <div class="success-icon">✦</div>
+      <div class="success-title">You're on the list.</div>
+      <div class="success-sub">We'll reach out personally when founding member access opens. You'll get the best rate we ever offer.</div>
+
+      <div class="success-number" id="success-position">—</div>
+      <div class="success-number-label">on the waitlist</div>
+
+      <div class="success-share">
+        <div class="success-share-label">Know someone who deserves better?</div>
+        <div class="success-share-text">Share Kyzmyt with a friend who's done with the games. Every person who joins because of you moves you up the list.</div>
+      </div>
+
+      <button class="btn-share" onclick="shareKyzmyt()">Share Kyzmyt ✦</button>
+      <a href="/" class="btn-home">Back to home</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://gnknifxhzriqwugmvoxf.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_BgWckBZrokjrV4LoaLSWBA_Ap5QTM3A';
+
+  let selectedGender = null;
+
+  function selectGender(gender) {
+    selectedGender = gender;
+    document.getElementById('gender-man').classList.toggle('selected', gender === 'man');
+    document.getElementById('gender-woman').classList.toggle('selected', gender === 'woman');
+  }
+
+  async function submitWaitlist() {
+    const name = document.getElementById('wl-name').value.trim();
+    const email = document.getElementById('wl-email').value.trim();
+    const city = document.getElementById('wl-city').value.trim();
+    const why = document.getElementById('wl-why').value.trim();
+    const btn = document.getElementById('submit-btn');
+
+    if (!name) { alert('Please enter your name.'); return; }
+    if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Reserving your spot...';
+
+    // Get UTM source if present
+    const params = new URLSearchParams(window.location.search);
+    const source = params.get('source') || params.get('utm_source') || 'landing_page';
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          gender: selectedGender,
+          city: city || null,
+          why: why || null,
+          source,
+          created_at: new Date().toISOString()
+        })
+      });
+
+      if (res.status === 409) {
+        // Duplicate email
+        btn.disabled = false;
+        btn.textContent = 'Reserve My Spot ✦';
+        alert('That email is already on the waitlist. You\'re already in!');
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error('Submission failed');
+      }
+
+      // Get waitlist position
+      const countRes = await fetch(`${SUPABASE_URL}/rest/v1/waitlist?select=id`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Prefer': 'count=exact'
+        }
+      });
+
+      const count = parseInt(countRes.headers.get('content-range')?.split('/')[1] || '1');
+
+      // Show success
+      document.getElementById('form-state').style.display = 'none';
+      document.getElementById('success-state').style.display = 'block';
+      document.getElementById('success-position').textContent = '#' + count;
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Reserve My Spot ✦';
+      alert('Something went wrong. Please try again.');
+    }
+  }
+
+  function shareKyzmyt() {
+    const text = "I just joined the waitlist for Kyzmyt — a dating platform where every member is background checked and ID verified. No fake profiles. No bots. Real people only. Apply for early access at kyzmyt.com";
+    if (navigator.share) {
+      navigator.share({ title: 'Kyzmyt', text, url: 'https://kyzmyt.com' });
+    } else {
+      navigator.clipboard?.writeText(text + '\n\nhttps://kyzmyt.com');
+      alert('Link copied to clipboard!');
+    }
+  }
+</script>
+
+</body>
+</html>
