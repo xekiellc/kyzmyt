@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9WSYHBGQZZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9WSYHBGQZZ');
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kyzmyt — Background Check Policy</title>
+  <meta name="description" content="Kyzmyt's background check policy. What we check, what disqualifies, and how we handle old records." />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --navy: #0F1E3D;
+      --navy-deep: #0a1628;
+      --copper: #B87333;
+      --copper-light: #D4935A;
+      --cream: #FAF8F5;
+      --cream-mid: #F0EDE8;
+      --white: #FFFFFF;
+      --text-muted: #666;
+      --success: #2e7d32;
+      --danger: #c62828;
+    }
+
+    body { margin: 0; font-family: 'DM Sans', -apple-system, sans-serif; background: var(--cream); color: #333; }
+
+    .policy-header {
+      background: var(--navy-deep);
+      padding: 48px 24px 40px;
+      text-align: center;
+    }
+    .policy-logo {
+      font-family: Georgia, serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 20px;
+      display: block;
+      text-decoration: none;
+    }
+    .policy-logo span { color: var(--copper); }
+    .policy-eyebrow {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--copper);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .policy-title {
+      font-family: Georgia, serif;
+      font-size: clamp(28px, 6vw, 42px);
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    .policy-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.45);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .policy-body {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .policy-section {
+      margin-bottom: 40px;
+    }
+    .policy-section-title {
+      font-family: Georgia, serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--cream-mid);
+    }
+    .policy-text {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+
+    /* What we check */
+    .check-list {
+      list-style: none;
+      margin: 0 0 16px;
+      padding: 0;
+    }
+    .check-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--cream-mid);
+      font-size: 14px;
+      color: #444;
+      line-height: 1.5;
+    }
+    .check-list li:last-child { border-bottom: none; }
+    .check-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(46,125,50,0.12);
+      color: var(--success);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Disqualifier cards */
+    .disqualifier-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .disqualifier-card {
+      border-radius: 12px;
+      padding: 18px 16px;
+    }
+    .disqualifier-card.permanent {
+      background: #fff5f5;
+      border: 1px solid #ffcdd2;
+    }
+    .disqualifier-card.review {
+      background: rgba(184,115,51,0.06);
+      border: 1px solid rgba(184,115,51,0.2);
+    }
+    .disqualifier-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .disqualifier-card.permanent .disqualifier-label { color: var(--danger); }
+    .disqualifier-card.review .disqualifier-label { color: var(--copper); }
+    .disqualifier-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--navy);
+    }
+    .disqualifier-desc {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    /* Timeline table */
+    .timeline-table {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--cream-mid);
+      margin-bottom: 16px;
+    }
+    .timeline-header {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      background: var(--navy);
+      padding: 12px 16px;
+    }
+    .timeline-header-cell {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--cream-mid);
+      background: var(--white);
+      font-size: 13px;
+    }
+    .timeline-row:last-child { border-bottom: none; }
+    .timeline-row:nth-child(even) { background: var(--cream); }
+    .timeline-cell { color: #444; display: flex; align-items: center; }
+    .timeline-cell.pass { color: var(--success); font-weight: 600; }
+    .timeline-cell.fail { color: var(--danger); font-weight: 600; }
+    .timeline-cell.review-cell { color: var(--copper); font-weight: 600; }
+
+    /* Process flow */
+    .process-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .process-step {
+      display: flex;
+      gap: 16px;
+      padding-bottom: 24px;
+      position: relative;
+    }
+    .process-step:last-child { padding-bottom: 0; }
+    .process-step-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .process-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .process-line {
+      width: 1px;
+      flex: 1;
+      background: rgba(15,30,61,0.12);
+      margin-top: 6px;
+    }
+    .process-step:last-child .process-line { display: none; }
+    .process-body { padding-top: 6px; }
+    .process-title { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+    .process-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* Transparency box */
+    .transparency-box {
+      background: var(--navy);
+      border-radius: 16px;
+      padding: 28px 24px;
+      margin-bottom: 16px;
+    }
+    .transparency-box-title {
+      font-family: Georgia, serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+    .transparency-box-text {
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.8;
+    }
+    .transparency-box-text strong { color: rgba(255,255,255,0.85); }
+
+    /* Disclaimer */
+    .disclaimer-box {
+      background: rgba(184,115,51,0.06);
+      border: 1px solid rgba(184,115,51,0.2);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .disclaimer-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 8px;
+    }
+    .disclaimer-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .policy-footer {
+      text-align: center;
+      padding: 40px 24px;
+      background: var(--navy);
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .policy-footer-logo {
+      font-family: Georgia, serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .policy-footer-logo span { color: var(--copper); }
+    .policy-footer-links {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+    .policy-footer-links a {
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+    }
+    .policy-footer-links a:hover { color: rgba(255,255,255,0.7); }
+    .policy-footer-copy {
+      font-size: 12px;
+      color: rgba(255,255,255,0.2);
+    }
+    .updated-tag {
+      display: inline-block;
+      background: rgba(184,115,51,0.12);
+      border: 1px solid rgba(184,115,51,0.25);
+      border-radius: 99px;
+      padding: 4px 12px;
+      font-size: 11px;
+      color: var(--copper);
+      margin-bottom: 32px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="policy-header">
+  <a href="/" class="policy-logo">Kyzm<span>yt</span></a>
+  <div class="policy-eyebrow">Trust & Safety</div>
+  <h1 class="policy-title">Background Check Policy</h1>
+  <p class="policy-sub">We believe you have the right to know exactly what we check, what disqualifies someone, and how we handle records from years past. No vague promises. Just facts.</p>
+</div>
+
+<div class="policy-body">
+
+  <div style="text-align:center;margin-bottom:32px">
+    <span class="updated-tag">Last updated April 2026</span>
+  </div>
+
+  <!-- WHAT WE CHECK -->
+  <div class="policy-section">
+    <div class="policy-section-title">What we check</div>
+    <p class="policy-text">Every Kyzmyt member must pass a real criminal background check before their profile goes live. This is not a self-reported form. Results go directly from our background check provider to us — the applicant never touches them.</p>
+    <ul class="check-list">
+      <li>
+        <div class="check-icon">✓</div>
+        <div><strong>National criminal database</strong> — searches across all 50 states for criminal records</div>
+      </li>
+      <li>
+        <div class="check-icon">✓</div>
+        <div><strong>Sex offender registry</strong> — checked against all 50 state registries and the national database</div>
+      </li>
+      <li>
+        <div class="check-icon">✓</div>
+        <div><strong>Felony convictions</strong> — all felony convictions regardless of offense type</div>
+      </li>
+      <li>
+        <div class="check-icon">✓</div>
+        <div><strong>Misdemeanor convictions</strong> — all misdemeanor convictions</div>
+      </li>
+      <li>
+        <div class="check-icon">✓</div>
+        <div><strong>Pending charges</strong> — active criminal charges that have not yet been resolved</div>
+      </li>
+    </ul>
+    <p class="policy-text">Results are delivered directly to Kyzmyt from our verified background check provider. The applicant cannot alter, hide, or selectively disclose what we receive.</p>
+  </div>
+
+  <!-- WHAT DISQUALIFIES -->
+  <div class="policy-section">
+    <div class="policy-section-title">What disqualifies an applicant</div>
+    <p class="policy-text">Not all records result in the same outcome. We use a category-based approach — the nature of the offense matters more than when it occurred.</p>
+
+    <div class="disqualifier-grid">
+      <div class="disqualifier-card permanent">
+        <div class="disqualifier-label">Permanent Disqualifier</div>
+        <div class="disqualifier-title">Sex offenses</div>
+        <div class="disqualifier-desc">Any sex offense — regardless of when it occurred, how long ago, or whether the applicant has served their time. No exceptions. No timeline.</div>
+      </div>
+      <div class="disqualifier-card permanent">
+        <div class="disqualifier-label">Permanent Disqualifier</div>
+        <div class="disqualifier-title">Violent felonies</div>
+        <div class="disqualifier-desc">Murder, manslaughter, assault, robbery, kidnapping, and other violent felony convictions. Permanent disqualifier regardless of timeline.</div>
+      </div>
+      <div class="disqualifier-card review">
+        <div class="disqualifier-label">Case by Case Review</div>
+        <div class="disqualifier-title">Non-violent older offenses</div>
+        <div class="disqualifier-desc">Non-violent felonies or misdemeanors from the distant past are reviewed individually. Context, timeline, and nature of the offense all factor in.</div>
+      </div>
+      <div class="disqualifier-card review">
+        <div class="disqualifier-label">Automatic Flag</div>
+        <div class="disqualifier-title">Pending charges</div>
+        <div class="disqualifier-desc">Active pending charges result in an automatic hold pending resolution. Applicants may reapply once charges are resolved.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OLD RECORDS -->
+  <div class="policy-section">
+    <div class="policy-section-title">How we handle old records</div>
+    <p class="policy-text">This is one of the most common questions we receive. We believe in second chances — with clear limits. Here's exactly how we think about it.</p>
+
+    <div class="timeline-table">
+      <div class="timeline-header">
+        <div class="timeline-header-cell">Offense type</div>
+        <div class="timeline-header-cell">Timeline</div>
+        <div class="timeline-header-cell">Outcome</div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-cell">Sex offense (any)</div>
+        <div class="timeline-cell">Any — ever</div>
+        <div class="timeline-cell fail">Permanent ban</div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-cell">Violent felony</div>
+        <div class="timeline-cell">Any — ever</div>
+        <div class="timeline-cell fail">Permanent ban</div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-cell">Non-violent felony</div>
+        <div class="timeline-cell">Within 7 years</div>
+        <div class="timeline-cell fail">Denied</div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-cell">Non-violent felony</div>
+        <div class="timeline-cell">7+ years ago</div>
+        <div class="timeline-cell review-cell">Human review</div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-cell">Misdemeanor</div>
+        <div class="timeline-cell">Within 3 years</div>
+        <div class="timeline-cell fail">Denied</div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-cell">Misdemeanor</div>
+        <div class="timeline-cell">3+ years ago</div>
+        <div class="timeline-cell review-cell">Human review</div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-cell">Pending charges</div>
+        <div class="timeline-cell">Active</div>
+        <div class="timeline-cell review-cell">Hold — reapply when resolved</div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-cell">No record</div>
+        <div class="timeline-cell">—</div>
+        <div class="timeline-cell pass">Approved</div>
+      </div>
+    </div>
+
+    <p class="policy-text">Human review means a real Kyzmyt team member evaluates the specific circumstances — the nature of the offense, how long ago it occurred, and any other relevant context. We do not use automated decisions for case-by-case reviews.</p>
+  </div>
+
+  <!-- HOW THE PROCESS WORKS -->
+  <div class="policy-section">
+    <div class="policy-section-title">How the process works</div>
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="process-step-left">
+          <div class="process-num">1</div>
+          <div class="process-line"></div>
+        </div>
+        <div class="process-body">
+          <div class="process-title">You apply for access</div>
+          <div class="process-desc">You submit your application through Kyzmyt. You provide your name, date of birth, and consent to a background check.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-left">
+          <div class="process-num">2</div>
+          <div class="process-line"></div>
+        </div>
+        <div class="process-body">
+          <div class="process-title">Identity is verified first</div>
+          <div class="process-desc">Before the background check runs, your identity is confirmed via government ID and live facial recognition match. This ensures the background check is run on you — not someone else's information.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-left">
+          <div class="process-num">3</div>
+          <div class="process-line"></div>
+        </div>
+        <div class="process-body">
+          <div class="process-title">Background check runs automatically</div>
+          <div class="process-desc">Our background check provider runs the check independently. Results are delivered directly to Kyzmyt — not through you. This typically takes 1–5 minutes.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-left">
+          <div class="process-num">4</div>
+          <div class="process-line"></div>
+        </div>
+        <div class="process-body">
+          <div class="process-title">Result is applied automatically</div>
+          <div class="process-desc">Clear results are auto-approved. Disqualifying results are auto-denied. Edge cases go to a human reviewer. You'll receive an email with your result.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-left">
+          <div class="process-num">5</div>
+          <div class="process-line"></div>
+        </div>
+        <div class="process-body">
+          <div class="process-title">Ongoing monitoring</div>
+          <div class="process-desc">Getting in doesn't mean staying in. We reserve the right to re-verify members and remove anyone whose status changes or whose behavior violates our standards.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSPARENCY -->
+  <div class="policy-section">
+    <div class="transparency-box">
+      <div class="transparency-box-title">Our commitment to transparency</div>
+      <div class="transparency-box-text">
+        <strong>Results go directly to us.</strong> Your background check results are delivered from our provider directly to Kyzmyt. You cannot see, alter, or selectively disclose them.<br><br>
+        <strong>We don't share results with other members.</strong> Your background check result is used only to determine your eligibility. It is never shared with other members of the platform.<br><br>
+        <strong>We don't sell your data.</strong> Your personal information and background check results are never sold, shared with advertisers, or used for any purpose other than verifying your eligibility for Kyzmyt.<br><br>
+        <strong>No system is perfect.</strong> We have built more verification layers than any dating platform in existence. But we cannot guarantee that every bad actor will be caught. This policy exists to make our standards clear — not to make promises we cannot keep.
+      </div>
+    </div>
+  </div>
+
+  <!-- DISPUTES -->
+  <div class="policy-section">
+    <div class="policy-section-title">If you believe your result is wrong</div>
+    <p class="policy-text">Background check errors do occur. If you believe your result contains inaccurate information, you have the right to dispute it. Here's what to do:</p>
+    <ul class="check-list">
+      <li>
+        <div class="check-icon">1</div>
+        <div>Email us at <strong>hello@kyzmyt.com</strong> with the subject line "Background Check Dispute"</div>
+      </li>
+      <li>
+        <div class="check-icon">2</div>
+        <div>We will provide you with the name of our background check provider so you can dispute the record directly with them</div>
+      </li>
+      <li>
+        <div class="check-icon">3</div>
+        <div>Under the Fair Credit Reporting Act (FCRA), you have the right to dispute inaccurate information in consumer reports</div>
+      </li>
+      <li>
+        <div class="check-icon">4</div>
+        <div>Once a dispute is resolved and your record is corrected, you may reapply to Kyzmyt</div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <div class="policy-section">
+    <div class="disclaimer-box">
+      <div class="disclaimer-title">Important disclaimer</div>
+      <div class="disclaimer-text">Kyzmyt's background check process is designed to reduce — not eliminate — the risk of harmful individuals joining the platform. No verification system is perfect. Background checks only reflect information that has been reported, prosecuted, and entered into public records. Kyzmyt makes no guarantee that all members are free of criminal history or that interactions on the platform are without risk. Members are encouraged to exercise their own judgment and report any concerning behavior immediately. By joining Kyzmyt, members acknowledge that they have read and understood this policy.</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:40px">
+    <a href="/" style="display:inline-block;padding:14px 32px;background:#0F1E3D;color:white;border-radius:10px;text-decoration:none;font-size:14px;font-weight:500">← Back to Kyzmyt</a>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="policy-footer">
+  <div class="policy-footer-logo">Kyzm<span>yt</span></div>
+  <div class="policy-footer-links">
+    <a href="/pages/about.html">About</a>
+    <a href="/pages/safety.html">Safety</a>
+    <a href="/pages/policy.html">Background Check Policy</a>
+    <a href="/pages/terms.html">Terms</a>
+    <a href="/pages/privacy.html">Privacy</a>
+  </div>
+  <div class="policy-footer-copy">KYZMYT, LLC © 2026 · Built in Northeast Ohio</div>
+</div>
+
+</body>
+</html>
