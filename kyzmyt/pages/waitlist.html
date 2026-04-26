@@ -74,7 +74,8 @@
     .already-have { text-align: center; font-size: 13px; color: rgba(255,255,255,0.3); }
     .already-have a { color: var(--copper); text-decoration: none; }
 
-    /* Success state */
+    .error-msg { background: rgba(198,40,40,0.12); border: 1px solid rgba(198,40,40,0.3); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #ef9a9a; text-align: center; margin-top: 12px; display: none; }
+
     .success-state { display: none; text-align: center; padding: 20px 0; }
     .success-icon { font-size: 52px; margin-bottom: 20px; }
     .success-title { font-family: Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: 700; color: var(--white); margin-bottom: 10px; }
@@ -127,7 +128,7 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">I identify as</label>
+        <label class="form-label">Gender</label>
         <div class="gender-grid">
           <div class="gender-option" id="gender-man" onclick="selectGender('man')">Man</div>
           <div class="gender-option" id="gender-woman" onclick="selectGender('woman')">Woman</div>
@@ -145,6 +146,7 @@
       </div>
 
       <button class="btn-submit" id="submit-btn" onclick="submitWaitlist()">Reserve My Spot ✦</button>
+      <div class="error-msg" id="error-msg"></div>
 
       <p class="fine-print">
         No spam. No selling your data. Ever.<br>
@@ -188,6 +190,16 @@
     document.getElementById('gender-woman').classList.toggle('selected', gender === 'woman');
   }
 
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function hideError() {
+    document.getElementById('error-msg').style.display = 'none';
+  }
+
   async function submitWaitlist() {
     const name = document.getElementById('wl-name').value.trim();
     const email = document.getElementById('wl-email').value.trim();
@@ -195,13 +207,14 @@
     const why = document.getElementById('wl-why').value.trim();
     const btn = document.getElementById('submit-btn');
 
-    if (!name) { alert('Please enter your name.'); return; }
-    if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+    hideError();
+
+    if (!name) { showError('Please enter your name.'); return; }
+    if (!email || !email.includes('@')) { showError('Please enter a valid email address.'); return; }
 
     btn.disabled = true;
     btn.textContent = 'Reserving your spot...';
 
-    // Get UTM source if present
     const params = new URLSearchParams(window.location.search);
     const source = params.get('source') || params.get('utm_source') || 'landing_page';
 
@@ -225,28 +238,41 @@
         })
       });
 
-      if (res.status === 409) {
-        // Duplicate email
+      // Duplicate email — already on waitlist
+      if (res.status === 409 || res.status === 400) {
+        const errData = await res.json().catch(() => ({}));
+        const isDuplicate = JSON.stringify(errData).toLowerCase().includes('duplicate') ||
+                            JSON.stringify(errData).toLowerCase().includes('unique') ||
+                            res.status === 409;
         btn.disabled = false;
         btn.textContent = 'Reserve My Spot ✦';
-        alert('That email is already on the waitlist. You\'re already in!');
+        if (isDuplicate) {
+          showError('That email is already on the waitlist — you\'re already in! ✦');
+        } else {
+          showError('Something went wrong. Please try again or email hello@kyzmyt.com');
+          console.error('Waitlist error:', errData);
+        }
         return;
       }
 
       if (!res.ok) {
-        throw new Error('Submission failed');
+        throw new Error(`HTTP ${res.status}`);
       }
 
       // Get waitlist position
-      const countRes = await fetch(`${SUPABASE_URL}/rest/v1/waitlist?select=id`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Prefer': 'count=exact'
-        }
-      });
-
-      const count = parseInt(countRes.headers.get('content-range')?.split('/')[1] || '1');
+      let count = 1;
+      try {
+        const countRes = await fetch(`${SUPABASE_URL}/rest/v1/waitlist?select=id`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Prefer': 'count=exact'
+          }
+        });
+        count = parseInt(countRes.headers.get('content-range')?.split('/')[1] || '1');
+      } catch (_) {
+        count = 1;
+      }
 
       // Show success
       document.getElementById('form-state').style.display = 'none';
@@ -254,9 +280,10 @@
       document.getElementById('success-position').textContent = '#' + count;
 
     } catch (err) {
+      console.error('Waitlist submission error:', err);
       btn.disabled = false;
       btn.textContent = 'Reserve My Spot ✦';
-      alert('Something went wrong. Please try again.');
+      showError('Something went wrong. Please try again or email hello@kyzmyt.com');
     }
   }
 
