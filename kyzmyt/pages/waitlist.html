@@ -180,7 +180,7 @@
 
 <script>
   const SUPABASE_URL = 'https://gnknifxhzriqwugmvoxf.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_BgWckBZrokjrV4LoaLSWBA_Ap5QTM3A';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdua25pZnhoenJpcXd1Z212b3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MzgyNzksImV4cCI6MjA5MjAxNDI3OX0.AkOt-GcJOmcUVV0I_JU2_yaMNPlwHRgUSrJi9Q9HHvo';
 
   let selectedGender = null;
 
@@ -238,7 +238,6 @@
         })
       });
 
-      // Duplicate email — already on waitlist
       if (res.status === 409 || res.status === 400) {
         const errData = await res.json().catch(() => ({}));
         const isDuplicate = JSON.stringify(errData).toLowerCase().includes('duplicate') ||
@@ -250,7 +249,6 @@
           showError('That email is already on the waitlist — you\'re already in! ✦');
         } else {
           showError('Something went wrong. Please try again or email hello@kyzmyt.com');
-          console.error('Waitlist error:', errData);
         }
         return;
       }
@@ -259,7 +257,6 @@
         throw new Error(`HTTP ${res.status}`);
       }
 
-      // Get waitlist position
       let count = 1;
       try {
         const countRes = await fetch(`${SUPABASE_URL}/rest/v1/waitlist?select=id`, {
@@ -274,7 +271,6 @@
         count = 1;
       }
 
-      // Show success
       document.getElementById('form-state').style.display = 'none';
       document.getElementById('success-state').style.display = 'block';
       document.getElementById('success-position').textContent = '#' + count;
