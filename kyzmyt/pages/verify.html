@@ -12,6 +12,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kyzmyt — Verify Your Identity</title>
   <link rel="stylesheet" href="/css/design-system.css" />
+  <script src="https://js.stripe.com/v3/"></script>
   <style>
     .verify-page { min-height: 100vh; background: var(--navy); padding-bottom: 60px; }
     .verify-header { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
@@ -89,6 +90,13 @@
     .security-note { background: rgba(184,115,51,0.06); border: 1px solid rgba(184,115,51,0.12); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
     .security-note-title { font-size: 11px; font-weight: 600; color: var(--copper); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
     .security-note-text { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.6; }
+
+    .stripe-identity-btn { background: rgba(99,91,255,0.12); border: 1px solid rgba(99,91,255,0.3); border-radius: 14px; padding: 18px 20px; display: flex; align-items: center; gap: 14px; cursor: pointer; width: 100%; margin-bottom: 16px; transition: all 0.3s ease; }
+    .stripe-identity-btn:hover { background: rgba(99,91,255,0.2); border-color: rgba(99,91,255,0.5); }
+    .stripe-identity-icon { font-size: 28px; }
+    .stripe-identity-text { text-align: left; }
+    .stripe-identity-title { font-size: 14px; font-weight: 600; color: white; margin-bottom: 3px; }
+    .stripe-identity-sub { font-size: 12px; color: rgba(255,255,255,0.4); }
   </style>
 </head>
 <body>
@@ -107,15 +115,15 @@
     <div class="triple-header">
       <div class="triple-badge">✦ Triple Verification System</div>
       <div class="triple-title">Three layers.<br>No exceptions.</div>
-      <div class="triple-sub">AWS · Microsoft Azure · Criminal Background Check<br>All three must pass before you appear in anyone's feed.</div>
+      <div class="triple-sub">AWS Rekognition · Stripe Identity · Criminal Background Check<br>All three must pass before you appear in anyone's feed.</div>
     </div>
 
     <div class="layer-stack">
       <div class="layer-card" id="layer1-card">
         <div class="layer-num">1</div>
         <div class="layer-body">
-          <div class="layer-name">Government ID + Facial Match</div>
-          <div class="layer-desc">Your face must match your government-issued ID in real time.</div>
+          <div class="layer-name">Live Facial Match</div>
+          <div class="layer-desc">Your live selfie is matched against your ID photo in real time.</div>
           <div class="layer-provider">Powered by AWS Rekognition</div>
           <div class="layer-status" id="layer1-status">Waiting</div>
           <div class="layer-confidence" id="layer1-confidence"></div>
@@ -126,9 +134,9 @@
       <div class="layer-card" id="layer2-card">
         <div class="layer-num">2</div>
         <div class="layer-body">
-          <div class="layer-name">Independent Facial Confirmation</div>
-          <div class="layer-desc">A second independent system confirms the match.</div>
-          <div class="layer-provider">Powered by Microsoft Azure Face API</div>
+          <div class="layer-name">Government ID Document Scan</div>
+          <div class="layer-desc">Your government ID is scanned and verified as authentic.</div>
+          <div class="layer-provider">Powered by Stripe Identity</div>
           <div class="layer-status" id="layer2-status">Waiting</div>
           <div class="layer-confidence" id="layer2-confidence"></div>
         </div>
@@ -199,7 +207,35 @@
           <button class="btn btn-outline flex-1" onclick="retakeSelfie()" id="retake-btn" style="display:none;color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.2)">Retake</button>
           <button class="btn btn-copper btn-full btn-lg" onclick="captureSelfie()" id="capture-btn">Capture Selfie</button>
         </div>
-        <button class="btn btn-copper btn-full btn-lg" onclick="proceedToBackground()" id="selfie-next-btn" style="display:none;margin-top:10px">Continue to Background Check →</button>
+        <button class="btn btn-copper btn-full btn-lg" onclick="proceedToStripeIdentity()" id="selfie-next-btn" style="display:none;margin-top:10px">Continue to ID Document Scan →</button>
+      </div>
+    </div>
+
+    <!-- Step 2b: Stripe Identity -->
+    <div class="step-section" id="step-stripe">
+      <div class="step-card">
+        <div class="step-eyebrow">Step 2b of 3</div>
+        <div class="step-title">Scan your ID document</div>
+        <div class="step-desc">Stripe will securely scan your government ID to confirm it's authentic. This opens a secure Stripe-hosted verification window.</div>
+
+        <button class="stripe-identity-btn" onclick="launchStripeIdentity()" id="stripe-launch-btn">
+          <div class="stripe-identity-icon">🔒</div>
+          <div class="stripe-identity-text">
+            <div class="stripe-identity-title">Open Secure ID Scanner</div>
+            <div class="stripe-identity-sub">Powered by Stripe Identity · Bank-level security</div>
+          </div>
+        </button>
+
+        <ul class="micro-list">
+          <li><span class="micro-check">✦</span> Stripe never shares your ID with Kyzmyt</li>
+          <li><span class="micro-check">✦</span> Only the verification result is returned</li>
+          <li><span class="micro-check">✦</span> Compliant with all US privacy laws</li>
+          <li><span class="micro-check">✦</span> Takes about 60 seconds</li>
+        </ul>
+
+        <div id="stripe-status-msg" style="display:none;text-align:center;padding:16px;font-size:13px;color:rgba(255,255,255,0.5)">
+          Waiting for Stripe Identity to complete...
+        </div>
       </div>
     </div>
 
@@ -246,7 +282,7 @@
       <div class="approved-state">
         <div class="approved-icon">✦</div>
         <div class="approved-title">You're verified.</div>
-        <div class="approved-sub">All three layers passed. Government ID matched. Facial recognition confirmed by two independent systems. Background check clear.<br><br>Welcome to Kyzmyt.</div>
+        <div class="approved-sub">All three layers passed. Live selfie matched. Government ID confirmed authentic. Background check clear.<br><br>Welcome to Kyzmyt.</div>
         <a href="/pages/app.html" class="btn btn-copper btn-lg btn-full">Find My Kyzmyt →</a>
       </div>
     </div>
@@ -256,7 +292,7 @@
       <div class="processing-state">
         <div style="font-size:40px;margin-bottom:20px">⏳</div>
         <div class="processing-title">Background check running</div>
-        <div class="processing-sub">Your facial verification passed both systems. The background check typically takes 1-5 minutes. We'll email you at <strong id="pending-email"></strong> when it's complete.</div>
+        <div class="processing-sub">Your facial verification and ID scan both passed. The background check typically takes 1-5 minutes. We'll email you at <strong id="pending-email"></strong> when it's complete.</div>
       </div>
     </div>
 
@@ -279,13 +315,24 @@ let currentUser = null;
 let idPhotoBase64 = null;
 let selfieBase64 = null;
 let stream = null;
+let stripeVerificationSessionId = null;
+let stripeClientSecret = null;
+
+// Stripe publishable key
+const stripe = Stripe('pk_live_51TABmhI1ESy65BqbHLLmHQ8N83nM1Xx6AojySNlWoDVlgfSqcu0iDbEmNTx9iJPwNYLx2yP1eEgtKhr4rwRZ0yNc00qZt6No7S');
 
 async function init() {
   const user = await requireAuth();
   if (!user) return;
   currentUser = user;
 
-  // Check if already verified or in progress
+  // Check for return from Stripe Identity
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('id_step') === 'complete') {
+    await handleStripeReturn();
+    return;
+  }
+
   await checkExistingStatus();
 }
 
@@ -305,6 +352,70 @@ async function checkExistingStatus() {
   }
 }
 
+async function handleStripeReturn() {
+  // User returned from Stripe Identity — check session status
+  showStep('processing');
+  document.getElementById('processing-layer-text').textContent = 'Checking Stripe Identity result...';
+
+  // Retrieve session ID from Supabase
+  const { data: verif } = await supabase
+    .from('verifications')
+    .select('stripe_identity_session_id, aws_facial_match')
+    .eq('user_id', currentUser.id)
+    .single();
+
+  if (!verif?.stripe_identity_session_id) {
+    showStep('id');
+    showToast('Session expired. Please start again.', 'error');
+    return;
+  }
+
+  stripeVerificationSessionId = verif.stripe_identity_session_id;
+
+  // If AWS already passed, check Stripe result and proceed
+  if (verif.aws_facial_match) {
+    setLayerPassed('layer1', 'Confirmed');
+    await checkStripeAndProceed();
+  } else {
+    // Need to run AWS first — go back to selfie step
+    showStep('id');
+    showToast('Please complete all steps from the beginning.', 'error');
+  }
+}
+
+async function checkStripeAndProceed() {
+  const response = await fetch('/.netlify/functions/verify-identity', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId: currentUser.id,
+      idPhotoBase64: null,
+      selfieBase64: null,
+      stripeVerificationSessionId,
+      stripeCheckOnly: true,
+      firstName: '',
+      lastName: '',
+      dob: ''
+    })
+  });
+
+  const result = await response.json();
+
+  if (result.results?.layer2_stripe?.passed) {
+    setLayerPassed('layer2', 'ID verified');
+    setLayerActive('layer3', 'Background check running...');
+    showStep('background');
+    showToast('ID scan verified ✓ One more step.', 'success');
+  } else if (result.results?.layer2_stripe?.status === 'requires_input') {
+    setLayerFailed('layer2', 'ID scan incomplete');
+    showStep('stripe');
+    showToast('Please complete the ID scan.', 'error');
+  } else {
+    showStep('stripe');
+    showToast('ID verification pending — please try again.', 'error');
+  }
+}
+
 function showStep(stepName) {
   document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
   document.getElementById(`step-${stepName}`)?.classList.add('active');
@@ -313,21 +424,18 @@ function showStep(stepName) {
 function updateLayerCards(layers) {
   if (!layers) return;
 
-  // Layer 1 AWS
   if (layers.aws?.passed === true) {
     setLayerPassed('layer1', `${layers.aws.confidence}% confidence`);
   } else if (layers.aws?.passed === false) {
     setLayerFailed('layer1', 'Match failed');
   }
 
-  // Layer 2 Azure
-  if (layers.azure?.passed === true) {
-    setLayerPassed('layer2', `${layers.azure.confidence}% confidence`);
-  } else if (layers.azure?.passed === false) {
-    setLayerFailed('layer2', 'Match failed');
+  if (layers.stripe?.passed === true) {
+    setLayerPassed('layer2', 'ID verified');
+  } else if (layers.stripe?.passed === false) {
+    setLayerFailed('layer2', 'Verification failed');
   }
 
-  // Layer 3 Certn
   if (layers.certn?.passed === true) {
     setLayerPassed('layer3', 'Background clear');
   } else if (layers.certn?.status === 'pending') {
@@ -433,9 +541,59 @@ window.retakeSelfie = async function() {
   await startCamera();
 };
 
-window.proceedToBackground = function() {
+window.proceedToStripeIdentity = function() {
   if (!selfieBase64) { showToast('Please capture your selfie first', 'error'); return; }
-  showStep('background');
+  showStep('stripe');
+};
+
+// ── STRIPE IDENTITY ───────────────────────────────────────────────────────────
+
+window.launchStripeIdentity = async function() {
+  const btn = document.getElementById('stripe-launch-btn');
+  btn.style.opacity = '0.5';
+  btn.style.pointerEvents = 'none';
+  document.getElementById('stripe-status-msg').style.display = 'block';
+
+  try {
+    // Create a Stripe Identity verification session via our function
+    const response = await fetch('/.netlify/functions/create-verification-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: currentUser.id })
+    });
+
+    const data = await response.json();
+
+    if (data.url) {
+      // Redirect to Stripe-hosted verification page
+      window.location.href = data.url;
+    } else if (data.clientSecret) {
+      // Use Stripe.js modal instead
+      stripeClientSecret = data.clientSecret;
+      stripeVerificationSessionId = data.sessionId;
+
+      const { error } = await stripe.verifyIdentity(stripeClientSecret);
+
+      if (error) {
+        showToast(error.message || 'Verification failed. Please try again.', 'error');
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+        document.getElementById('stripe-status-msg').style.display = 'none';
+      } else {
+        // Verification complete — proceed
+        setLayerPassed('layer2', 'ID verified');
+        showStep('background');
+        showToast('ID scan complete ✓', 'success');
+      }
+    } else {
+      throw new Error('No verification URL returned');
+    }
+  } catch (err) {
+    showToast('Could not launch ID scanner. Please try again.', 'error');
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+    document.getElementById('stripe-status-msg').style.display = 'none';
+  }
 };
 
 // ── RUN VERIFICATION ──────────────────────────────────────────────────────────
@@ -451,7 +609,6 @@ window.startVerification = async function() {
 
   const processingText = document.getElementById('processing-layer-text');
 
-  // Get user profile for name/dob
   const { data: profile } = await supabase.from('profiles').select('*').eq('user_id', currentUser.id).single();
 
   try {
@@ -464,6 +621,7 @@ window.startVerification = async function() {
         userId: currentUser.id,
         idPhotoBase64,
         selfieBase64,
+        stripeVerificationSessionId,
         firstName: profile?.first_name || profile?.display_name?.split(' ')[0] || '',
         lastName: profile?.last_name || profile?.display_name?.split(' ').slice(1).join(' ') || '',
         dob: profile?.date_of_birth || '',
@@ -473,36 +631,42 @@ window.startVerification = async function() {
 
     const result = await response.json();
 
-    // Update layer cards with results
+    // Layer 1 — AWS
     if (result.results?.layer1_aws) {
       const l1 = result.results.layer1_aws;
       if (l1.passed) {
         setLayerPassed('layer1', `${l1.confidence}% confidence`);
-        processingText.textContent = 'Layer 1 passed ✓ Running Layer 2: Azure...';
-        setLayerActive('layer2', 'Running Azure Face API...');
+        processingText.textContent = 'Layer 1 passed ✓ Checking Layer 2: Stripe Identity...';
+        setLayerActive('layer2', 'Checking ID document scan...');
       } else {
         setLayerFailed('layer1', 'Facial match failed');
-        showStep('background');
+        showStep('selfie');
         showToast('Facial match failed. Please try again with better lighting.', 'error');
         return;
       }
     }
 
-    if (result.results?.layer2_azure) {
-      const l2 = result.results.layer2_azure;
+    // Layer 2 — Stripe Identity
+    if (result.results?.layer2_stripe) {
+      const l2 = result.results.layer2_stripe;
       if (l2.passed) {
-        setLayerPassed('layer2', `${l2.confidence}% confidence`);
+        setLayerPassed('layer2', 'ID verified');
         processingText.textContent = 'Layer 2 passed ✓ Running Layer 3: Background check...';
         setLayerActive('layer3', 'Background check running...');
+      } else if (l2.requiresClientAction) {
+        // Need to complete Stripe Identity first
+        showStep('stripe');
+        showToast('Please complete the ID document scan first.', 'error');
+        return;
       } else if (result.results?.flagged_for_review) {
-        setLayerFailed('layer2', 'System disagreement');
+        setLayerFailed('layer2', 'Review required');
         showStep('review');
         return;
       }
     }
 
+    // Layer 3 — Certn
     if (result.results?.layer3_certn?.status === 'pending') {
-      // Background check is async — poll for completion
       showStep('pending');
       document.getElementById('pending-email').textContent = currentUser.email;
       pollForCompletion();
@@ -532,7 +696,7 @@ async function pollForCompletion() {
       clearInterval(poll);
       showStep('review');
     }
-  }, 10000); // Poll every 10 seconds
+  }, 10000);
 }
 
 init();
