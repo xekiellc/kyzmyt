@@ -1,10 +1,10 @@
 // ── KYZMYT TRIPLE IDENTITY VERIFICATION ──────────────────────────────────────
-// Layer 1: AWS Rekognition facial match (selfie vs ID photo)
-// Layer 2: Azure Face API facial match (second independent confirmation)
-// Layer 3: Certn ID verification + criminal background check
+// Layer 1: AWS Rekognition facial liveness + selfie match
+// Layer 2: Stripe Identity government ID document scan
+// Layer 3: Certn criminal background check
 // All three must pass. Sequential — each layer gates the next.
-// Cost: ~$0.001 (AWS) + ~$0.001 (Azure) + $13.99 (Certn) = ~$14.00 per verified member
-// Certn only fires if Layers 1 and 2 both pass — no wasted spend on failed facial matches
+// Cost: ~$0.001 (AWS) + $1.50 (Stripe Identity) + $49.99 (Certn) = ~$51.50 per verified member
+// Certn only fires if Layers 1 and 2 both pass — no wasted spend on failed verifications
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -18,7 +18,7 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid request body' }) };
   }
 
-  const { userId, idPhotoBase64, selfieBase64, firstName, lastName, dob, ssn4, zipCode } = body;
+  const { userId, idPhotoBase64, selfieBase64, firstName, lastName, dob, ssn4, zipCode, stripeVerificationSessionId } = body;
 
   if (!userId || !idPhotoBase64 || !selfieBase64 || !firstName || !lastName || !dob) {
     return {
@@ -31,7 +31,7 @@ exports.handler = async (event) => {
     userId,
     timestamp: new Date().toISOString(),
     layer1_aws: { passed: false, confidence: null, error: null },
-    layer2_azure: { passed: false, confidence: null, error: null },
+    layer2_stripe: { passed: false, status: null, documentVerified: null, error: null },
     layer3_certn: { passed: false, status: null, backgroundClear: null, error: null },
     overall_passed: false,
     flagged_for_review: false,
@@ -64,25 +64,24 @@ exports.handler = async (event) => {
     };
   }
 
-  // ── LAYER 2: AZURE FACE API ───────────────────────────────────────────────
+  // ── LAYER 2: STRIPE IDENTITY ──────────────────────────────────────────────
   try {
-    const azureResult = await runAzureFacialMatch(idPhotoBase64, selfieBase64);
-    results.layer2_azure = azureResult;
+    const stripeResult = await runStripeIdentityCheck(stripeVerificationSessionId, userId);
+    results.layer2_stripe = stripeResult;
 
-    if (!azureResult.passed) {
-      results.flagged_for_review = true;
-      results.failure_reason = 'AWS/Azure disagreement — flagged for human review';
+    if (!stripeResult.passed) {
+      results.failure_reason = 'Stripe Identity document verification failed';
       await updateSupabase(userId, results);
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ success: false, results, message: 'Identity disagreement between systems — flagged for review' })
+        body: JSON.stringify({ success: false, results, message: 'Identity verification failed at layer 2' })
       };
     }
   } catch (err) {
-    results.layer2_azure.error = err.message;
+    results.layer2_stripe.error = err.message;
     results.flagged_for_review = true;
-    results.failure_reason = 'Azure layer error — flagged for human review';
+    results.failure_reason = 'Stripe Identity layer error — flagged for human review';
     await updateSupabase(userId, results);
     return {
       statusCode: 200,
@@ -96,7 +95,7 @@ exports.handler = async (event) => {
     const certnResult = await runCertnCheck({ firstName, lastName, dob, ssn4, zipCode, userId });
     results.layer3_certn = certnResult;
 
-    if (!certnResult.passed) {
+    if (!certnResult.passed && certnResult.status !== 'pending') {
       results.failure_reason = 'Background check failed';
       await updateSupabase(userId, results);
       return {
@@ -117,8 +116,8 @@ exports.handler = async (event) => {
     };
   }
 
-  // ── ALL THREE LAYERS PASSED ───────────────────────────────────────────────
-  results.overall_passed = true;
+  // ── LAYERS 1 & 2 PASSED — CERTN PENDING ──────────────────────────────────
+  results.overall_passed = false; // true only after Certn webhook confirms clear
   await updateSupabase(userId, results);
 
   return {
@@ -127,15 +126,15 @@ exports.handler = async (event) => {
     body: JSON.stringify({
       success: true,
       results,
-      message: 'All three verification layers passed. Member approved.'
+      message: 'Facial match and ID document verified. Background check in progress.'
     })
   };
 };
 
 // ── AWS REKOGNITION ───────────────────────────────────────────────────────────
 async function runAWSFacialMatch(idPhotoBase64, selfieBase64) {
-  const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY_ID;
-  const AWS_SECRET_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+  const AWS_ACCESS_KEY = process.env.KYZMYT_AWS_ACCESS_KEY_ID;
+  const AWS_SECRET_KEY = process.env.KYZMYT_AWS_SECRET_ACCESS_KEY;
   const AWS_REGION = process.env.KYZMYT_AWS_REGION || 'us-east-1';
 
   if (!AWS_ACCESS_KEY || !AWS_SECRET_KEY) {
@@ -150,17 +149,35 @@ async function runAWSFacialMatch(idPhotoBase64, selfieBase64) {
     SimilarityThreshold: 90
   };
 
+  // Build AWS Signature V4 headers
+  const now = new Date();
+  const amzDate = now.toISOString().replace(/[:\-]|\.\d{3}/g, '').slice(0, 15) + 'Z';
+  const dateStamp = amzDate.slice(0, 8);
+
+  const bodyStr = JSON.stringify(payload);
+
+  const headers = await buildAWSHeaders({
+    method: 'POST',
+    endpoint,
+    body: bodyStr,
+    service: 'rekognition',
+    region: AWS_REGION,
+    accessKey: AWS_ACCESS_KEY,
+    secretKey: AWS_SECRET_KEY,
+    amzDate,
+    dateStamp,
+    target: 'RekognitionService.CompareFaces'
+  });
+
   const response = await fetch(endpoint, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-amz-json-1.1',
-      'X-Amz-Target': 'RekognitionService.CompareFaces',
-    },
-    body: JSON.stringify(payload)
+    headers,
+    body: bodyStr
   });
 
   if (!response.ok) {
-    throw new Error(`AWS Rekognition error: ${response.status}`);
+    const errText = await response.text();
+    throw new Error(`AWS Rekognition error: ${response.status} ${errText}`);
   }
 
   const data = await response.json();
@@ -177,59 +194,107 @@ async function runAWSFacialMatch(idPhotoBase64, selfieBase64) {
   return { passed, confidence: Math.round(confidence * 10) / 10, error: null };
 }
 
-// ── AZURE FACE API ────────────────────────────────────────────────────────────
-async function runAzureFacialMatch(idPhotoBase64, selfieBase64) {
-  const AZURE_ENDPOINT = process.env.AZURE_FACE_ENDPOINT;
-  const AZURE_KEY = process.env.AZURE_FACE_KEY;
+// ── AWS SIGNATURE V4 BUILDER ──────────────────────────────────────────────────
+async function buildAWSHeaders({ method, endpoint, body, service, region, accessKey, secretKey, amzDate, dateStamp, target }) {
+  const crypto = require('crypto');
+  const url = new URL(endpoint);
+  const host = url.hostname;
 
-  if (!AZURE_ENDPOINT || !AZURE_KEY) {
-    throw new Error('Azure Face API credentials not configured');
+  const canonicalHeaders = `content-type:application/x-amz-json-1.1\nhost:${host}\nx-amz-date:${amzDate}\nx-amz-target:${target}\n`;
+  const signedHeaders = 'content-type;host;x-amz-date;x-amz-target';
+
+  const payloadHash = crypto.createHash('sha256').update(body).digest('hex');
+  const canonicalRequest = `${method}\n/\n\n${canonicalHeaders}\n${signedHeaders}\n${payloadHash}`;
+
+  const credentialScope = `${dateStamp}/${region}/${service}/aws4_request`;
+  const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${credentialScope}\n${crypto.createHash('sha256').update(canonicalRequest).digest('hex')}`;
+
+  const getSignatureKey = (key, dateStamp, region, service) => {
+    const kDate = crypto.createHmac('sha256', `AWS4${key}`).update(dateStamp).digest();
+    const kRegion = crypto.createHmac('sha256', kDate).update(region).digest();
+    const kService = crypto.createHmac('sha256', kRegion).update(service).digest();
+    return crypto.createHmac('sha256', kService).update('aws4_request').digest();
+  };
+
+  const signingKey = getSignatureKey(secretKey, dateStamp, region, service);
+  const signature = crypto.createHmac('sha256', signingKey).update(stringToSign).digest('hex');
+  const authorizationHeader = `AWS4-HMAC-SHA256 Credential=${accessKey}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+  return {
+    'Content-Type': 'application/x-amz-json-1.1',
+    'X-Amz-Date': amzDate,
+    'X-Amz-Target': target,
+    'Authorization': authorizationHeader
+  };
+}
+
+// ── STRIPE IDENTITY ───────────────────────────────────────────────────────────
+async function runStripeIdentityCheck(verificationSessionId, userId) {
+  const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+
+  if (!STRIPE_SECRET_KEY) {
+    throw new Error('Stripe secret key not configured');
   }
 
-  const detectID = await fetch(`${AZURE_ENDPOINT}/face/v1.0/detect?returnFaceId=true`, {
-    method: 'POST',
+  if (!verificationSessionId) {
+    // Create a new verification session
+    const createResponse = await fetch('https://api.stripe.com/v1/identity/verification_sessions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${STRIPE_SECRET_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        type: 'document',
+        'metadata[userId]': userId,
+        'options[document][allowed_types][]': 'driving_license',
+        'options[document][allowed_types][]': 'passport',
+        'options[document][require_matching_selfie]': 'true'
+      }).toString()
+    });
+
+    if (!createResponse.ok) {
+      const err = await createResponse.json();
+      throw new Error(`Stripe Identity session creation failed: ${JSON.stringify(err)}`);
+    }
+
+    const session = await createResponse.json();
+
+    return {
+      passed: false,
+      status: 'pending',
+      documentVerified: false,
+      sessionId: session.id,
+      clientSecret: session.client_secret,
+      error: null,
+      requiresClientAction: true
+    };
+  }
+
+  // Retrieve existing session to check status
+  const retrieveResponse = await fetch(`https://api.stripe.com/v1/identity/verification_sessions/${verificationSessionId}`, {
+    method: 'GET',
     headers: {
-      'Content-Type': 'application/octet-stream',
-      'Ocp-Apim-Subscription-Key': AZURE_KEY
-    },
-    body: Buffer.from(idPhotoBase64, 'base64')
+      'Authorization': `Bearer ${STRIPE_SECRET_KEY}`
+    }
   });
 
-  if (!detectID.ok) throw new Error(`Azure detect ID error: ${detectID.status}`);
-  const idFaces = await detectID.json();
-  if (!idFaces.length) return { passed: false, confidence: 0, error: 'No face detected in ID photo' };
-  const idFaceId = idFaces[0].faceId;
+  if (!retrieveResponse.ok) {
+    const err = await retrieveResponse.json();
+    throw new Error(`Stripe Identity retrieval failed: ${JSON.stringify(err)}`);
+  }
 
-  const detectSelfie = await fetch(`${AZURE_ENDPOINT}/face/v1.0/detect?returnFaceId=true`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/octet-stream',
-      'Ocp-Apim-Subscription-Key': AZURE_KEY
-    },
-    body: Buffer.from(selfieBase64, 'base64')
-  });
+  const session = await retrieveResponse.json();
+  const passed = session.status === 'verified';
 
-  if (!detectSelfie.ok) throw new Error(`Azure detect selfie error: ${detectSelfie.status}`);
-  const selfieFaces = await detectSelfie.json();
-  if (!selfieFaces.length) return { passed: false, confidence: 0, error: 'No face detected in selfie' };
-  const selfieFaceId = selfieFaces[0].faceId;
-
-  const verify = await fetch(`${AZURE_ENDPOINT}/face/v1.0/verify`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Ocp-Apim-Subscription-Key': AZURE_KEY
-    },
-    body: JSON.stringify({ faceId1: idFaceId, faceId2: selfieFaceId })
-  });
-
-  if (!verify.ok) throw new Error(`Azure verify error: ${verify.status}`);
-  const verifyResult = await verify.json();
-
-  const confidence = (verifyResult.confidence || 0) * 100;
-  const passed = verifyResult.isIdentical === true && confidence >= 90;
-
-  return { passed, confidence: Math.round(confidence * 10) / 10, error: null };
+  return {
+    passed,
+    status: session.status,
+    documentVerified: passed,
+    sessionId: session.id,
+    error: null,
+    requiresClientAction: false
+  };
 }
 
 // ── CERTN BACKGROUND CHECK ────────────────────────────────────────────────────
@@ -290,14 +355,15 @@ async function updateSupabase(userId, results) {
     user_id: userId,
     aws_facial_match: results.layer1_aws.passed,
     aws_confidence: results.layer1_aws.confidence,
-    azure_facial_match: results.layer2_azure.passed,
-    azure_confidence: results.layer2_azure.confidence,
+    stripe_identity_status: results.layer2_stripe.status || null,
+    stripe_session_id: results.layer2_stripe.sessionId || null,
+    document_verified: results.layer2_stripe.documentVerified || false,
     certn_order_id: results.layer3_certn.certnOrderId || null,
     background_status: results.layer3_certn.status || 'not_started',
     background_clear: results.layer3_certn.backgroundClear,
     flagged_for_review: results.flagged_for_review,
     failure_reason: results.failure_reason,
-    id_verified: results.layer1_aws.passed && results.layer2_azure.passed,
+    id_verified: results.layer1_aws.passed && results.layer2_stripe.passed,
     overall_verified: results.overall_passed,
     verified_at: results.overall_passed ? new Date().toISOString() : null,
     updated_at: new Date().toISOString()
