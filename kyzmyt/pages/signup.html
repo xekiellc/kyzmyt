@@ -323,7 +323,7 @@ import { supabase, showToast } from '/js/supabase.js';
 let currentStep = 0;
 let formData = {};
 let currentPhotoSlot = 0;
-let uploadedPhotos = []; // { slot, url, path }
+let uploadedPhotos = [];
 
 const quizQuestions = [
   { id: 'conflict', text: 'When you disagree with someone close, you usually:', options: ['Address it directly right away', 'Wait for the right moment', 'Let it go if it\'s small', 'Need space to process first'] },
@@ -487,7 +487,6 @@ window.handlePhotoUpload = async function(e) {
   const slot = document.getElementById(`photo-${currentPhotoSlot}`);
   slot.innerHTML = '<div class="uploading-indicator"></div>';
 
-  // Get current user
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     showToast('Please create your account first', 'error');
@@ -517,7 +516,6 @@ window.handlePhotoUpload = async function(e) {
     ${currentPhotoSlot === 0 ? '<div class="primary-badge">PRIMARY</div>' : ''}
   `;
 
-  // Store for profile save
   uploadedPhotos = uploadedPhotos.filter(p => p.slot !== currentPhotoSlot);
   uploadedPhotos.push({ slot: currentPhotoSlot, url: publicUrl, path });
 
@@ -594,8 +592,33 @@ window.saveProfile = async function() {
     await supabase.from('profile_photos').insert(photoRecords);
   }
 
-  showToast('Profile saved! Time to verify your identity.', 'success');
-  setTimeout(() => { window.location.href = '/pages/verify.html'; }, 1500);
+  showToast('Profile saved! Setting up your verification...', 'success');
+
+  // Create payment session — redirect to Stripe Checkout
+  const payResponse = await fetch('/.netlify/functions/create-signup-payment', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId: user.id,
+      email: user.email
+    })
+  });
+
+  const payData = await payResponse.json();
+
+  if (payData.already_paid) {
+    window.location.href = '/pages/verify.html';
+    return;
+  }
+
+  if (payData.url) {
+    window.location.href = payData.url;
+    return;
+  }
+
+  showToast('Payment setup failed. Please try again.', 'error');
+  btn.textContent = 'Continue to Verification →';
+  btn.disabled = false;
 };
 
 document.getElementById('bio').addEventListener('input', function() {
@@ -606,6 +629,12 @@ document.getElementById('bio').addEventListener('input', function() {
 const urlParams = new URLSearchParams(window.location.search);
 const stepParam = parseInt(urlParams.get('step'));
 if (stepParam && stepParam > 0) { currentStep = stepParam; showStep(stepParam); }
+
+// Handle cancelled payment — show message and stay on step 6
+if (urlParams.get('payment') === 'cancelled') {
+  showStep(6);
+  setTimeout(() => showToast('Payment cancelled. Complete your profile to continue.', 'error'), 500);
+}
 
 renderQuiz();
 </script>
