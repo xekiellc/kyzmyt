@@ -53,22 +53,6 @@
     .step-title { font-family: var(--font-display); font-size: 22px; color: white; margin-bottom: 8px; }
     .step-desc { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.65; margin-bottom: 20px; }
 
-    .upload-zone { border: 2px dashed rgba(255,255,255,0.15); border-radius: 14px; padding: 36px 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; margin-bottom: 16px; position: relative; }
-    .upload-zone:hover { border-color: var(--copper); background: rgba(184,115,51,0.05); }
-    .upload-zone.has-file { border-color: rgba(46,125,50,0.5); background: rgba(46,125,50,0.05); }
-    .upload-icon { font-size: 32px; margin-bottom: 10px; }
-    .upload-label { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
-    .upload-sub { font-size: 12px; color: rgba(255,255,255,0.3); }
-    .upload-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-    .upload-preview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; margin-top: 12px; display: none; }
-
-    .camera-container { border-radius: 14px; overflow: hidden; background: #000; margin-bottom: 16px; position: relative; }
-    .camera-video { width: 100%; display: block; border-radius: 14px; }
-    .camera-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-    .face-guide { width: 180px; height: 220px; border: 2px solid rgba(184,115,51,0.6); border-radius: 50%; box-shadow: 0 0 0 4000px rgba(0,0,0,0.4); }
-    .camera-canvas { display: none; }
-    .camera-preview { width: 100%; border-radius: 14px; display: none; }
-
     .micro-list { list-style: none; margin-bottom: 20px; }
     .micro-list li { display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgba(255,255,255,0.4); padding: 4px 0; }
     .micro-check { color: var(--copper); font-size: 10px; }
@@ -89,17 +73,20 @@
     .security-note-title { font-size: 11px; font-weight: 600; color: var(--copper); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
     .security-note-text { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.6; }
 
-    .stripe-identity-btn { background: rgba(99,91,255,0.12); border: 1px solid rgba(99,91,255,0.3); border-radius: 14px; padding: 18px 20px; display: flex; align-items: center; gap: 14px; cursor: pointer; width: 100%; margin-bottom: 16px; transition: all 0.3s ease; }
+    .stripe-identity-btn { background: rgba(99,91,255,0.12); border: 1px solid rgba(99,91,255,0.3); border-radius: 14px; padding: 24px 20px; display: flex; align-items: center; gap: 14px; cursor: pointer; width: 100%; margin-bottom: 16px; transition: all 0.3s ease; text-align: left; }
     .stripe-identity-btn:hover { background: rgba(99,91,255,0.2); border-color: rgba(99,91,255,0.5); }
-    .stripe-identity-icon { font-size: 28px; }
-    .stripe-identity-text { text-align: left; }
-    .stripe-identity-title { font-size: 14px; font-weight: 600; color: white; margin-bottom: 3px; }
+    .stripe-identity-icon { font-size: 32px; flex-shrink: 0; }
+    .stripe-identity-title { font-size: 15px; font-weight: 600; color: white; margin-bottom: 4px; }
     .stripe-identity-sub { font-size: 12px; color: rgba(255,255,255,0.4); }
 
     .payment-gate { text-align: center; padding: 60px 20px; }
     .payment-gate-icon { font-size: 48px; margin-bottom: 20px; }
     .payment-gate-title { font-family: var(--font-display); font-size: 26px; color: white; margin-bottom: 12px; }
     .payment-gate-sub { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.7; margin-bottom: 28px; }
+
+    .verify-start { text-align: center; padding: 20px 0 32px; }
+    .verify-start-title { font-family: var(--font-display); font-size: 22px; color: white; margin-bottom: 8px; }
+    .verify-start-sub { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.6; margin-bottom: 24px; }
   </style>
 </head>
 <body>
@@ -118,7 +105,7 @@
     <div class="triple-header">
       <div class="triple-badge">✦ Triple Verification System</div>
       <div class="triple-title">Three layers.<br>No exceptions.</div>
-      <div class="triple-sub">AWS Rekognition · Stripe Identity · Criminal Background Check<br>All three must pass before you appear in anyone's feed.</div>
+      <div class="triple-sub">AWS Rekognition · Stripe Identity · Checkr Background Check<br>All three must pass before you appear in anyone's feed.</div>
     </div>
 
     <div class="layer-stack">
@@ -126,7 +113,7 @@
         <div class="layer-num">1</div>
         <div class="layer-body">
           <div class="layer-name">Live Facial Match</div>
-          <div class="layer-desc">Your live selfie is matched against your ID photo in real time.</div>
+          <div class="layer-desc">Your live selfie is matched against your ID photo using AI facial recognition.</div>
           <div class="layer-provider">Powered by AWS Rekognition</div>
           <div class="layer-status" id="layer1-status">Waiting</div>
           <div class="layer-confidence" id="layer1-confidence"></div>
@@ -151,14 +138,14 @@
         <div class="layer-body">
           <div class="layer-name">Criminal Background Check</div>
           <div class="layer-desc">National database, sex offender registry, felony and misdemeanor history.</div>
-          <div class="layer-provider">Powered by Certn</div>
+          <div class="layer-provider">Powered by Checkr</div>
           <div class="layer-status" id="layer3-status">Waiting</div>
         </div>
         <div class="layer-icon" id="layer3-icon">⏳</div>
       </div>
     </div>
 
-    <!-- Payment gate — shown if user lands here without paying -->
+    <!-- Payment gate -->
     <div class="step-section" id="step-paygate">
       <div class="payment-gate">
         <div class="payment-gate-icon">🔐</div>
@@ -169,100 +156,45 @@
       </div>
     </div>
 
-    <!-- Step 1: Upload ID -->
-    <div class="step-section" id="step-id">
+    <!-- Step 1: Launch Stripe Identity — handles ID scan + selfie natively -->
+    <div class="step-section" id="step-verify">
       <div class="step-card">
-        <div class="step-eyebrow">Step 1 of 3</div>
-        <div class="step-title">Upload your government ID</div>
-        <div class="step-desc">Driver's license, passport, or state ID. Must be current and not expired. Both sides if applicable.</div>
-
-        <div class="upload-zone" id="id-upload-zone">
-          <input type="file" class="upload-input" id="id-file" accept="image/jpeg,image/png,image/webp" onchange="handleIDUpload(event)" />
-          <div class="upload-icon">🪪</div>
-          <div class="upload-label">Tap to upload your ID</div>
-          <div class="upload-sub">JPEG, PNG, or WebP · Max 10MB</div>
-          <img id="id-preview" class="upload-preview" />
-        </div>
-
-        <ul class="micro-list">
-          <li><span class="micro-check">✦</span> Your ID is encrypted immediately on upload</li>
-          <li><span class="micro-check">✦</span> Never shared with other members</li>
-          <li><span class="micro-check">✦</span> Used only for identity verification</li>
-          <li><span class="micro-check">✦</span> Does not affect your credit score</li>
-        </ul>
-
-        <button class="btn btn-copper btn-full btn-lg" onclick="proceedToSelfie()" id="id-next-btn" disabled>Continue to Live Selfie →</button>
-      </div>
-    </div>
-
-    <!-- Step 2: Live selfie -->
-    <div class="step-section" id="step-selfie">
-      <div class="step-card">
-        <div class="step-eyebrow">Step 2 of 3</div>
-        <div class="step-title">Take a live selfie</div>
-        <div class="step-desc">Position your face within the oval. This confirms you are the person on the ID — in real time. No uploaded photos accepted.</div>
-
-        <div class="camera-container" id="camera-container">
-          <video id="camera-video" class="camera-video" autoplay muted playsinline></video>
-          <div class="camera-overlay">
-            <div class="face-guide"></div>
-          </div>
-          <canvas id="camera-canvas" class="camera-canvas"></canvas>
-        </div>
-        <img id="selfie-preview" class="camera-preview" />
-
-        <ul class="micro-list">
-          <li><span class="micro-check">✦</span> Look directly at the camera</li>
-          <li><span class="micro-check">✦</span> Good lighting — no sunglasses or hats</li>
-          <li><span class="micro-check">✦</span> This is a live check — AI images cannot pass</li>
-        </ul>
-
-        <div style="display:flex;gap:10px">
-          <button class="btn btn-outline flex-1" onclick="retakeSelfie()" id="retake-btn" style="display:none;color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.2)">Retake</button>
-          <button class="btn btn-copper btn-full btn-lg" onclick="captureSelfie()" id="capture-btn">Capture Selfie</button>
-        </div>
-        <button class="btn btn-copper btn-full btn-lg" onclick="proceedToStripeIdentity()" id="selfie-next-btn" style="display:none;margin-top:10px">Continue to ID Document Scan →</button>
-      </div>
-    </div>
-
-    <!-- Step 2b: Stripe Identity -->
-    <div class="step-section" id="step-stripe">
-      <div class="step-card">
-        <div class="step-eyebrow">Step 2b of 3</div>
-        <div class="step-title">Scan your ID document</div>
-        <div class="step-desc">Stripe will securely scan your government ID to confirm it's authentic. This opens a secure Stripe-hosted verification window.</div>
+        <div class="step-eyebrow">Step 1 of 2</div>
+        <div class="step-title">Verify your identity</div>
+        <div class="step-desc">Tap below to open the secure verification flow. You'll scan your government ID and take a live selfie — all in one step. Takes about 60 seconds.</div>
 
         <button class="stripe-identity-btn" onclick="launchStripeIdentity()" id="stripe-launch-btn">
           <div class="stripe-identity-icon">🔒</div>
-          <div class="stripe-identity-text">
-            <div class="stripe-identity-title">Open Secure ID Scanner</div>
+          <div>
+            <div class="stripe-identity-title">Start Identity Verification</div>
             <div class="stripe-identity-sub">Powered by Stripe Identity · Bank-level security</div>
           </div>
         </button>
 
         <ul class="micro-list">
-          <li><span class="micro-check">✦</span> Stripe never shares your ID with Kyzmyt</li>
-          <li><span class="micro-check">✦</span> Only the verification result is returned</li>
-          <li><span class="micro-check">✦</span> Compliant with all US privacy laws</li>
-          <li><span class="micro-check">✦</span> Takes about 60 seconds</li>
+          <li><span class="micro-check">✦</span> Scan your government ID — driver's license, passport, or state ID</li>
+          <li><span class="micro-check">✦</span> Take a live selfie — AI images and photos cannot pass</li>
+          <li><span class="micro-check">✦</span> Stripe never shares your ID with other members</li>
+          <li><span class="micro-check">✦</span> Only the verification result is returned to Kyzmyt</li>
+          <li><span class="micro-check">✦</span> Does not affect your credit score</li>
         </ul>
 
         <div id="stripe-status-msg" style="display:none;text-align:center;padding:16px;font-size:13px;color:rgba(255,255,255,0.5)">
-          Waiting for Stripe Identity to complete...
+          Opening secure verification window...
         </div>
       </div>
     </div>
 
-    <!-- Step 3: Background check info -->
+    <!-- Step 2: Background check confirmation -->
     <div class="step-section" id="step-background">
       <div class="step-card">
-        <div class="step-eyebrow">Step 3 of 3</div>
+        <div class="step-eyebrow">Step 2 of 2</div>
         <div class="step-title">Background check</div>
-        <div class="step-desc">A real criminal background check runs automatically. Results go directly to Kyzmyt — you cannot alter them. This takes 1-5 minutes.</div>
+        <div class="step-desc">Your identity is verified. Now a real criminal background check runs automatically. Results go directly to Kyzmyt — you cannot alter them.</div>
 
         <div class="security-note">
           <div class="security-note-title">What we check</div>
-          <div class="security-note-text">National criminal database · Sex offender registry (all 50 states) · Felony convictions · Misdemeanor convictions · Pending charges</div>
+          <div class="security-note-text">National criminal database · Sex offender registry (all 50 states) · County criminal records · Felony convictions · Misdemeanor convictions · Pending charges</div>
         </div>
 
         <div class="security-note">
@@ -277,7 +209,7 @@
           <li><span class="micro-check">✦</span> Takes approximately 1-5 minutes</li>
         </ul>
 
-        <button class="btn btn-copper btn-full btn-lg" onclick="startVerification()" id="start-verify-btn">Run All Three Verifications ✦</button>
+        <button class="btn btn-copper btn-full btn-lg" onclick="startBackgroundCheck()" id="start-bg-btn">Run Background Check ✦</button>
       </div>
     </div>
 
@@ -286,8 +218,8 @@
       <div class="processing-state">
         <div class="processing-spinner"></div>
         <div class="processing-title">Verifying your identity</div>
-        <div class="processing-sub">Running all three layers simultaneously.<br>This takes about 2-3 minutes.</div>
-        <div class="processing-layer" id="processing-layer-text">Layer 1: AWS facial recognition running...</div>
+        <div class="processing-sub">Running all three layers.<br>This takes about 2-3 minutes.</div>
+        <div class="processing-layer" id="processing-layer-text">Initializing...</div>
       </div>
     </div>
 
@@ -306,7 +238,7 @@
       <div class="processing-state">
         <div style="font-size:40px;margin-bottom:20px">⏳</div>
         <div class="processing-title">Background check running</div>
-        <div class="processing-sub">Your facial verification and ID scan both passed. The background check typically takes 1-5 minutes. We'll email you at <strong id="pending-email"></strong> when it's complete.</div>
+        <div class="processing-sub">Your facial verification and ID scan both passed. The background check typically completes within minutes. We'll email you at <strong id="pending-email"></strong> when it's done.</div>
       </div>
     </div>
 
@@ -319,6 +251,16 @@
       </div>
     </div>
 
+    <!-- Failed state -->
+    <div class="step-section" id="step-failed">
+      <div class="processing-state">
+        <div style="font-size:40px;margin-bottom:20px">✕</div>
+        <div class="processing-title">Verification failed</div>
+        <div class="processing-sub" id="failed-reason">One or more verification layers could not be completed. Please try again or contact support at hello@kyzmyt.com.</div>
+        <button class="btn btn-copper btn-full btn-lg" style="margin-top:24px" onclick="showStep('verify')">Try Again</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -326,11 +268,7 @@
 import { supabase, requireAuth, showToast } from '/js/supabase.js';
 
 let currentUser = null;
-let idPhotoBase64 = null;
-let selfieBase64 = null;
-let stream = null;
 let stripeVerificationSessionId = null;
-let stripeClientSecret = null;
 
 const stripe = Stripe('pk_live_51TABmhI1ESy65BqbHLLmHQ8N83nM1Xx6AojySNlWoDVlgfSqcu0iDbEmNTx9iJPwNYLx2yP1eEgtKhr4rwRZ0yNc00qZt6No7S');
 
@@ -341,13 +279,14 @@ async function init() {
 
   const params = new URLSearchParams(window.location.search);
 
-  // Handle return from Stripe Identity verification
+  // Return from Stripe Identity hosted flow
   if (params.get('id_step') === 'complete') {
+    window.history.replaceState({}, '', '/pages/verify.html');
     await handleStripeReturn();
     return;
   }
 
-  // Handle successful payment return from Stripe Checkout
+  // Return from Stripe Checkout payment
   if (params.get('payment') === 'success') {
     const sessionId = params.get('session_id');
     if (sessionId) {
@@ -356,7 +295,7 @@ async function init() {
     }
   }
 
-  // Check payment status before anything else
+  // Check payment first
   const paid = await checkPaymentStatus();
   if (!paid) {
     showStep('paygate');
@@ -377,7 +316,6 @@ async function checkPaymentStatus() {
 }
 
 async function confirmPaymentAndProceed(sessionId) {
-  // Mark has_paid in Supabase via the stripe-webhook or directly confirm here
   showStep('processing');
   document.getElementById('processing-layer-text').textContent = 'Confirming your payment...';
 
@@ -390,10 +328,9 @@ async function confirmPaymentAndProceed(sessionId) {
     const data = await res.json();
 
     if (data.confirmed) {
-      // Clean URL and proceed to verification
       window.history.replaceState({}, '', '/pages/verify.html');
       showToast('Payment confirmed ✓ Let\'s verify your identity.', 'success');
-      showStep('id');
+      showStep('verify');
     } else {
       showToast('Payment could not be confirmed. Please contact support.', 'error');
       showStep('paygate');
@@ -442,78 +379,195 @@ async function checkExistingStatus() {
   const data = await res.json();
 
   if (data.status === 'approved') {
-    showStep('approved');
     updateLayerCards(data.layers);
+    showStep('approved');
   } else if (data.status === 'pending') {
-    showStep('pending');
     document.getElementById('pending-email').textContent = currentUser.email;
+    showStep('pending');
     pollForCompletion();
   } else if (data.status === 'review') {
     showStep('review');
   } else {
-    showStep('id');
+    showStep('verify');
   }
 }
+
+// ── STRIPE IDENTITY ───────────────────────────────────────────────────────────
+
+window.launchStripeIdentity = async function() {
+  const btn = document.getElementById('stripe-launch-btn');
+  btn.style.opacity = '0.5';
+  btn.style.pointerEvents = 'none';
+  document.getElementById('stripe-status-msg').style.display = 'block';
+
+  try {
+    const response = await fetch('/.netlify/functions/create-verification-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: currentUser.id })
+    });
+
+    const data = await response.json();
+
+    if (data.url) {
+      // Redirect to Stripe-hosted flow
+      window.location.href = data.url;
+    } else if (data.clientSecret) {
+      // Use Stripe.js modal
+      stripeVerificationSessionId = data.sessionId;
+      const { error } = await stripe.verifyIdentity(data.clientSecret);
+      if (error) {
+        showToast(error.message || 'Verification failed. Please try again.', 'error');
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+        document.getElementById('stripe-status-msg').style.display = 'none';
+      } else {
+        await handleStripeReturn();
+      }
+    } else {
+      throw new Error('No verification URL returned');
+    }
+  } catch (err) {
+    showToast('Could not launch verification. Please try again.', 'error');
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+    document.getElementById('stripe-status-msg').style.display = 'none';
+  }
+};
 
 async function handleStripeReturn() {
   showStep('processing');
-  document.getElementById('processing-layer-text').textContent = 'Checking Stripe Identity result...';
+  document.getElementById('processing-layer-text').textContent = 'Checking your identity verification...';
 
-  const { data: verif } = await supabase
-    .from('verifications')
-    .select('stripe_identity_session_id, aws_facial_match')
-    .eq('user_id', currentUser.id)
-    .single();
+  try {
+    // Get the stored session ID
+    const { data: verif } = await supabase
+      .from('verifications')
+      .select('stripe_identity_session_id')
+      .eq('user_id', currentUser.id)
+      .single();
 
-  if (!verif?.stripe_identity_session_id) {
-    showStep('id');
-    showToast('Session expired. Please start again.', 'error');
-    return;
-  }
+    if (!verif?.stripe_identity_session_id) {
+      showStep('verify');
+      showToast('Session expired. Please start again.', 'error');
+      return;
+    }
 
-  stripeVerificationSessionId = verif.stripe_identity_session_id;
+    stripeVerificationSessionId = verif.stripe_identity_session_id;
 
-  if (verif.aws_facial_match) {
-    setLayerPassed('layer1', 'Confirmed');
-    await checkStripeAndProceed();
-  } else {
-    showStep('id');
-    showToast('Please complete all steps from the beginning.', 'error');
+    // Run layers 1 + 2 check via verify-identity function
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('display_name, date_of_birth, zipcode')
+      .eq('user_id', currentUser.id)
+      .single();
+
+    document.getElementById('processing-layer-text').textContent = 'Layer 1: AWS facial recognition running...';
+    setLayerActive('layer1', 'Running...');
+
+    const response = await fetch('/.netlify/functions/verify-identity', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: currentUser.id,
+        stripeVerificationSessionId,
+        firstName: profile?.display_name?.split(' ')[0] || '',
+        lastName: profile?.display_name?.split(' ').slice(1).join(' ') || '',
+        dob: profile?.date_of_birth || '',
+        zipCode: profile?.zipcode || ''
+      })
+    });
+
+    const result = await response.json();
+
+    // Layer 1 — AWS
+    if (result.results?.layer1_aws?.passed) {
+      setLayerPassed('layer1', `${result.results.layer1_aws.confidence}% confidence`);
+      document.getElementById('processing-layer-text').textContent = 'Layer 1 passed ✓ Checking Stripe Identity...';
+    } else if (result.results?.layer1_aws?.passed === false) {
+      setLayerFailed('layer1', 'Facial match failed');
+      document.getElementById('failed-reason').textContent = 'Facial match failed. Please ensure your profile photo matches your ID. Contact hello@kyzmyt.com if you need help.';
+      showStep('failed');
+      return;
+    }
+
+    // Layer 2 — Stripe Identity
+    if (result.results?.layer2_stripe?.passed) {
+      setLayerPassed('layer2', 'ID verified');
+      document.getElementById('processing-layer-text').textContent = 'Layer 2 passed ✓ Ready for background check.';
+      setLayerActive('layer3', 'Ready to run...');
+      showStep('background');
+      showToast('Identity verified ✓ One final step.', 'success');
+    } else if (result.results?.layer2_stripe?.requiresClientAction) {
+      showStep('verify');
+      showToast('Please complete the identity scan to continue.', 'error');
+    } else if (result.results?.flagged_for_review) {
+      showStep('review');
+    } else {
+      showStep('verify');
+      showToast('Verification incomplete. Please try again.', 'error');
+    }
+
+  } catch (err) {
+    showToast('Verification error. Please try again.', 'error');
+    showStep('verify');
   }
 }
 
-async function checkStripeAndProceed() {
-  const response = await fetch('/.netlify/functions/verify-identity', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      userId: currentUser.id,
-      idPhotoBase64: null,
-      selfieBase64: null,
-      stripeVerificationSessionId,
-      stripeCheckOnly: true,
-      firstName: '',
-      lastName: '',
-      dob: ''
-    })
-  });
+// ── BACKGROUND CHECK ──────────────────────────────────────────────────────────
 
-  const result = await response.json();
+window.startBackgroundCheck = async function() {
+  const btn = document.getElementById('start-bg-btn');
+  btn.textContent = 'Running...';
+  btn.disabled = true;
 
-  if (result.results?.layer2_stripe?.passed) {
-    setLayerPassed('layer2', 'ID verified');
-    setLayerActive('layer3', 'Background check running...');
+  showStep('processing');
+  setLayerActive('layer3', 'Running background check...');
+  document.getElementById('processing-layer-text').textContent = 'Layer 3: Checkr background check running...';
+
+  try {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('display_name, date_of_birth, zipcode')
+      .eq('user_id', currentUser.id)
+      .single();
+
+    const response = await fetch('/.netlify/functions/run-background-check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: currentUser.id,
+        firstName: profile?.display_name?.split(' ')[0] || '',
+        lastName: profile?.display_name?.split(' ').slice(1).join(' ') || '',
+        dob: profile?.date_of_birth || '',
+        zipCode: profile?.zipcode || ''
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.status === 'pending') {
+      document.getElementById('pending-email').textContent = currentUser.email;
+      showStep('pending');
+      pollForCompletion();
+    } else if (result.status === 'clear') {
+      setLayerPassed('layer3', 'Background clear');
+      showStep('approved');
+    } else if (result.status === 'review') {
+      showStep('review');
+    } else {
+      showStep('review');
+    }
+
+  } catch (err) {
+    showToast('Background check error. Please try again.', 'error');
     showStep('background');
-    showToast('ID scan verified ✓ One more step.', 'success');
-  } else if (result.results?.layer2_stripe?.status === 'requires_input') {
-    setLayerFailed('layer2', 'ID scan incomplete');
-    showStep('stripe');
-    showToast('Please complete the ID scan.', 'error');
-  } else {
-    showStep('stripe');
-    showToast('ID verification pending — please try again.', 'error');
+    btn.textContent = 'Run Background Check ✦';
+    btn.disabled = false;
   }
-}
+};
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
 
 function showStep(stepName) {
   document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
@@ -526,9 +580,9 @@ function updateLayerCards(layers) {
   else if (layers.aws?.passed === false) setLayerFailed('layer1', 'Match failed');
   if (layers.stripe?.passed === true) setLayerPassed('layer2', 'ID verified');
   else if (layers.stripe?.passed === false) setLayerFailed('layer2', 'Verification failed');
-  if (layers.certn?.passed === true) setLayerPassed('layer3', 'Background clear');
-  else if (layers.certn?.status === 'pending') setLayerActive('layer3', 'Running...');
-  else if (layers.certn?.passed === false) setLayerFailed('layer3', 'Not clear');
+  if (layers.checkr?.passed === true) setLayerPassed('layer3', 'Background clear');
+  else if (layers.checkr?.status === 'pending') setLayerActive('layer3', 'Running...');
+  else if (layers.checkr?.passed === false) setLayerFailed('layer3', 'Not clear');
 }
 
 function setLayerActive(id, statusText) {
@@ -551,195 +605,6 @@ function setLayerFailed(id, reason) {
   document.getElementById(`${id}-status`).textContent = `✕ ${reason}`;
   document.getElementById(`${id}-icon`).textContent = '✕';
 }
-
-window.handleIDUpload = function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  if (file.size > 10 * 1024 * 1024) { showToast('File must be under 10MB', 'error'); return; }
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    const dataUrl = ev.target.result;
-    idPhotoBase64 = dataUrl.split(',')[1];
-    const preview = document.getElementById('id-preview');
-    preview.src = dataUrl;
-    preview.style.display = 'block';
-    document.getElementById('id-upload-zone').classList.add('has-file');
-    document.getElementById('id-next-btn').disabled = false;
-    showToast('ID uploaded successfully', 'success');
-  };
-  reader.readAsDataURL(file);
-};
-
-window.proceedToSelfie = async function() {
-  if (!idPhotoBase64) { showToast('Please upload your ID first', 'error'); return; }
-  showStep('selfie');
-  await startCamera();
-};
-
-async function startCamera() {
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }
-    });
-    document.getElementById('camera-video').srcObject = stream;
-  } catch (err) {
-    showToast('Camera access required for verification', 'error');
-  }
-}
-
-window.captureSelfie = function() {
-  const video = document.getElementById('camera-video');
-  const canvas = document.getElementById('camera-canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-  const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-  selfieBase64 = dataUrl.split(',')[1];
-  const preview = document.getElementById('selfie-preview');
-  preview.src = dataUrl;
-  preview.style.display = 'block';
-  document.getElementById('camera-container').style.display = 'none';
-  document.getElementById('capture-btn').style.display = 'none';
-  document.getElementById('retake-btn').style.display = 'inline-flex';
-  document.getElementById('selfie-next-btn').style.display = 'block';
-  if (stream) { stream.getTracks().forEach(t => t.stop()); }
-  showToast('Selfie captured', 'success');
-};
-
-window.retakeSelfie = async function() {
-  selfieBase64 = null;
-  document.getElementById('selfie-preview').style.display = 'none';
-  document.getElementById('camera-container').style.display = 'block';
-  document.getElementById('capture-btn').style.display = 'block';
-  document.getElementById('retake-btn').style.display = 'none';
-  document.getElementById('selfie-next-btn').style.display = 'none';
-  await startCamera();
-};
-
-window.proceedToStripeIdentity = function() {
-  if (!selfieBase64) { showToast('Please capture your selfie first', 'error'); return; }
-  showStep('stripe');
-};
-
-window.launchStripeIdentity = async function() {
-  const btn = document.getElementById('stripe-launch-btn');
-  btn.style.opacity = '0.5';
-  btn.style.pointerEvents = 'none';
-  document.getElementById('stripe-status-msg').style.display = 'block';
-
-  try {
-    const response = await fetch('/.netlify/functions/create-verification-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: currentUser.id })
-    });
-
-    const data = await response.json();
-
-    if (data.url) {
-      window.location.href = data.url;
-    } else if (data.clientSecret) {
-      stripeClientSecret = data.clientSecret;
-      stripeVerificationSessionId = data.sessionId;
-      const { error } = await stripe.verifyIdentity(stripeClientSecret);
-      if (error) {
-        showToast(error.message || 'Verification failed. Please try again.', 'error');
-        btn.style.opacity = '1';
-        btn.style.pointerEvents = 'auto';
-        document.getElementById('stripe-status-msg').style.display = 'none';
-      } else {
-        setLayerPassed('layer2', 'ID verified');
-        showStep('background');
-        showToast('ID scan complete ✓', 'success');
-      }
-    } else {
-      throw new Error('No verification URL returned');
-    }
-  } catch (err) {
-    showToast('Could not launch ID scanner. Please try again.', 'error');
-    btn.style.opacity = '1';
-    btn.style.pointerEvents = 'auto';
-    document.getElementById('stripe-status-msg').style.display = 'none';
-  }
-};
-
-window.startVerification = async function() {
-  if (!idPhotoBase64 || !selfieBase64) {
-    showToast('Please complete all steps first', 'error');
-    return;
-  }
-
-  showStep('processing');
-  setLayerActive('layer1', 'Running AWS facial recognition...');
-
-  const processingText = document.getElementById('processing-layer-text');
-  const { data: profile } = await supabase.from('profiles').select('*').eq('user_id', currentUser.id).single();
-
-  try {
-    processingText.textContent = 'Layer 1: AWS Rekognition running...';
-
-    const response = await fetch('/.netlify/functions/verify-identity', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId: currentUser.id,
-        idPhotoBase64,
-        selfieBase64,
-        stripeVerificationSessionId,
-        firstName: profile?.first_name || profile?.display_name?.split(' ')[0] || '',
-        lastName: profile?.last_name || profile?.display_name?.split(' ').slice(1).join(' ') || '',
-        dob: profile?.date_of_birth || '',
-        zipCode: profile?.zipcode || ''
-      })
-    });
-
-    const result = await response.json();
-
-    if (result.results?.layer1_aws) {
-      const l1 = result.results.layer1_aws;
-      if (l1.passed) {
-        setLayerPassed('layer1', `${l1.confidence}% confidence`);
-        processingText.textContent = 'Layer 1 passed ✓ Checking Layer 2: Stripe Identity...';
-        setLayerActive('layer2', 'Checking ID document scan...');
-      } else {
-        setLayerFailed('layer1', 'Facial match failed');
-        showStep('selfie');
-        showToast('Facial match failed. Please try again with better lighting.', 'error');
-        return;
-      }
-    }
-
-    if (result.results?.layer2_stripe) {
-      const l2 = result.results.layer2_stripe;
-      if (l2.passed) {
-        setLayerPassed('layer2', 'ID verified');
-        processingText.textContent = 'Layer 2 passed ✓ Running Layer 3: Background check...';
-        setLayerActive('layer3', 'Background check running...');
-      } else if (l2.requiresClientAction) {
-        showStep('stripe');
-        showToast('Please complete the ID document scan first.', 'error');
-        return;
-      } else if (result.results?.flagged_for_review) {
-        setLayerFailed('layer2', 'Review required');
-        showStep('review');
-        return;
-      }
-    }
-
-    if (result.results?.layer3_certn?.status === 'pending') {
-      showStep('pending');
-      document.getElementById('pending-email').textContent = currentUser.email;
-      pollForCompletion();
-    } else if (result.results?.overall_passed) {
-      setLayerPassed('layer3', 'Background clear');
-      showStep('approved');
-    }
-
-  } catch (err) {
-    showToast('Verification error. Please try again.', 'error');
-    showStep('background');
-  }
-};
 
 async function pollForCompletion() {
   const poll = setInterval(async () => {
