@@ -1,7 +1,3 @@
-// ── VERIFICATION STATUS CHECK ─────────────────────────────────────────────────
-// Called by verify.html to show real-time status of all three layers
-// Powers the progress UI on the verification page
-
 exports.handler = async (event) => {
   if (event.httpMethod !== 'GET') {
     return { statusCode: 405, body: 'Method not allowed' };
@@ -29,7 +25,10 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'not_started' })
+      body: JSON.stringify({
+        status: 'not_started',
+        has_paid: false
+      })
     };
   }
 
@@ -41,10 +40,11 @@ exports.handler = async (event) => {
               verif.flagged_for_review ? 'review' :
               verif.background_status === 'pending' ? 'pending' :
               'not_started',
+      has_paid: verif.has_paid === true,
       layers: {
         aws: { passed: verif.aws_facial_match, confidence: verif.aws_confidence },
-        azure: { passed: verif.azure_facial_match, confidence: verif.azure_confidence },
-        certn: { passed: verif.background_clear, status: verif.background_status }
+        stripe: { passed: verif.document_verified, status: verif.stripe_identity_status },
+        checkr: { passed: verif.background_clear, status: verif.background_status }
       },
       id_verified: verif.id_verified,
       background_clear: verif.background_clear,
