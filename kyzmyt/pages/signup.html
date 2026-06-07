@@ -66,6 +66,27 @@
     .toggle.on .toggle-thumb { left: 22px; }
     .range-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 4px; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── PASSWORD FIELD ── */
+    .password-wrap { position: relative; }
+    .password-wrap .form-input { padding-right: 44px; }
+    .pw-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pw-toggle:hover { color: var(--navy); }
   </style>
 </head>
 <body>
@@ -99,11 +120,17 @@
       </div>
       <div class="form-group">
         <label class="form-label">Password</label>
-        <input type="password" class="form-input" id="password" placeholder="8+ characters" />
+        <div class="password-wrap">
+          <input type="password" class="form-input" id="password" placeholder="8+ characters" />
+          <button type="button" class="pw-toggle" onclick="togglePw('password', this)" aria-label="Show password">👁</button>
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">Confirm password</label>
-        <input type="password" class="form-input" id="confirm-password" placeholder="Repeat password" />
+        <div class="password-wrap">
+          <input type="password" class="form-input" id="confirm-password" placeholder="Repeat password" />
+          <button type="button" class="pw-toggle" onclick="togglePw('confirm-password', this)" aria-label="Show password">👁</button>
+        </div>
       </div>
       <div style="margin-bottom:20px">
         <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:13px;color:var(--text-secondary)">
@@ -361,6 +388,19 @@ function renderQuiz() {
   `).join('');
 }
 
+window.togglePw = function(fieldId, btn) {
+  const input = document.getElementById(fieldId);
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+    btn.setAttribute('aria-label', 'Hide password');
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁';
+    btn.setAttribute('aria-label', 'Show password');
+  }
+};
+
 window.selectOption = function(el, key, value) {
   el.closest('.option-grid').querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
@@ -391,10 +431,7 @@ window.toggleDealbreaker = function(el, key) {
 
 window.nextStep = function() {
   if (!validateStep(currentStep)) return;
-  if (currentStep < 6) {
-    currentStep++;
-    showStep(currentStep);
-  }
+  if (currentStep < 6) { currentStep++; showStep(currentStep); }
 };
 
 window.prevStep = function() {
@@ -445,15 +482,12 @@ window.handleSignup = async function() {
   const spinner = document.getElementById('signup-spinner');
   btn.textContent = 'Creating account...';
   spinner.classList.remove('hidden');
-
   const { data, error } = await supabase.auth.signUp({
     email: formData.email,
     password: formData.password
   });
-
   btn.textContent = 'Create Account';
   spinner.classList.add('hidden');
-
   if (error) { showToast(error.message, 'error'); return; }
   formData.userId = data.user?.id;
   showToast('Account created! Let\'s build your profile.', 'success');
@@ -478,47 +512,27 @@ window.handlePhotoUpload = async function(e) {
   const file = e.target.files[0];
   if (!file) return;
   e.target.value = '';
-
-  if (file.size > 10 * 1024 * 1024) {
-    showToast('Photo must be under 10MB', 'error');
-    return;
-  }
-
+  if (file.size > 10 * 1024 * 1024) { showToast('Photo must be under 10MB', 'error'); return; }
   const slot = document.getElementById(`photo-${currentPhotoSlot}`);
   slot.innerHTML = '<div class="uploading-indicator"></div>';
-
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     showToast('Please create your account first', 'error');
     slot.innerHTML = '<div class="add-icon">+</div>';
     return;
   }
-
   const ext = file.name.split('.').pop().toLowerCase();
   const path = `${user.id}/${Date.now()}_${currentPhotoSlot}.${ext}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from('profile-photos')
-    .upload(path, file, { upsert: true });
-
+  const { error: uploadError } = await supabase.storage.from('profile-photos').upload(path, file, { upsert: true });
   if (uploadError) {
     showToast('Upload failed. Try again.', 'error');
     slot.innerHTML = '<div class="add-icon">+</div>';
     return;
   }
-
-  const { data: { publicUrl } } = supabase.storage
-    .from('profile-photos')
-    .getPublicUrl(path);
-
-  slot.innerHTML = `
-    <img src="${publicUrl}" alt="Photo" />
-    ${currentPhotoSlot === 0 ? '<div class="primary-badge">PRIMARY</div>' : ''}
-  `;
-
+  const { data: { publicUrl } } = supabase.storage.from('profile-photos').getPublicUrl(path);
+  slot.innerHTML = `<img src="${publicUrl}" alt="Photo" />${currentPhotoSlot === 0 ? '<div class="primary-badge">PRIMARY</div>' : ''}`;
   uploadedPhotos = uploadedPhotos.filter(p => p.slot !== currentPhotoSlot);
   uploadedPhotos.push({ slot: currentPhotoSlot, url: publicUrl, path });
-
   showToast('Photo uploaded!', 'success');
 };
 
@@ -526,7 +540,6 @@ window.saveProfile = async function() {
   const btn = document.getElementById('finish-btn');
   btn.textContent = 'Saving...';
   btn.disabled = true;
-
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     showToast('Session expired. Please start over.', 'error');
@@ -534,18 +547,15 @@ window.saveProfile = async function() {
     btn.disabled = false;
     return;
   }
-
   const hot_takes = [
     document.getElementById('hot-take-1').value,
     document.getElementById('hot-take-2').value,
     document.getElementById('hot-take-3').value
   ].filter(Boolean);
-
   const bio = document.getElementById('bio').value;
   const current_obsession = document.getElementById('current-obsession').value;
   const bucket_list = document.getElementById('bucket-list').value;
   const primaryPhoto = uploadedPhotos.find(p => p.slot === 0);
-
   const { error } = await supabase.from('profiles').upsert({
     user_id: user.id,
     display_name: formData.first_name,
@@ -570,40 +580,26 @@ window.saveProfile = async function() {
     is_verified: false,
     created_at: new Date().toISOString()
   });
-
   if (error) {
     showToast('Error saving profile: ' + error.message, 'error');
     btn.textContent = 'Explore Kyzmyt →';
     btn.disabled = false;
     return;
   }
-
-  // Save photo records
   if (uploadedPhotos.length > 0) {
-    const photoRecords = uploadedPhotos
-      .sort((a, b) => a.slot - b.slot)
-      .map((p, idx) => ({
-        user_id: user.id,
-        url: p.url,
-        storage_path: p.path,
-        display_order: idx,
-        is_primary: p.slot === 0
-      }));
+    const photoRecords = uploadedPhotos.sort((a, b) => a.slot - b.slot).map((p, idx) => ({
+      user_id: user.id, url: p.url, storage_path: p.path, display_order: idx, is_primary: p.slot === 0
+    }));
     await supabase.from('profile_photos').insert(photoRecords);
   }
-
-  // Free tier: go straight to discover — no payment required to explore
   showToast('Profile saved! Welcome to Kyzmyt.', 'success');
-  setTimeout(() => {
-    window.location.href = '/pages/discover.html';
-  }, 1000);
+  setTimeout(() => { window.location.href = '/pages/discover.html'; }, 1000);
 };
 
 document.getElementById('bio').addEventListener('input', function() {
   document.getElementById('bio-count').textContent = `${this.value.length} / 300 characters`;
 });
 
-// Handle Google OAuth redirect
 const urlParams = new URLSearchParams(window.location.search);
 const stepParam = parseInt(urlParams.get('step'));
 if (stepParam && stepParam > 0) { currentStep = stepParam; showStep(stepParam); }
