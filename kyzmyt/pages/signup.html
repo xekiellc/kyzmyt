@@ -33,7 +33,6 @@
     .option-card.selected { border-color: var(--copper); background: var(--copper-pale); }
     .option-card .opt-icon { font-size: 22px; margin-bottom: 6px; }
     .option-card .opt-label { font-size: 13px; font-weight: 500; color: var(--navy); }
-    .option-card .opt-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
     .option-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
     .option-row { border: 1.5px solid var(--border-mid); border-radius: var(--radius-md); padding: 14px 16px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; background: var(--white); }
     .option-row:hover { border-color: var(--copper); }
@@ -43,6 +42,14 @@
     .radio-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border-mid); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
     .option-row.selected .radio-check { border-color: var(--copper); background: var(--copper); }
     .option-row.selected .radio-check::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: white; }
+    /* Multi-select quiz rows */
+    .quiz-option { border: 1.5px solid var(--border-mid); border-radius: var(--radius-md); padding: 12px 16px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; background: var(--white); margin-bottom: 8px; }
+    .quiz-option:hover { border-color: var(--copper); }
+    .quiz-option.selected { border-color: var(--copper); background: var(--copper-pale); }
+    .quiz-option-label { font-size: 14px; color: var(--navy); font-weight: 500; }
+    .multi-check { width: 20px; height: 20px; border-radius: 4px; border: 2px solid var(--border-mid); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; font-size: 11px; color: white; }
+    .quiz-option.selected .multi-check { border-color: var(--copper); background: var(--copper); }
+    .quiz-option.selected .multi-check::after { content: '✓'; }
     .chip-selector { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
     .chip-select { padding: 8px 16px; border-radius: var(--radius-full); border: 1.5px solid var(--border-mid); background: var(--white); font-size: 13px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; user-select: none; }
     .chip-select:hover { border-color: var(--copper); }
@@ -64,28 +71,10 @@
     .toggle.on { background: var(--copper); }
     .toggle-thumb { width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; box-shadow: var(--shadow-sm); }
     .toggle.on .toggle-thumb { left: 22px; }
-    .range-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 4px; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* ── PASSWORD FIELD ── */
     .password-wrap { position: relative; }
     .password-wrap .form-input { padding-right: 44px; }
-    .pw-toggle {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 4px;
-      color: var(--text-muted);
-      font-size: 16px;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .pw-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 4px; color: var(--text-muted); font-size: 16px; line-height: 1; display: flex; align-items: center; justify-content: center; }
     .pw-toggle:hover { color: var(--navy); }
   </style>
 </head>
@@ -94,7 +83,6 @@
 <div id="toast-container" class="toast-container"></div>
 
 <div class="signup-page">
-
   <div class="signup-header">
     <a href="/" class="signup-logo">Kyzm<span>yt</span></a>
     <div class="step-indicator">
@@ -122,14 +110,14 @@
         <label class="form-label">Password</label>
         <div class="password-wrap">
           <input type="password" class="form-input" id="password" placeholder="8+ characters" />
-          <button type="button" class="pw-toggle" onclick="togglePw('password', this)" aria-label="Show password">👁</button>
+          <button type="button" class="pw-toggle" onclick="togglePw('password',this)" aria-label="Show password">👁</button>
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">Confirm password</label>
         <div class="password-wrap">
           <input type="password" class="form-input" id="confirm-password" placeholder="Repeat password" />
-          <button type="button" class="pw-toggle" onclick="togglePw('confirm-password', this)" aria-label="Show password">👁</button>
+          <button type="button" class="pw-toggle" onclick="togglePw('confirm-password',this)" aria-label="Show password">👁</button>
         </div>
       </div>
       <div style="margin-bottom:20px">
@@ -138,8 +126,8 @@
           I agree to the <a href="/pages/terms.html">Terms of Service</a> and <a href="/pages/privacy.html">Privacy Policy</a>. I understand a background check is required.
         </label>
       </div>
-      <button class="btn btn-copper btn-full btn-lg" onclick="handleSignup()">
-        <span id="signup-btn-text">Create Account</span>
+      <button class="btn btn-copper btn-full btn-lg" onclick="handleNextFromAccount()">
+        <span id="signup-btn-text">Continue</span>
         <span id="signup-spinner" class="spinner hidden"></span>
       </button>
       <div class="divider-text">or</div>
@@ -170,8 +158,6 @@
         <div class="option-grid">
           <div class="option-card" onclick="selectOption(this,'gender','man')"><div class="opt-icon">👨</div><div class="opt-label">Man</div></div>
           <div class="option-card" onclick="selectOption(this,'gender','woman')"><div class="opt-icon">👩</div><div class="opt-label">Woman</div></div>
-          <div class="option-card" onclick="selectOption(this,'gender','nonbinary')"><div class="opt-icon">🧑</div><div class="opt-label">Non-binary</div></div>
-          <div class="option-card" onclick="selectOption(this,'gender','other')"><div class="opt-icon">✨</div><div class="opt-label">Other</div></div>
         </div>
       </div>
       <div class="form-group">
@@ -179,8 +165,6 @@
         <div class="option-grid">
           <div class="option-card" onclick="selectOption(this,'seeking','men')"><div class="opt-label">Men</div></div>
           <div class="option-card" onclick="selectOption(this,'seeking','women')"><div class="opt-label">Women</div></div>
-          <div class="option-card" onclick="selectOption(this,'seeking','nonbinary')"><div class="opt-label">Non-binary</div></div>
-          <div class="option-card" onclick="selectOption(this,'seeking','everyone')"><div class="opt-label">Everyone</div></div>
         </div>
       </div>
       <div class="form-group">
@@ -271,10 +255,10 @@
       <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="prevStep()">Back</button>
     </div>
 
-    <!-- Step 4: Personality quiz -->
+    <!-- Step 4: Personality quiz — multi-select -->
     <div class="step-panel" id="step-4">
       <h1 class="step-title">The real you</h1>
-      <p class="step-subtitle">Quick questions that power your compatibility match. Honest answers = better matches.</p>
+      <p class="step-subtitle">Select all answers that apply. Honest answers = better matches.</p>
       <div id="quiz-container"></div>
       <div style="display:flex;gap:10px">
         <button class="btn btn-outline flex-1" onclick="prevStep()">Back</button>
@@ -351,6 +335,8 @@ let currentStep = 0;
 let formData = {};
 let currentPhotoSlot = 0;
 let uploadedPhotos = [];
+// quiz answers stored as arrays per question id
+const quizAnswers = {};
 
 const quizQuestions = [
   { id: 'conflict', text: 'When you disagree with someone close, you usually:', options: ['Address it directly right away', 'Wait for the right moment', 'Let it go if it\'s small', 'Need space to process first'] },
@@ -372,33 +358,41 @@ const quizQuestions = [
 
 function renderQuiz() {
   const container = document.getElementById('quiz-container');
-  container.innerHTML = quizQuestions.map((q, i) => `
-    <div class="form-group" style="margin-bottom:24px">
+  container.innerHTML = '';
+  quizQuestions.forEach((q, i) => {
+    // init answer array
+    if (!quizAnswers[q.id]) quizAnswers[q.id] = [];
+    const block = document.createElement('div');
+    block.className = 'form-group';
+    block.style.marginBottom = '28px';
+    block.innerHTML = `
       <div style="font-size:13px;font-weight:500;color:var(--text-muted);margin-bottom:4px">Question ${i+1} of ${quizQuestions.length}</div>
       <div style="font-size:15px;font-weight:500;color:var(--navy);margin-bottom:12px">${q.text}</div>
-      <div class="option-list">
-        ${q.options.map(opt => `
-          <div class="option-row" onclick="selectRow(this,'quiz_${q.id}','${opt.replace(/'/g, "&#39;")}')">
-            <div class="option-row-label">${opt}</div>
-            <div class="radio-check"></div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `).join('');
+    `;
+    q.options.forEach(opt => {
+      const row = document.createElement('div');
+      row.className = 'quiz-option' + (quizAnswers[q.id].includes(opt) ? ' selected' : '');
+      row.innerHTML = `<span class="quiz-option-label">${opt}</span><span class="multi-check"></span>`;
+      row.addEventListener('click', () => {
+        const idx = quizAnswers[q.id].indexOf(opt);
+        if (idx === -1) {
+          quizAnswers[q.id].push(opt);
+          row.classList.add('selected');
+        } else {
+          quizAnswers[q.id].splice(idx, 1);
+          row.classList.remove('selected');
+        }
+      });
+      block.appendChild(row);
+    });
+    container.appendChild(block);
+  });
 }
 
 window.togglePw = function(fieldId, btn) {
   const input = document.getElementById(fieldId);
-  if (input.type === 'password') {
-    input.type = 'text';
-    btn.textContent = '🙈';
-    btn.setAttribute('aria-label', 'Hide password');
-  } else {
-    input.type = 'password';
-    btn.textContent = '👁';
-    btn.setAttribute('aria-label', 'Show password');
-  }
+  if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+  else { input.type = 'password'; btn.textContent = '👁'; }
 };
 
 window.selectOption = function(el, key, value) {
@@ -422,11 +416,8 @@ window.selectChip = function(el, key, value) {
 window.toggleDealbreaker = function(el, key) {
   el.classList.toggle('on');
   if (!formData.dealbreakers) formData.dealbreakers = [];
-  if (el.classList.contains('on')) {
-    if (!formData.dealbreakers.includes(key)) formData.dealbreakers.push(key);
-  } else {
-    formData.dealbreakers = formData.dealbreakers.filter(d => d !== key);
-  }
+  if (el.classList.contains('on')) { if (!formData.dealbreakers.includes(key)) formData.dealbreakers.push(key); }
+  else { formData.dealbreakers = formData.dealbreakers.filter(d => d !== key); }
 };
 
 window.nextStep = function() {
@@ -476,23 +467,9 @@ function validateStep(step) {
   return true;
 }
 
-window.handleSignup = async function() {
-  if (!validateStep(0)) return;
-  const btn = document.getElementById('signup-btn-text');
-  const spinner = document.getElementById('signup-spinner');
-  btn.textContent = 'Creating account...';
-  spinner.classList.remove('hidden');
-  const { data, error } = await supabase.auth.signUp({
-    email: formData.email,
-    password: formData.password
-  });
-  btn.textContent = 'Create Account';
-  spinner.classList.add('hidden');
-  if (error) { showToast(error.message, 'error'); return; }
-  formData.userId = data.user?.id;
-  showToast('Account created! Let\'s build your profile.', 'success');
-  currentStep = 1;
-  showStep(1);
+// Step 0 no longer creates account — just validates and moves on
+window.handleNextFromAccount = function() {
+  if (validateStep(0)) { currentStep = 1; showStep(1); }
 };
 
 window.handleGoogleAuth = async function() {
@@ -516,19 +493,11 @@ window.handlePhotoUpload = async function(e) {
   const slot = document.getElementById(`photo-${currentPhotoSlot}`);
   slot.innerHTML = '<div class="uploading-indicator"></div>';
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    showToast('Please create your account first', 'error');
-    slot.innerHTML = '<div class="add-icon">+</div>';
-    return;
-  }
+  if (!user) { showToast('Your account isn\'t created yet — continue to the save step first', 'error'); slot.innerHTML = '<div class="add-icon">+</div>'; return; }
   const ext = file.name.split('.').pop().toLowerCase();
   const path = `${user.id}/${Date.now()}_${currentPhotoSlot}.${ext}`;
   const { error: uploadError } = await supabase.storage.from('profile-photos').upload(path, file, { upsert: true });
-  if (uploadError) {
-    showToast('Upload failed. Try again.', 'error');
-    slot.innerHTML = '<div class="add-icon">+</div>';
-    return;
-  }
+  if (uploadError) { showToast('Upload failed. Try again.', 'error'); slot.innerHTML = '<div class="add-icon">+</div>'; return; }
   const { data: { publicUrl } } = supabase.storage.from('profile-photos').getPublicUrl(path);
   slot.innerHTML = `<img src="${publicUrl}" alt="Photo" />${currentPhotoSlot === 0 ? '<div class="primary-badge">PRIMARY</div>' : ''}`;
   uploadedPhotos = uploadedPhotos.filter(p => p.slot !== currentPhotoSlot);
@@ -538,24 +507,28 @@ window.handlePhotoUpload = async function(e) {
 
 window.saveProfile = async function() {
   const btn = document.getElementById('finish-btn');
-  btn.textContent = 'Saving...';
+  btn.textContent = 'Creating account...';
   btn.disabled = true;
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    showToast('Session expired. Please start over.', 'error');
+
+  // Create account now (at the very end — no session timeout risk)
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email: formData.email,
+    password: formData.password
+  });
+  if (authError) {
+    showToast(authError.message, 'error');
     btn.textContent = 'Explore Kyzmyt →';
     btn.disabled = false;
     return;
   }
+  const user = authData.user;
+
   const hot_takes = [
     document.getElementById('hot-take-1').value,
     document.getElementById('hot-take-2').value,
     document.getElementById('hot-take-3').value
   ].filter(Boolean);
-  const bio = document.getElementById('bio').value;
-  const current_obsession = document.getElementById('current-obsession').value;
-  const bucket_list = document.getElementById('bucket-list').value;
-  const primaryPhoto = uploadedPhotos.find(p => p.slot === 0);
+
   const { error } = await supabase.from('profiles').upsert({
     user_id: user.id,
     display_name: formData.first_name,
@@ -571,28 +544,32 @@ window.saveProfile = async function() {
     device_pref: formData.device,
     dealbreakers: formData.dealbreakers || [],
     hot_takes,
-    bio,
-    current_obsession,
-    bucket_list,
-    avatar_url: primaryPhoto?.url || null,
-    quiz_responses: JSON.stringify(formData),
+    bio: document.getElementById('bio').value,
+    current_obsession: document.getElementById('current-obsession').value,
+    bucket_list: document.getElementById('bucket-list').value,
+    avatar_url: uploadedPhotos.find(p => p.slot === 0)?.url || null,
+    quiz_responses: JSON.stringify(quizAnswers),
     is_visible: false,
     is_verified: false,
     created_at: new Date().toISOString()
   });
+
   if (error) {
     showToast('Error saving profile: ' + error.message, 'error');
     btn.textContent = 'Explore Kyzmyt →';
     btn.disabled = false;
     return;
   }
+
   if (uploadedPhotos.length > 0) {
-    const photoRecords = uploadedPhotos.sort((a, b) => a.slot - b.slot).map((p, idx) => ({
-      user_id: user.id, url: p.url, storage_path: p.path, display_order: idx, is_primary: p.slot === 0
-    }));
-    await supabase.from('profile_photos').insert(photoRecords);
+    await supabase.from('profile_photos').insert(
+      uploadedPhotos.sort((a,b) => a.slot - b.slot).map((p, idx) => ({
+        user_id: user.id, url: p.url, storage_path: p.path, display_order: idx, is_primary: p.slot === 0
+      }))
+    );
   }
-  showToast('Profile saved! Welcome to Kyzmyt.', 'success');
+
+  showToast('Welcome to Kyzmyt! ✶', 'success');
   setTimeout(() => { window.location.href = '/pages/discover.html'; }, 1000);
 };
 
