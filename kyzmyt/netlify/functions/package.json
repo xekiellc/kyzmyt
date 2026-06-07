@@ -7,7 +7,6 @@
     "@anthropic-ai/sdk": "^0.24.0",
     "@supabase/supabase-js": "^2.43.0",
     "aws-sdk": "^2.1600.0",
-    "checkr-node": "^1.0.0",
     "plaid": "^25.0.0",
     "stripe": "^15.0.0",
     "twilio": "^5.0.0",
