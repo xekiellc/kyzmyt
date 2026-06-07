@@ -310,7 +310,7 @@
         <input type="text" class="form-input" id="current-obsession" placeholder="What are you into right now? Show, hobby, food..." />
         <div class="form-hint">Updates any time. Keeps your profile alive.</div>
       </div>
-      <button class="btn btn-copper btn-full btn-lg" id="finish-btn" onclick="saveProfile()">Continue to Verification →</button>
+      <button class="btn btn-copper btn-full btn-lg" id="finish-btn" onclick="saveProfile()">Explore Kyzmyt →</button>
       <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="prevStep()">Back</button>
     </div>
 
@@ -530,7 +530,7 @@ window.saveProfile = async function() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     showToast('Session expired. Please start over.', 'error');
-    btn.textContent = 'Continue to Verification →';
+    btn.textContent = 'Explore Kyzmyt →';
     btn.disabled = false;
     return;
   }
@@ -573,7 +573,7 @@ window.saveProfile = async function() {
 
   if (error) {
     showToast('Error saving profile: ' + error.message, 'error');
-    btn.textContent = 'Continue to Verification →';
+    btn.textContent = 'Explore Kyzmyt →';
     btn.disabled = false;
     return;
   }
@@ -592,33 +592,11 @@ window.saveProfile = async function() {
     await supabase.from('profile_photos').insert(photoRecords);
   }
 
-  showToast('Profile saved! Setting up your verification...', 'success');
-
-  // Create payment session — redirect to Stripe Checkout
-  const payResponse = await fetch('/.netlify/functions/create-signup-payment', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      userId: user.id,
-      email: user.email
-    })
-  });
-
-  const payData = await payResponse.json();
-
-  if (payData.already_paid) {
-    window.location.href = '/pages/verify.html';
-    return;
-  }
-
-  if (payData.url) {
-    window.location.href = payData.url;
-    return;
-  }
-
-  showToast('Payment setup failed. Please try again.', 'error');
-  btn.textContent = 'Continue to Verification →';
-  btn.disabled = false;
+  // Free tier: go straight to discover — no payment required to explore
+  showToast('Profile saved! Welcome to Kyzmyt.', 'success');
+  setTimeout(() => {
+    window.location.href = '/pages/discover.html';
+  }, 1000);
 };
 
 document.getElementById('bio').addEventListener('input', function() {
@@ -629,12 +607,6 @@ document.getElementById('bio').addEventListener('input', function() {
 const urlParams = new URLSearchParams(window.location.search);
 const stepParam = parseInt(urlParams.get('step'));
 if (stepParam && stepParam > 0) { currentStep = stepParam; showStep(stepParam); }
-
-// Handle cancelled payment — show message and stay on step 6
-if (urlParams.get('payment') === 'cancelled') {
-  showStep(6);
-  setTimeout(() => showToast('Payment cancelled. Complete your profile to continue.', 'error'), 500);
-}
 
 renderQuiz();
 </script>
