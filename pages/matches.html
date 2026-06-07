@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Matches ✶ Kyzmyt</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0A1628;
+    --navy-2:#101F36;
+    --copper:#B87333;
+    --copper-light:#D89556;
+    --cream:#FAF8F5;
+    --cream-dim:rgba(250,248,245,.72);
+    --cream-faint:rgba(250,248,245,.42);
+    --line:rgba(184,115,51,.28);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--navy);
+    color:var(--cream);
+    font-family:'DM Sans',sans-serif;
+    min-height:100vh;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(184,115,51,.10), transparent),
+      radial-gradient(ellipse 60% 40% at 90% 110%, rgba(184,115,51,.06), transparent);
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px 100px}
+
+  header{text-align:center;padding:52px 0 36px}
+  .asterism{color:var(--copper);font-size:1.6rem;letter-spacing:.4em}
+  h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;
+    font-size:clamp(2rem,5vw,2.9rem);
+    margin-top:10px;
+  }
+  .sub{
+    color:var(--cream-dim);
+    max-width:560px;
+    margin:12px auto 0;
+    line-height:1.6;
+    font-size:.95rem;
+  }
+  .nav{margin-top:20px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+  .nav a{
+    color:var(--copper-light);
+    text-decoration:none;
+    font-size:.85rem;
+    letter-spacing:.04em;
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:8px 18px;
+    transition:all .15s;
+  }
+  .nav a:hover{background:var(--copper);color:var(--navy);border-color:var(--copper)}
+
+  footer{
+    text-align:center;
+    color:var(--cream-faint);
+    font-size:.78rem;
+    padding:60px 20px 30px;
+    letter-spacing:.06em;
+  }
+  footer .asterism{font-size:1rem}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="asterism">✶</div>
+    <h1>Your Matches</h1>
+    <p class="sub">Every card below is a triple-verified member who clears your dealbreakers — scored against your filters and shared favorites.</p>
+    <nav class="nav">
+      <a href="favorites.html">Edit Favorites &amp; Filters</a>
+      <a href="profile.html">My Profile</a>
+    </nav>
+  </header>
+
+  <div id="kyzmyt-matches"></div>
+</div>
+
+<footer>
+  <span class="asterism">❖</span><br>
+  Safety isn't a feature. It's the foundation.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/match-overlay.js"></script>
+</body>
+</html>
