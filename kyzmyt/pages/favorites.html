@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Favorites & Filters ✶ Kyzmyt</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --navy:#0A1628;
+    --navy-2:#101F36;
+    --navy-3:#16294a;
+    --copper:#B87333;
+    --copper-light:#D89556;
+    --cream:#FAF8F5;
+    --cream-dim:rgba(250,248,245,.72);
+    --cream-faint:rgba(250,248,245,.42);
+    --line:rgba(184,115,51,.28);
+    --green:#5BB98B;
+    --red:#D96A6A;
+    --amber:#E0A84E;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--navy);
+    color:var(--cream);
+    font-family:'DM Sans',sans-serif;
+    min-height:100vh;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(184,115,51,.10), transparent),
+      radial-gradient(ellipse 60% 40% at 90% 110%, rgba(184,115,51,.06), transparent);
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px 140px}
+  header{text-align:center;padding:52px 0 12px}
+  .asterism{color:var(--copper);font-size:1.6rem;letter-spacing:.4em}
+  h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(2rem,5vw,2.9rem);margin-top:10px;letter-spacing:.01em}
+  .sub{color:var(--cream-dim);max-width:560px;margin:12px auto 0;line-height:1.6;font-size:.95rem}
+  .backlink{display:inline-block;margin-top:16px;color:var(--copper-light);text-decoration:none;font-size:.85rem;letter-spacing:.04em}
+  .backlink:hover{text-decoration:underline}
+  section.card{background:var(--navy-2);border:1px solid var(--line);border-radius:14px;padding:30px 28px;margin-top:30px}
+  .card h2{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.55rem;color:var(--cream)}
+  .card h2 .num{color:var(--copper);font-style:italic;margin-right:8px}
+  .card .hint{color:var(--cream-faint);font-size:.85rem;margin-top:6px;line-height:1.5}
+  .trait{margin-top:26px}
+  .trait-label{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--copper-light);font-weight:700}
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .pill{border:1px solid var(--line);background:transparent;color:var(--cream-dim);border-radius:999px;padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:.86rem;cursor:pointer;transition:all .15s ease}
+  .pill:hover{border-color:var(--copper);color:var(--cream)}
+  .pill.on{background:var(--copper);border-color:var(--copper);color:var(--navy);font-weight:700}
+  .fav{margin-top:26px}
+  .fav-row{display:flex;gap:8px;margin-top:10px}
+  .fav-row input{flex:1;background:var(--navy);border:1px solid var(--line);border-radius:10px;color:var(--cream);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:.92rem}
+  .fav-row input:focus{outline:none;border-color:var(--copper)}
+  .fav-row input::placeholder{color:var(--cream-faint)}
+  .addbtn{background:transparent;border:1px solid var(--copper);color:var(--copper-light);border-radius:10px;padding:0 18px;font-weight:700;cursor:pointer;font-size:1.1rem;transition:all .15s}
+  .addbtn:hover{background:var(--copper);color:var(--navy)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;min-height:6px}
+  .chip{display:inline-flex;align-items:center;gap:8px;background:var(--navy-3);border:1px solid var(--line);border-radius:999px;padding:6px 8px 6px 14px;font-size:.86rem}
+  .chip button{background:none;border:none;color:var(--copper-light);cursor:pointer;font-size:1rem;line-height:1;padding:2px 6px}
+  .chip button:hover{color:var(--red)}
+  .cap-note{font-size:.75rem;color:var(--cream-faint);margin-top:6px}
+  input.url-input{width:100%;background:var(--navy);border:1px solid var(--line);border-radius:10px;color:var(--cream);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:.92rem;margin-top:10px}
+  input.url-input:focus{outline:none;border-color:var(--copper)}
+  .filter-block{border:1px solid var(--line);border-radius:12px;padding:18px 18px 20px;margin-top:18px;background:var(--navy)}
+  .filter-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .filter-name{font-weight:700;font-size:.95rem}
+  .prio{display:flex;gap:6px;flex-wrap:wrap}
+  .prio button{border:1px solid var(--line);background:transparent;color:var(--cream-faint);border-radius:8px;padding:6px 12px;font-size:.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+  .prio button:hover{color:var(--cream)}
+  .prio button.on-off{background:rgba(250,248,245,.12);color:var(--cream);border-color:transparent}
+  .prio button.on-nice{background:var(--green);color:var(--navy);font-weight:700;border-color:var(--green)}
+  .prio button.on-must{background:var(--amber);color:var(--navy);font-weight:700;border-color:var(--amber)}
+  .prio button.on-deal{background:var(--red);color:var(--navy);font-weight:700;border-color:var(--red)}
+  .accepted{margin-top:14px;display:none}
+  .accepted.show{display:block}
+  .accepted .trait-label{color:var(--cream-faint)}
+  .savebar{position:fixed;bottom:0;left:0;right:0;background:rgba(10,22,40,.92);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:16px 20px;display:flex;justify-content:center;align-items:center;gap:18px;z-index:50}
+  .savebtn{background:var(--copper);color:var(--navy);border:none;border-radius:999px;padding:14px 46px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1rem;letter-spacing:.03em;cursor:pointer;transition:all .15s}
+  .savebtn:hover{background:var(--copper-light)}
+  .savebtn:disabled{opacity:.5;cursor:wait}
+  .savemsg{font-size:.88rem;min-width:140px}
+  .savemsg.ok{color:var(--green)}
+  .savemsg.err{color:var(--red)}
+  .loading-veil{position:fixed;inset:0;background:var(--navy);z-index:100;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--copper);transition:opacity .4s}
+  .loading-veil.gone{opacity:0;pointer-events:none}
+  @media(max-width:600px){section.card{padding:24px 18px}}
+</style>
+</head>
+<body>
+<div class="loading-veil" id="veil">✶ &nbsp;loading your preferences&nbsp; ✶</div>
+<div class="wrap">
+  <header>
+    <div class="asterism">✶</div>
+    <h1>Favorites &amp; Filters</h1>
+    <p class="sub">Tell us what you love and what matters in a match. Dealbreakers hide people entirely. Must-haves and nice-to-haves shape your compatibility scores.</p>
+    <a class="backlink" href="profile.html">← back to profile</a>
+  </header>
+  <section class="card">
+    <h2><span class="num">I.</span>About You</h2>
+    <p class="hint">Pick one answer per question. These appear on your profile and power compatibility.</p>
+    <div id="traits"></div>
+  </section>
+  <section class="card">
+    <h2><span class="num">II.</span>Your Favorites</h2>
+    <p class="hint">Type one and press Enter or +. Up to 10 per category. Shared favorites boost compatibility scores.</p>
+    <div id="favorites"></div>
+    <div class="fav">
+      <div class="trait-label">Goodreads Profile (optional)</div>
+      <input class="url-input" id="goodreadsUrl" type="url" placeholder="https://www.goodreads.com/user/show/...">
+    </div>
+  </section>
+  <section class="card">
+    <h2><span class="num">III.</span>Match Filters</h2>
+    <p class="hint">For each question, choose how much it matters — then select which answers you'd accept in a match. <strong style="color:var(--red)">Dealbreaker</strong> removes non-matches from your feed. <strong style="color:var(--amber)">Must-have</strong> adds +15 to compatibility. <strong style="color:var(--green)">Nice-to-have</strong> adds +5.</p>
+    <div id="traitFilters"></div>
+    <h2 style="margin-top:34px;font-size:1.2rem"><span class="num">＋</span>Shared-Favorite Filters</h2>
+    <p class="hint">Require (or prefer) at least one favorite in common in a category.</p>
+    <div id="favFilters"></div>
+  </section>
+</div>
+<div class="savebar">
+  <button class="savebtn" id="saveBtn">Save Everything ✶</button>
+  <span class="savemsg" id="saveMsg"></span>
+</div>
+<script>
+const SUPABASE_URL="https://gnknifxhzriqwugmvoxf.supabase.co";
+const SUPABASE_ANON_KEY="PASTE_ANON_PUBLIC_KEY_HERE";
+const FN="/.netlify/functions/user-preferences";
+const TRAITS=[
+  {key:"religion",label:"Religion / Spirituality",opts:[["christian","Christian"],["catholic","Catholic"],["jewish","Jewish"],["muslim","Muslim"],["hindu","Hindu"],["buddhist","Buddhist"],["spiritual","Spiritual"],["agnostic","Agnostic"],["atheist","Atheist"],["other","Other"],["prefer_not_to_say","Prefer not to say"]]},
+  {key:"chronotype",label:"Morning Person or Night Owl?",opts:[["morning_person","Morning person"],["night_owl","Night owl"],["flexible","Flexible"]]},
+  {key:"social_energy",label:"Introvert or Extrovert?",opts:[["introvert","Introvert"],["extrovert","Extrovert"],["ambivert","Ambivert"]]},
+  {key:"pet_person",label:"Dog Person or Cat Person?",opts:[["dog_person","Dog person"],["cat_person","Cat person"],["both","Both"],["neither","Neither"]]},
+  {key:"political_comfort",label:"Politics & Dating",opts:[["must_align","We should align"],["open_minded","Open-minded"],["avoid_politics","Keep politics out of it"]]},
+  {key:"kids_preference",label:"Kids",opts:[["want_kids","Want kids"],["dont_want_kids","Don't want kids"],["have_kids_want_more","Have kids, want more"],["have_kids_done","Have kids, done"],["open_to_kids","Open to kids"]]},
+  {key:"pineapple_pizza",label:"Pineapple on Pizza?",opts:[["yes","Yes 🍍"],["no","Absolutely not"]]},
+  {key:"beach_or_mountains",label:"Beach or Mountains?",opts:[["beach","Beach"],["mountains","Mountains"],["both","Both"]]},
+  {key:"coffee_or_tea",label:"Coffee or Tea?",opts:[["coffee","Coffee"],["tea","Tea"],["neither","Neither"]]},
+  {key:"texter_or_caller",label:"Texter or Caller?",opts:[["texter","Texter"],["caller","Caller"],["either","Either"]]},
+  {key:"planner_or_spontaneous",label:"Planner or Spontaneous?",opts:[["planner","Planner"],["spontaneous","Spontaneous"],["mix","A bit of both"]]}
+];
+const CATEGORIES=[["books","Books"],["movies","Movies"],["tv_shows","TV Shows"],["music_genres","Music Genres"],["bands","Bands & Artists"],["actors","Actors"],["sports_teams","Sports Teams"],["athletes","Players & Athletes"],["foods","Foods"],["restaurants","Restaurants"],["vacation_spots","Vacation Spots"]];
+const PRIORITIES=[["off","Off","on-off"],["nice_to_have","Nice-to-have","on-nice"],["must_have","Must-have","on-must"],["dealbreaker","Dealbreaker","on-deal"]];
+const state={traits:{},goodreads_url:"",favorites:{},traitFilters:{},favFilters:{}};
+CATEGORIES.forEach(([k])=>state.favorites[k]=[]);
+TRAITS.forEach(t=>state.traitFilters[t.key]={priority:"off",accepted:new Set()});
+CATEGORIES.forEach(([k])=>state.favFilters[k]="off");
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+let token=null;
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function renderTraits(){
+  const el=document.getElementById("traits");el.innerHTML="";
+  TRAITS.forEach(t=>{
+    const d=document.createElement("div");d.className="trait";
+    d.innerHTML=`<div class="trait-label">${t.label}</div>`;
+    const pills=document.createElement("div");pills.className="pills";
+    t.opts.forEach(([val,lab])=>{
+      const b=document.createElement("button");b.type="button";
+      b.className="pill"+(state.traits[t.key]===val?" on":"");b.textContent=lab;
+      b.onclick=()=>{state.traits[t.key]=(state.traits[t.key]===val?null:val);renderTraits()};
+      pills.appendChild(b);
+    });
+    d.appendChild(pills);el.appendChild(d);
+  });
+}
+function renderFavorites(){
+  const el=document.getElementById("favorites");el.innerHTML="";
+  CATEGORIES.forEach(([key,label])=>{
+    const d=document.createElement("div");d.className="fav";
+    d.innerHTML=`<div class="trait-label">${label}</div>`;
+    const row=document.createElement("div");row.className="fav-row";
+    const inp=document.createElement("input");
+    inp.placeholder=`Add a favorite ${label.toLowerCase().replace(/s$/,"")}…`;inp.maxLength=80;
+    inp.setAttribute("data-cat-input",key);
+    const add=document.createElement("button");add.type="button";add.className="addbtn";add.textContent="+";
+    const commit=()=>{
+      const v=inp.value.trim();if(!v)return;
+      const norm=v.toLowerCase();
+      if(state.favorites[key].some(x=>x.toLowerCase()===norm)){inp.value="";return}
+      if(state.favorites[key].length>=10){alert("Max 10 per category.");return}
+      state.favorites[key].push(v);inp.value="";renderFavorites();
+      setTimeout(()=>{const i=document.querySelector(`[data-cat-input="${key}"]`);if(i)i.focus()},0);
+    };
+    inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();commit()}});
+    add.onclick=commit;row.appendChild(inp);row.appendChild(add);d.appendChild(row);
+    const chips=document.createElement("div");chips.className="chips";
+    state.favorites[key].forEach((v,i)=>{
+      const c=document.createElement("span");c.className="chip";
+      c.innerHTML=`${esc(v)} <button type="button" aria-label="remove">✕</button>`;
+      c.querySelector("button").onclick=()=>{state.favorites[key].splice(i,1);renderFavorites()};
+      chips.appendChild(c);
+    });
+    d.appendChild(chips);
+    const cap=document.createElement("div");cap.className="cap-note";cap.textContent=`${state.favorites[key].length}/10`;
+    d.appendChild(cap);el.appendChild(d);
+  });
+}
+function renderTraitFilters(){
+  const el=document.getElementById("traitFilters");el.innerHTML="";
+  TRAITS.forEach(t=>{
+    const f=state.traitFilters[t.key];
+    const blk=document.createElement("div");blk.className="filter-block";
+    const head=document.createElement("div");head.className="filter-head";
+    head.innerHTML=`<span class="filter-name">${t.label}</span>`;
+    const prio=document.createElement("div");prio.className="prio";
+    PRIORITIES.forEach(([val,lab,cls])=>{
+      const b=document.createElement("button");b.type="button";b.textContent=lab;
+      if(f.priority===val)b.classList.add(cls);
+      b.onclick=()=>{f.priority=val;renderTraitFilters()};
+      prio.appendChild(b);
+    });
+    head.appendChild(prio);blk.appendChild(head);
+    const acc=document.createElement("div");
+    acc.className="accepted"+(f.priority!=="off"?" show":"");
+    acc.innerHTML=`<div class="trait-label">Answers you'd accept in a match:</div>`;
+    const pills=document.createElement("div");pills.className="pills";
+    t.opts.forEach(([val,lab])=>{
+      const b=document.createElement("button");b.type="button";
+      b.className="pill"+(f.accepted.has(val)?" on":"");b.textContent=lab;
+      b.onclick=()=>{f.accepted.has(val)?f.accepted.delete(val):f.accepted.add(val);renderTraitFilters()};
+      pills.appendChild(b);
+    });
+    acc.appendChild(pills);blk.appendChild(acc);el.appendChild(blk);
+  });
+}
+function renderFavFilters(){
+  const el=document.getElementById("favFilters");el.innerHTML="";
+  CATEGORIES.forEach(([key,label])=>{
+    const blk=document.createElement("div");blk.className="filter-block";
+    const head=document.createElement("div");head.className="filter-head";
+    head.innerHTML=`<span class="filter-name">Share at least one favorite: ${label}</span>`;
+    const prio=document.createElement("div");prio.className="prio";
+    PRIORITIES.forEach(([val,lab,cls])=>{
+      const b=document.createElement("button");b.type="button";b.textContent=lab;
+      if(state.favFilters[key]===val)b.classList.add(cls);
+      b.onclick=()=>{state.favFilters[key]=val;renderFavFilters()};
+      prio.appendChild(b);
+    });
+    head.appendChild(prio);blk.appendChild(head);el.appendChild(blk);
+  });
+}
+async function init(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){window.location.href="login.html";return}
+  token=session.access_token;
+  try{
+    const res=await fetch(FN,{headers:{Authorization:"Bearer "+token}});
+    if(res.ok){
+      const data=await res.json();
+      if(data.traits){TRAITS.forEach(t=>{if(data.traits[t.key])state.traits[t.key]=data.traits[t.key]});state.goodreads_url=data.traits.goodreads_url||"";document.getElementById("goodreadsUrl").value=state.goodreads_url}
+      if(data.favorites){CATEGORIES.forEach(([k])=>{if(Array.isArray(data.favorites[k]))state.favorites[k]=data.favorites[k]})}
+      if(Array.isArray(data.filters)){
+        data.filters.forEach(fl=>{
+          if(fl.filter_type==="trait"&&state.traitFilters[fl.trait_key]){state.traitFilters[fl.trait_key].priority=fl.priority;state.traitFilters[fl.trait_key].accepted=new Set(fl.accepted_values||[])}
+          if(fl.filter_type==="favorite_category"&&fl.favorite_category in state.favFilters){state.favFilters[fl.favorite_category]=fl.priority}
+        });
+      }
+    }
+  }catch(e){console.error("load failed",e)}
+  renderTraits();renderFavorites();renderTraitFilters();renderFavFilters();
+  document.getElementById("veil").classList.add("gone");
+}
+async function save(){
+  const btn=document.getElementById("saveBtn");const msg=document.getElementById("saveMsg");
+  for(const t of TRAITS){const f=state.traitFilters[t.key];if(f.priority!=="off"&&f.accepted.size===0){msg.className="savemsg err";msg.textContent=`Pick accepted answers for "${t.label}"`;return}}
+  btn.disabled=true;msg.className="savemsg";msg.textContent="Saving…";
+  const filters=[];
+  TRAITS.forEach(t=>{const f=state.traitFilters[t.key];if(f.priority!=="off"){filters.push({filter_type:"trait",trait_key:t.key,accepted_values:[...f.accepted],priority:f.priority})}});
+  CATEGORIES.forEach(([k])=>{if(state.favFilters[k]!=="off"){filters.push({filter_type:"favorite_category",favorite_category:k,priority:state.favFilters[k]})}});
+  const payload={traits:{...state.traits,goodreads_url:document.getElementById("goodreadsUrl").value.trim()||null},favorites:state.favorites,filters};
+  try{
+    const res=await fetch(FN,{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token},body:JSON.stringify(payload)});
+    if(!res.ok)throw new Error(await res.text());
+    msg.className="savemsg ok";msg.textContent="Saved ✶";
+  }catch(e){console.error(e);msg.className="savemsg err";msg.textContent="Save failed — try again"}
+  btn.disabled=false;
+}
+document.getElementById("saveBtn").addEventListener("click",save);
+init();
+</script>
+</body>
+</html>
