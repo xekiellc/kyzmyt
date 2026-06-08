@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your Favorites & Filters ✶ Kyzmyt</title>
+<title>Build Your Profile ✶ Kyzmyt</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,29 +11,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
-    --navy:#0A1628;
-    --navy-2:#101F36;
-    --navy-3:#16294a;
-    --copper:#B87333;
-    --copper-light:#D89556;
-    --cream:#FAF8F5;
-    --cream-dim:rgba(250,248,245,.72);
-    --cream-faint:rgba(250,248,245,.42);
-    --line:rgba(184,115,51,.28);
-    --green:#5BB98B;
-    --red:#D96A6A;
-    --amber:#E0A84E;
+    --navy:#0A1628;--navy-2:#101F36;--navy-3:#16294a;
+    --copper:#B87333;--copper-light:#D89556;
+    --cream:#FAF8F5;--cream-dim:rgba(250,248,245,.72);--cream-faint:rgba(250,248,245,.42);
+    --line:rgba(184,115,51,.28);--green:#5BB98B;--red:#D96A6A;--amber:#E0A84E;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{
-    background:var(--navy);
-    color:var(--cream);
-    font-family:'DM Sans',sans-serif;
-    min-height:100vh;
-    background-image:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(184,115,51,.10), transparent),
-      radial-gradient(ellipse 60% 40% at 90% 110%, rgba(184,115,51,.06), transparent);
-  }
+  body{background:var(--navy);color:var(--cream);font-family:'DM Sans',sans-serif;min-height:100vh;
+    background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(184,115,51,.10),transparent),radial-gradient(ellipse 60% 40% at 90% 110%,rgba(184,115,51,.06),transparent);}
   .wrap{max-width:860px;margin:0 auto;padding:0 20px 140px}
   header{text-align:center;padding:52px 0 12px}
   .asterism{color:var(--copper);font-size:1.6rem;letter-spacing:.4em}
@@ -41,6 +26,13 @@
   .sub{color:var(--cream-dim);max-width:560px;margin:12px auto 0;line-height:1.6;font-size:.95rem}
   .backlink{display:inline-block;margin-top:16px;color:var(--copper-light);text-decoration:none;font-size:.85rem;letter-spacing:.04em}
   .backlink:hover{text-decoration:underline}
+
+  /* Progress meter */
+  .progress-bar-wrap{background:var(--navy-2);border:1px solid var(--line);border-radius:12px;padding:18px 24px;margin-top:24px}
+  .progress-label{font-size:.85rem;color:var(--cream-dim);margin-bottom:8px;display:flex;justify-content:space-between}
+  .progress-track{height:6px;background:rgba(184,115,51,.18);border-radius:99px;overflow:hidden}
+  .progress-fill{height:100%;background:var(--copper);border-radius:99px;transition:width .4s ease}
+
   section.card{background:var(--navy-2);border:1px solid var(--line);border-radius:14px;padding:30px 28px;margin-top:30px}
   .card h2{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.55rem;color:var(--cream)}
   .card h2 .num{color:var(--copper);font-style:italic;margin-right:8px}
@@ -51,6 +43,57 @@
   .pill{border:1px solid var(--line);background:transparent;color:var(--cream-dim);border-radius:999px;padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:.86rem;cursor:pointer;transition:all .15s ease}
   .pill:hover{border-color:var(--copper);color:var(--cream)}
   .pill.on{background:var(--copper);border-color:var(--copper);color:var(--navy);font-weight:700}
+
+  /* Photo grid */
+  .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+  .photo-slot{aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:var(--navy-3);border:1.5px dashed var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative}
+  .photo-slot:hover{border-color:var(--copper)}
+  .photo-slot img{width:100%;height:100%;object-fit:cover}
+  .photo-slot .add-icon{font-size:24px;color:var(--cream-faint)}
+  .photo-slot .uploading-indicator{display:flex;align-items:center;justify-content:center;height:100%;width:100%}
+  .photo-slot .uploading-indicator::after{content:'';width:24px;height:24px;border:2px solid var(--copper);border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .photo-slot .primary-badge{position:absolute;bottom:4px;left:4px;background:var(--copper);color:var(--navy);font-size:9px;font-weight:700;padding:2px 6px;border-radius:99px}
+  .form-input-dark{width:100%;background:var(--navy);border:1px solid var(--line);border-radius:10px;color:var(--cream);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:.92rem;margin-top:10px}
+  .form-input-dark:focus{outline:none;border-color:var(--copper)}
+  .form-input-dark::placeholder{color:var(--cream-faint)}
+  textarea.form-input-dark{resize:vertical;min-height:100px}
+
+  /* Option rows (dark theme) */
+  .option-list-dark{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+  .option-row-dark{border:1px solid var(--line);border-radius:10px;padding:13px 16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:space-between;background:var(--navy)}
+  .option-row-dark:hover{border-color:var(--copper)}
+  .option-row-dark.selected{border-color:var(--copper);background:rgba(184,115,51,.1)}
+  .option-row-dark .row-label{font-size:14px;color:var(--cream);font-weight:500}
+  .option-row-dark .row-sub{font-size:12px;color:var(--cream-faint);margin-top:2px}
+  .radio-dark{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+  .option-row-dark.selected .radio-dark{border-color:var(--copper);background:var(--copper)}
+  .option-row-dark.selected .radio-dark::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--navy)}
+
+  /* Chip selector (dark) */
+  .chip-selector-dark{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chip-dark{padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:transparent;font-size:.86rem;color:var(--cream-dim);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+  .chip-dark:hover{border-color:var(--copper);color:var(--cream)}
+  .chip-dark.on{background:var(--copper);border-color:var(--copper);color:var(--navy);font-weight:700}
+
+  /* Quiz */
+  .quiz-option-dark{border:1px solid var(--line);border-radius:10px;padding:12px 16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:space-between;background:var(--navy);margin-bottom:8px}
+  .quiz-option-dark:hover{border-color:var(--copper)}
+  .quiz-option-dark.selected{border-color:var(--copper);background:rgba(184,115,51,.1)}
+  .quiz-option-dark .opt-label{font-size:14px;color:var(--cream);font-weight:500}
+  .multi-check-dark{width:20px;height:20px;border-radius:4px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:11px;color:var(--navy)}
+  .quiz-option-dark.selected .multi-check-dark{border-color:var(--copper);background:var(--copper)}
+  .quiz-option-dark.selected .multi-check-dark::after{content:'✓'}
+
+  /* Dealbreakers */
+  .dealbreaker-item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--navy);border:1px solid var(--line);border-radius:10px;margin-bottom:8px}
+  .dealbreaker-label{font-size:13px;color:var(--cream)}
+  .toggle{width:44px;height:24px;background:rgba(250,248,245,.15);border-radius:999px;position:relative;cursor:pointer;transition:background .2s}
+  .toggle.on{background:var(--copper)}
+  .toggle-thumb{width:20px;height:20px;background:white;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .toggle.on .toggle-thumb{left:22px}
+
+  /* Fav entry */
   .fav{margin-top:26px}
   .fav-row{display:flex;gap:8px;margin-top:10px}
   .fav-row input{flex:1;background:var(--navy);border:1px solid var(--line);border-radius:10px;color:var(--cream);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:.92rem}
@@ -65,6 +108,8 @@
   .cap-note{font-size:.75rem;color:var(--cream-faint);margin-top:6px}
   input.url-input{width:100%;background:var(--navy);border:1px solid var(--line);border-radius:10px;color:var(--cream);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:.92rem;margin-top:10px}
   input.url-input:focus{outline:none;border-color:var(--copper)}
+
+  /* Filters */
   .filter-block{border:1px solid var(--line);border-radius:12px;padding:18px 18px 20px;margin-top:18px;background:var(--navy)}
   .filter-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
   .filter-name{font-weight:700;font-size:.95rem}
@@ -78,6 +123,13 @@
   .accepted{margin-top:14px;display:none}
   .accepted.show{display:block}
   .accepted .trait-label{color:var(--cream-faint)}
+
+  /* Unlock section */
+  .unlock-banner{background:rgba(184,115,51,.08);border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-top:30px;text-align:center}
+  .unlock-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--cream);margin-bottom:6px}
+  .unlock-sub{font-size:.88rem;color:var(--cream-dim);line-height:1.5}
+
+  /* Save bar */
   .savebar{position:fixed;bottom:0;left:0;right:0;background:rgba(10,22,40,.92);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:16px 20px;display:flex;justify-content:center;align-items:center;gap:18px;z-index:50}
   .savebtn{background:var(--copper);color:var(--navy);border:none;border-radius:999px;padding:14px 46px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1rem;letter-spacing:.03em;cursor:pointer;transition:all .15s}
   .savebtn:hover{background:var(--copper-light)}
@@ -87,25 +139,181 @@
   .savemsg.err{color:var(--red)}
   .loading-veil{position:fixed;inset:0;background:var(--navy);z-index:100;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--copper);transition:opacity .4s}
   .loading-veil.gone{opacity:0;pointer-events:none}
-  @media(max-width:600px){section.card{padding:24px 18px}}
+  .section-divider{border:none;border-top:1px solid var(--line);margin:10px 0}
+  @media(max-width:600px){section.card{padding:24px 18px}.photo-grid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
-<div class="loading-veil" id="veil">✶ &nbsp;loading your preferences&nbsp; ✶</div>
+<div class="loading-veil" id="veil">✶ &nbsp;loading your profile&nbsp; ✶</div>
 <div class="wrap">
   <header>
     <div class="asterism">✶</div>
-    <h1>Favorites &amp; Filters</h1>
-    <p class="sub">Tell us what you love and what matters in a match. Dealbreakers hide people entirely. Must-haves and nice-to-haves shape your compatibility scores.</p>
+    <h1>Build Your Profile</h1>
+    <p class="sub">The more you share, the better your matches. Everything here strengthens your compatibility score.</p>
     <a class="backlink" href="profile.html">← back to profile</a>
   </header>
+
+  <!-- Progress meter -->
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>Compatibility profile</span>
+      <span id="progress-pct">0% complete</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- SECTION A: Values -->
   <section class="card">
-    <h2><span class="num">I.</span>About You</h2>
+    <h2><span class="num">I.</span>Your Values</h2>
+    <p class="hint">These power your compatibility score. Be real — filtered results only work with honest inputs.</p>
+
+    <div class="trait" style="margin-top:24px">
+      <div class="trait-label">Political affiliation</div>
+      <div class="chip-selector-dark" id="politics-chips">
+        <button class="chip-dark" onclick="selectChipDark(this,'politics','conservative')">Conservative</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'politics','moderate')">Moderate</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'politics','liberal')">Liberal</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'politics','libertarian')">Libertarian</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'politics','apolitical')">Apolitical</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'politics','prefer_not')">Prefer not to say</button>
+      </div>
+    </div>
+
+    <div class="trait" style="margin-top:24px">
+      <div class="trait-label">Religion / Faith</div>
+      <div class="chip-selector-dark" id="religion-chips">
+        <button class="chip-dark" onclick="selectChipDark(this,'religion','christian')">Christian</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'religion','catholic')">Catholic</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'religion','jewish')">Jewish</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'religion','muslim')">Muslim</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'religion','hindu')">Hindu</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'religion','buddhist')">Buddhist</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'religion','spiritual')">Spiritual</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'religion','agnostic')">Agnostic</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'religion','atheist')">Atheist</button>
+        <button class="chip-dark" onclick="selectChipDark(this,'religion','other')">Other</button>
+      </div>
+    </div>
+
+    <div class="trait" style="margin-top:24px">
+      <div class="trait-label">Love language</div>
+      <div class="option-list-dark">
+        <div class="option-row-dark" onclick="selectRowDark(this,'love_language','words')"><div><div class="row-label">Words of Affirmation</div><div class="row-sub">I thrive on verbal encouragement</div></div><div class="radio-dark"></div></div>
+        <div class="option-row-dark" onclick="selectRowDark(this,'love_language','acts')"><div><div class="row-label">Acts of Service</div><div class="row-sub">Actions speak louder than words</div></div><div class="radio-dark"></div></div>
+        <div class="option-row-dark" onclick="selectRowDark(this,'love_language','gifts')"><div><div class="row-label">Receiving Gifts</div><div class="row-sub">Thoughtful gestures mean everything</div></div><div class="radio-dark"></div></div>
+        <div class="option-row-dark" onclick="selectRowDark(this,'love_language','time')"><div><div class="row-label">Quality Time</div><div class="row-sub">Undivided attention is the ultimate gift</div></div><div class="radio-dark"></div></div>
+        <div class="option-row-dark" onclick="selectRowDark(this,'love_language','touch')"><div><div class="row-label">Physical Touch</div><div class="row-sub">Connection through touch and closeness</div></div><div class="radio-dark"></div></div>
+      </div>
+    </div>
+
+    <div class="trait" style="margin-top:24px">
+      <div class="trait-label">Attachment style</div>
+      <div class="option-list-dark">
+        <div class="option-row-dark" onclick="selectRowDark(this,'attachment','secure')"><div><div class="row-label">Secure</div><div class="row-sub">Comfortable with intimacy and independence</div></div><div class="radio-dark"></div></div>
+        <div class="option-row-dark" onclick="selectRowDark(this,'attachment','anxious')"><div><div class="row-label">Anxious</div><div class="row-sub">Crave closeness, worry about the relationship</div></div><div class="radio-dark"></div></div>
+        <div class="option-row-dark" onclick="selectRowDark(this,'attachment','avoidant')"><div><div class="row-label">Avoidant</div><div class="row-sub">Value independence, sometimes pull back</div></div><div class="radio-dark"></div></div>
+        <div class="option-row-dark" onclick="selectRowDark(this,'attachment','disorganized')"><div><div class="row-label">Disorganized / Fearful</div><div class="row-sub">Working through some complicated patterns</div></div><div class="radio-dark"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION B: Photos & Bio -->
+  <section class="card">
+    <h2><span class="num">II.</span>Photos &amp; Bio</h2>
+    <p class="hint">Real photos only. Your main photo will be verified against your ID selfie — this is a core part of what makes Kyzmyt different.</p>
+    <div class="photo-grid" id="photo-grid">
+      <div class="photo-slot" id="photo-0" onclick="triggerPhotoUpload(0)"><div class="add-icon">+</div></div>
+      <div class="photo-slot" id="photo-1" onclick="triggerPhotoUpload(1)"><div class="add-icon">+</div></div>
+      <div class="photo-slot" id="photo-2" onclick="triggerPhotoUpload(2)"><div class="add-icon">+</div></div>
+      <div class="photo-slot" id="photo-3" onclick="triggerPhotoUpload(3)"><div class="add-icon">+</div></div>
+      <div class="photo-slot" id="photo-4" onclick="triggerPhotoUpload(4)"><div class="add-icon">+</div></div>
+      <div class="photo-slot" id="photo-5" onclick="triggerPhotoUpload(5)"><div class="add-icon">+</div></div>
+    </div>
+    <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handlePhotoUpload(event)">
+    <div style="font-size:.8rem;color:var(--cream-faint);text-align:center;margin-top:10px">First photo is your main profile photo. Max 10MB each.</div>
+
+    <div class="trait" style="margin-top:24px">
+      <div class="trait-label">Your bio</div>
+      <textarea class="form-input-dark" id="bio" placeholder="Write something real. What makes you you? What are you looking for?" maxlength="300"></textarea>
+      <div style="font-size:.75rem;color:var(--cream-faint);margin-top:4px" id="bio-count">0 / 300</div>
+    </div>
+
+    <div class="trait" style="margin-top:20px">
+      <div class="trait-label">Your current obsession</div>
+      <input class="form-input-dark" id="current-obsession" type="text" placeholder="What are you into right now? Show, hobby, food...">
+      <div style="font-size:.75rem;color:var(--cream-faint);margin-top:4px">Updates any time. Keeps your profile alive.</div>
+    </div>
+  </section>
+
+  <!-- SECTION C: Dealbreakers + Hot Takes + Bucket List -->
+  <section class="card">
+    <h2><span class="num">III.</span>Dealbreakers &amp; Personality</h2>
+    <p class="hint">Dealbreakers filter people out of your feed entirely. Hot takes and bucket list show who you really are.</p>
+
+    <div class="trait" style="margin-top:24px">
+      <div class="trait-label">My dealbreakers</div>
+      <div style="margin-top:10px">
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Smoker</div><div class="toggle" onclick="toggleDealbreaker(this,'smoker')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Heavy drinker</div><div class="toggle" onclick="toggleDealbreaker(this,'heavy_drinker')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Has children</div><div class="toggle" onclick="toggleDealbreaker(this,'has_kids')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Wants children</div><div class="toggle" onclick="toggleDealbreaker(this,'wants_kids')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Different religion</div><div class="toggle" onclick="toggleDealbreaker(this,'diff_religion')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Different politics</div><div class="toggle" onclick="toggleDealbreaker(this,'diff_politics')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Long distance</div><div class="toggle" onclick="toggleDealbreaker(this,'long_distance')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">No pets allowed</div><div class="toggle" onclick="toggleDealbreaker(this,'no_pets')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Never reads books</div><div class="toggle" onclick="toggleDealbreaker(this,'no_reading')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Bad tipper</div><div class="toggle" onclick="toggleDealbreaker(this,'bad_tipper')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Pineapple on pizza</div><div class="toggle" onclick="toggleDealbreaker(this,'pineapple_pizza')"><div class="toggle-thumb"></div></div></div>
+        <div class="dealbreaker-item"><div class="dealbreaker-label">Talks during movies</div><div class="toggle" onclick="toggleDealbreaker(this,'talks_movies')"><div class="toggle-thumb"></div></div></div>
+      </div>
+    </div>
+
+    <div class="trait" style="margin-top:28px">
+      <div class="trait-label">Your hot takes (up to 3)</div>
+      <p style="font-size:.82rem;color:var(--cream-faint);margin-top:4px;margin-bottom:12px">Unpopular opinions welcome. This is where your personality shows.</p>
+      <div style="background:var(--navy);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;gap:10px;align-items:flex-start">
+        <div style="width:24px;height:24px;border-radius:50%;background:rgba(184,115,51,.15);color:var(--copper);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;margin-top:2px">1</div>
+        <input type="text" id="hot-take-1" placeholder="An opinion people disagree with..." style="flex:1;background:transparent;border:none;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+      </div>
+      <div style="background:var(--navy);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;gap:10px;align-items:flex-start">
+        <div style="width:24px;height:24px;border-radius:50%;background:rgba(184,115,51,.15);color:var(--copper);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;margin-top:2px">2</div>
+        <input type="text" id="hot-take-2" placeholder="Another hot take..." style="flex:1;background:transparent;border:none;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+      </div>
+      <div style="background:var(--navy);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start">
+        <div style="width:24px;height:24px;border-radius:50%;background:rgba(184,115,51,.15);color:var(--copper);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;margin-top:2px">3</div>
+        <input type="text" id="hot-take-3" placeholder="Your third hot take..." style="flex:1;background:transparent;border:none;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+      </div>
+    </div>
+
+    <div class="trait" style="margin-top:28px">
+      <div class="trait-label">Bucket list (up to 5 things)</div>
+      <p style="font-size:.82rem;color:var(--cream-faint);margin-top:4px;margin-bottom:8px">Shared dreams start great conversations.</p>
+      <input class="form-input-dark" id="bucket-list" type="text" placeholder="e.g. See Northern Lights, Learn to surf, Visit Japan...">
+    </div>
+  </section>
+
+  <!-- SECTION D: Unlock — 15-Question Quiz -->
+  <div class="unlock-banner">
+    <div class="unlock-title">&#10054; Unlock stronger matches</div>
+    <div class="unlock-sub">Answer 15 compatibility questions to significantly improve your match scores. Takes about 3 minutes.</div>
+  </div>
+
+  <section class="card">
+    <h2><span class="num">IV.</span>Deep Compatibility</h2>
+    <p class="hint">Select all answers that apply. Honest answers = better matches. These questions power the compatibility engine.</p>
+    <div id="quiz-container" style="margin-top:20px"></div>
+  </section>
+
+  <!-- SECTION E: Traits (existing) -->
+  <section class="card">
+    <h2><span class="num">V.</span>About You</h2>
     <p class="hint">Pick one answer per question. These appear on your profile and power compatibility.</p>
     <div id="traits"></div>
   </section>
+
+  <!-- SECTION F: Favorites (existing) -->
   <section class="card">
-    <h2><span class="num">II.</span>Your Favorites</h2>
+    <h2><span class="num">VI.</span>Your Favorites</h2>
     <p class="hint">Type one and press Enter or +. Up to 10 per category. Shared favorites boost compatibility scores.</p>
     <div id="favorites"></div>
     <div class="fav">
@@ -113,8 +321,10 @@
       <input class="url-input" id="goodreadsUrl" type="url" placeholder="https://www.goodreads.com/user/show/...">
     </div>
   </section>
+
+  <!-- SECTION G: Match Filters (existing) -->
   <section class="card">
-    <h2><span class="num">III.</span>Match Filters</h2>
+    <h2><span class="num">VII.</span>Match Filters</h2>
     <p class="hint">For each question, choose how much it matters — then select which answers you'd accept in a match. <strong style="color:var(--red)">Dealbreaker</strong> removes non-matches from your feed. <strong style="color:var(--amber)">Must-have</strong> adds +15 to compatibility. <strong style="color:var(--green)">Nice-to-have</strong> adds +5.</p>
     <div id="traitFilters"></div>
     <h2 style="margin-top:34px;font-size:1.2rem"><span class="num">＋</span>Shared-Favorite Filters</h2>
@@ -122,14 +332,17 @@
     <div id="favFilters"></div>
   </section>
 </div>
+
 <div class="savebar">
   <button class="savebtn" id="saveBtn">Save Everything ✶</button>
   <span class="savemsg" id="saveMsg"></span>
 </div>
+
 <script>
 const SUPABASE_URL="https://gnknifxhzriqwugmvoxf.supabase.co";
 const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdua25pZnhoenJpcXd1Z212b3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MzgyNzksImV4cCI6MjA5MjAxNDI3OX0.AkOt-GcJOmcUVV0I_JU2_yaMNPlwHRgUSrJi9Q9HHvo";
 const FN="/.netlify/functions/user-preferences";
+
 const TRAITS=[
   {key:"religion",label:"Religion / Spirituality",opts:[["christian","Christian"],["catholic","Catholic"],["jewish","Jewish"],["muslim","Muslim"],["hindu","Hindu"],["buddhist","Buddhist"],["spiritual","Spiritual"],["agnostic","Agnostic"],["atheist","Atheist"],["other","Other"],["prefer_not_to_say","Prefer not to say"]]},
   {key:"chronotype",label:"Morning Person or Night Owl?",opts:[["morning_person","Morning person"],["night_owl","Night owl"],["flexible","Flexible"]]},
@@ -143,15 +356,149 @@ const TRAITS=[
   {key:"texter_or_caller",label:"Texter or Caller?",opts:[["texter","Texter"],["caller","Caller"],["either","Either"]]},
   {key:"planner_or_spontaneous",label:"Planner or Spontaneous?",opts:[["planner","Planner"],["spontaneous","Spontaneous"],["mix","A bit of both"]]}
 ];
+
+const QUIZ_QUESTIONS=[
+  {id:'conflict',text:'When you disagree with someone close, you usually:',opts:['Address it directly right away','Wait for the right moment','Let it go if it\'s small','Need space to process first']},
+  {id:'social',text:'On a typical weekend you prefer:',opts:['Big social gatherings','Small group of close friends','One on one time','Mostly solo recharge']},
+  {id:'finance',text:'Your financial philosophy is:',opts:['Saver first, splurge occasionally','Balanced spender','Live in the moment','Investor mindset, always planning']},
+  {id:'family',text:'Family in your life means:',opts:['Everything, involved daily','Very important, regular contact','I love them but value independence','I\'ve built my own chosen family']},
+  {id:'future',text:'In 5 years you see yourself:',opts:['Settled and building something','Exploring new opportunities','Focused on career and growth','Still figuring it out honestly']},
+  {id:'humor',text:'Your sense of humor is:',opts:['Dry and deadpan','Sarcastic and witty','Goofy and silly','Dark and unexpected']},
+  {id:'communication',text:'In a relationship your communication style is:',opts:['Text all day','Quality calls over quantity','In person is everything','I need lots of alone time between']},
+  {id:'ambition',text:'Career and ambition to you means:',opts:['Work to live not live to work','Career is very important to me','Balanced — neither dominates','Building something of my own']},
+  {id:'adventure',text:'Your idea of adventure is:',opts:['International travel and exploration','Road trips and hidden places','Trying every new restaurant','Deep conversations till 3am']},
+  {id:'pets',text:'When it comes to pets:',opts:['I have them and they\'re family','I love them, don\'t have any','Neutral, could go either way','Not really a pet person']},
+  {id:'morning',text:'Mornings at your place look like:',opts:['Up early, full routine, motivated','Coffee first, slowly human','Whenever, I\'m not a morning person','Depends entirely on the day']},
+  {id:'politics_depth',text:'Politics in a relationship should be:',opts:['We must align on everything','Core values must align','We can disagree and be fine','I don\'t discuss it at all']},
+  {id:'kids_want',text:'When it comes to kids:',opts:['Have them and they\'re my world','Want them someday','On the fence honestly','Childfree by choice']},
+  {id:'health',text:'Health and fitness to you is:',opts:['Core to my identity and daily life','Important, I try to stay active','Casual, I move when I feel like it','Honestly not a priority right now']},
+  {id:'religion_depth',text:'Faith in a relationship should be:',opts:['We must share the same faith','Similar values more than doctrine','Respectful of differences','It\'s private and personal']}
+];
+
 const CATEGORIES=[["books","Books"],["movies","Movies"],["tv_shows","TV Shows"],["music_genres","Music Genres"],["bands","Bands & Artists"],["actors","Actors"],["sports_teams","Sports Teams"],["athletes","Players & Athletes"],["foods","Foods"],["restaurants","Restaurants"],["vacation_spots","Vacation Spots"]];
 const PRIORITIES=[["off","Off","on-off"],["nice_to_have","Nice-to-have","on-nice"],["must_have","Must-have","on-must"],["dealbreaker","Dealbreaker","on-deal"]];
-const state={traits:{},goodreads_url:"",favorites:{},traitFilters:{},favFilters:{}};
+
+const state={
+  traits:{},goodreads_url:"",
+  favorites:{},traitFilters:{},favFilters:{},
+  // New fields
+  politics:null,religion:null,love_language:null,attachment:null,
+  dealbreakers:[],hot_takes:[],bucket_list:"",bio:"",current_obsession:"",
+  quizAnswers:{},uploadedPhotos:[]
+};
+
 CATEGORIES.forEach(([k])=>state.favorites[k]=[]);
 TRAITS.forEach(t=>state.traitFilters[t.key]={priority:"off",accepted:new Set()});
 CATEGORIES.forEach(([k])=>state.favFilters[k]="off");
+QUIZ_QUESTIONS.forEach(q=>state.quizAnswers[q.id]=[]);
+
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 let token=null;
+let currentPhotoSlot=0;
+
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+
+/* ---- Progress meter ---- */
+function updateProgress(){
+  let filled=0,total=0;
+  // Values (4 fields)
+  total+=4;
+  if(state.politics)filled++;
+  if(state.religion)filled++;
+  if(state.love_language)filled++;
+  if(state.attachment)filled++;
+  // Photo (1 = at least one photo)
+  total+=1;
+  if(state.uploadedPhotos.length>0)filled++;
+  // Bio
+  total+=1;
+  const bioVal=document.getElementById('bio')?.value||'';
+  if(bioVal.trim().length>10)filled++;
+  // Quiz (15 questions, each answered = 1 point, partial credit)
+  total+=15;
+  QUIZ_QUESTIONS.forEach(q=>{if(state.quizAnswers[q.id]?.length>0)filled++});
+  // Traits (11)
+  total+=11;
+  TRAITS.forEach(t=>{if(state.traits[t.key])filled++});
+  const pct=Math.round((filled/total)*100);
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-pct').textContent=pct+'% complete';
+}
+
+/* ---- Chip selectors (dark theme) ---- */
+window.selectChipDark=function(el,key,value){
+  el.closest('.chip-selector-dark').querySelectorAll('.chip-dark').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  state[key]=value;
+  updateProgress();
+};
+
+/* ---- Option rows (dark theme) ---- */
+window.selectRowDark=function(el,key,value){
+  el.closest('.option-list-dark').querySelectorAll('.option-row-dark').forEach(r=>r.classList.remove('selected'));
+  el.classList.add('selected');
+  state[key]=value;
+  updateProgress();
+};
+
+/* ---- Dealbreakers ---- */
+window.toggleDealbreaker=function(el,key){
+  el.classList.toggle('on');
+  if(el.classList.contains('on')){if(!state.dealbreakers.includes(key))state.dealbreakers.push(key)}
+  else{state.dealbreakers=state.dealbreakers.filter(d=>d!==key)}
+};
+
+/* ---- Photos ---- */
+window.triggerPhotoUpload=function(slot){
+  currentPhotoSlot=slot;
+  document.getElementById('photo-input').click();
+};
+
+window.handlePhotoUpload=async function(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  e.target.value='';
+  if(file.size>10*1024*1024){alert('Photo must be under 10MB');return}
+  const slot=document.getElementById('photo-'+currentPhotoSlot);
+  slot.innerHTML='<div class="uploading-indicator"></div>';
+  const {data:{user}}=await sb.auth.getUser();
+  if(!user){alert('Please sign in first');slot.innerHTML='<div class="add-icon">+</div>';return}
+  const ext=file.name.split('.').pop().toLowerCase();
+  const path=`${user.id}/${Date.now()}_${currentPhotoSlot}.${ext}`;
+  const {error:uploadError}=await sb.storage.from('profile-photos').upload(path,file,{upsert:true});
+  if(uploadError){alert('Upload failed. Try again.');slot.innerHTML='<div class="add-icon">+</div>';return}
+  const {data:{publicUrl}}=sb.storage.from('profile-photos').getPublicUrl(path);
+  slot.innerHTML=`<img src="${publicUrl}" alt="Photo">${currentPhotoSlot===0?'<div class="primary-badge">PRIMARY</div>':''}`;
+  state.uploadedPhotos=state.uploadedPhotos.filter(p=>p.slot!==currentPhotoSlot);
+  state.uploadedPhotos.push({slot:currentPhotoSlot,url:publicUrl,path});
+  updateProgress();
+};
+
+/* ---- Quiz ---- */
+function renderQuiz(){
+  const container=document.getElementById('quiz-container');
+  container.innerHTML='';
+  QUIZ_QUESTIONS.forEach((q,i)=>{
+    const block=document.createElement('div');
+    block.style.marginBottom='28px';
+    block.innerHTML=`<div style="font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--copper-light);font-weight:700;margin-bottom:4px">Question ${i+1} of ${QUIZ_QUESTIONS.length}</div><div style="font-size:15px;font-weight:500;color:var(--cream);margin-bottom:12px">${q.text}</div>`;
+    q.opts.forEach(opt=>{
+      const row=document.createElement('div');
+      row.className='quiz-option-dark'+(state.quizAnswers[q.id].includes(opt)?' selected':'');
+      row.innerHTML=`<span class="opt-label">${opt}</span><span class="multi-check-dark"></span>`;
+      row.addEventListener('click',()=>{
+        const idx=state.quizAnswers[q.id].indexOf(opt);
+        if(idx===-1){state.quizAnswers[q.id].push(opt);row.classList.add('selected')}
+        else{state.quizAnswers[q.id].splice(idx,1);row.classList.remove('selected')}
+        updateProgress();
+      });
+      block.appendChild(row);
+    });
+    container.appendChild(block);
+  });
+}
+
+/* ---- Existing trait/fav/filter renderers (unchanged) ---- */
 function renderTraits(){
   const el=document.getElementById("traits");el.innerHTML="";
   TRAITS.forEach(t=>{
@@ -161,12 +508,13 @@ function renderTraits(){
     t.opts.forEach(([val,lab])=>{
       const b=document.createElement("button");b.type="button";
       b.className="pill"+(state.traits[t.key]===val?" on":"");b.textContent=lab;
-      b.onclick=()=>{state.traits[t.key]=(state.traits[t.key]===val?null:val);renderTraits()};
+      b.onclick=()=>{state.traits[t.key]=(state.traits[t.key]===val?null:val);renderTraits();updateProgress()};
       pills.appendChild(b);
     });
     d.appendChild(pills);el.appendChild(d);
   });
 }
+
 function renderFavorites(){
   const el=document.getElementById("favorites");el.innerHTML="";
   CATEGORIES.forEach(([key,label])=>{
@@ -179,8 +527,7 @@ function renderFavorites(){
     const add=document.createElement("button");add.type="button";add.className="addbtn";add.textContent="+";
     const commit=()=>{
       const v=inp.value.trim();if(!v)return;
-      const norm=v.toLowerCase();
-      if(state.favorites[key].some(x=>x.toLowerCase()===norm)){inp.value="";return}
+      if(state.favorites[key].some(x=>x.toLowerCase()===v.toLowerCase())){inp.value="";return}
       if(state.favorites[key].length>=10){alert("Max 10 per category.");return}
       state.favorites[key].push(v);inp.value="";renderFavorites();
       setTimeout(()=>{const i=document.querySelector(`[data-cat-input="${key}"]`);if(i)i.focus()},0);
@@ -199,6 +546,7 @@ function renderFavorites(){
     d.appendChild(cap);el.appendChild(d);
   });
 }
+
 function renderTraitFilters(){
   const el=document.getElementById("traitFilters");el.innerHTML="";
   TRAITS.forEach(t=>{
@@ -227,6 +575,7 @@ function renderTraitFilters(){
     acc.appendChild(pills);blk.appendChild(acc);el.appendChild(blk);
   });
 }
+
 function renderFavFilters(){
   const el=document.getElementById("favFilters");el.innerHTML="";
   CATEGORIES.forEach(([key,label])=>{
@@ -243,10 +592,49 @@ function renderFavFilters(){
     head.appendChild(prio);blk.appendChild(head);el.appendChild(blk);
   });
 }
+
+/* ---- Load existing data ---- */
 async function init(){
   const{data:{session}}=await sb.auth.getSession();
   if(!session){window.location.href="login.html";return}
   token=session.access_token;
+
+  // Load profile data (bio, obsession, quiz, dealbreakers, hot takes, bucket list)
+  const {data:{user}}=await sb.auth.getUser();
+  if(user){
+    const {data:profile}=await sb.from('profiles').select('*').eq('user_id',user.id).single();
+    if(profile){
+      if(profile.bio){document.getElementById('bio').value=profile.bio;document.getElementById('bio-count').textContent=profile.bio.length+' / 300'}
+      if(profile.current_obsession)document.getElementById('current-obsession').value=profile.current_obsession;
+      if(profile.bucket_list)document.getElementById('bucket-list').value=profile.bucket_list;
+      if(Array.isArray(profile.hot_takes)){
+        if(profile.hot_takes[0])document.getElementById('hot-take-1').value=profile.hot_takes[0];
+        if(profile.hot_takes[1])document.getElementById('hot-take-2').value=profile.hot_takes[1];
+        if(profile.hot_takes[2])document.getElementById('hot-take-3').value=profile.hot_takes[2];
+      }
+      if(Array.isArray(profile.dealbreakers)){
+        profile.dealbreakers.forEach(key=>{
+          state.dealbreakers.push(key);
+          const toggleEl=document.querySelector(`.toggle[onclick*="'${key}'"]`);
+          if(toggleEl)toggleEl.classList.add('on');
+        });
+      }
+      if(profile.politics){state.politics=profile.politics;document.querySelector(`[onclick*="selectChipDark"][onclick*="'${profile.politics}'"]`)?.classList.add('on')}
+      if(profile.religion){state.religion=profile.religion;document.querySelector(`[onclick*="selectChipDark"][onclick*="'religion','${profile.religion}'"]`)?.classList.add('on')}
+      if(profile.love_language){state.love_language=profile.love_language;document.querySelectorAll('.option-row-dark').forEach(r=>{if(r.getAttribute('onclick')?.includes(`'${profile.love_language}'`))r.classList.add('selected')})}
+      if(profile.attachment){state.attachment=profile.attachment;document.querySelectorAll('.option-row-dark').forEach(r=>{if(r.getAttribute('onclick')?.includes(`'${profile.attachment}'`))r.classList.add('selected')})}
+      if(profile.quiz_responses){try{const qr=JSON.parse(profile.quiz_responses);Object.assign(state.quizAnswers,qr)}catch(e){}}
+      // Load existing photos
+      const {data:photos}=await sb.from('profile_photos').select('*').eq('user_id',user.id).order('display_order');
+      if(photos?.length){
+        photos.forEach(p=>{
+          const slot=document.getElementById('photo-'+p.display_order);
+          if(slot){slot.innerHTML=`<img src="${p.url}" alt="Photo">${p.is_primary?'<div class="primary-badge">PRIMARY</div>':''}`;state.uploadedPhotos.push({slot:p.display_order,url:p.url,path:p.storage_path})}
+        });
+      }
+    }
+  }
+
   try{
     const res=await fetch(FN,{headers:{Authorization:"Bearer "+token}});
     if(res.ok){
@@ -261,24 +649,76 @@ async function init(){
       }
     }
   }catch(e){console.error("load failed",e)}
-  renderTraits();renderFavorites();renderTraitFilters();renderFavFilters();
+
+  renderQuiz();renderTraits();renderFavorites();renderTraitFilters();renderFavFilters();
+  updateProgress();
   document.getElementById("veil").classList.add("gone");
 }
+
+/* ---- Bio counter ---- */
+document.getElementById('bio').addEventListener('input',function(){
+  document.getElementById('bio-count').textContent=this.value.length+' / 300';
+  updateProgress();
+});
+
+/* ---- Save ---- */
 async function save(){
   const btn=document.getElementById("saveBtn");const msg=document.getElementById("saveMsg");
   for(const t of TRAITS){const f=state.traitFilters[t.key];if(f.priority!=="off"&&f.accepted.size===0){msg.className="savemsg err";msg.textContent=`Pick accepted answers for "${t.label}"`;return}}
   btn.disabled=true;msg.className="savemsg";msg.textContent="Saving…";
+
+  const {data:{user}}=await sb.auth.getUser();
+  if(!user){msg.className="savemsg err";msg.textContent="Not signed in";btn.disabled=false;return}
+
+  const hot_takes=[
+    document.getElementById('hot-take-1').value,
+    document.getElementById('hot-take-2').value,
+    document.getElementById('hot-take-3').value
+  ].filter(Boolean);
+
+  // Save extended profile data
+  const {error:profileError}=await sb.from('profiles').upsert({
+    user_id:user.id,
+    politics:state.politics,
+    religion:state.religion,
+    love_language:state.love_language,
+    attachment_style:state.attachment,
+    dealbreakers:state.dealbreakers,
+    hot_takes,
+    bio:document.getElementById('bio').value,
+    current_obsession:document.getElementById('current-obsession').value,
+    bucket_list:document.getElementById('bucket-list').value,
+    quiz_responses:JSON.stringify(state.quizAnswers),
+    avatar_url:state.uploadedPhotos.find(p=>p.slot===0)?.url||null
+  });
+
+  if(profileError){msg.className="savemsg err";msg.textContent="Error saving profile";btn.disabled=false;return}
+
+  // Save photos
+  if(state.uploadedPhotos.length>0){
+    await sb.from('profile_photos').delete().eq('user_id',user.id);
+    await sb.from('profile_photos').insert(
+      state.uploadedPhotos.sort((a,b)=>a.slot-b.slot).map((p,idx)=>({
+        user_id:user.id,url:p.url,storage_path:p.path,display_order:idx,is_primary:p.slot===0
+      }))
+    );
+  }
+
+  // Save traits/favorites/filters via existing function
   const filters=[];
   TRAITS.forEach(t=>{const f=state.traitFilters[t.key];if(f.priority!=="off"){filters.push({filter_type:"trait",trait_key:t.key,accepted_values:[...f.accepted],priority:f.priority})}});
   CATEGORIES.forEach(([k])=>{if(state.favFilters[k]!=="off"){filters.push({filter_type:"favorite_category",favorite_category:k,priority:state.favFilters[k]})}});
   const payload={traits:{...state.traits,goodreads_url:document.getElementById("goodreadsUrl").value.trim()||null},favorites:state.favorites,filters};
+
   try{
     const res=await fetch(FN,{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token},body:JSON.stringify(payload)});
     if(!res.ok)throw new Error(await res.text());
     msg.className="savemsg ok";msg.textContent="Saved ✶";
+    updateProgress();
   }catch(e){console.error(e);msg.className="savemsg err";msg.textContent="Save failed — try again"}
   btn.disabled=false;
 }
+
 document.getElementById("saveBtn").addEventListener("click",save);
 init();
 </script>
