@@ -12,6 +12,9 @@
 </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Join Kyzmyt — Create Your Account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/design-system.css" />
   <style>
     .signup-page { min-height: 100vh; background: var(--cream); display: flex; flex-direction: column; }
@@ -42,7 +45,6 @@
     .radio-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border-mid); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
     .option-row.selected .radio-check { border-color: var(--copper); background: var(--copper); }
     .option-row.selected .radio-check::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: white; }
-    /* Multi-select quiz rows */
     .quiz-option { border: 1.5px solid var(--border-mid); border-radius: var(--radius-md); padding: 12px 16px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; background: var(--white); margin-bottom: 8px; }
     .quiz-option:hover { border-color: var(--copper); }
     .quiz-option.selected { border-color: var(--copper); background: var(--copper-pale); }
@@ -76,13 +78,207 @@
     .password-wrap .form-input { padding-right: 44px; }
     .pw-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 4px; color: var(--text-muted); font-size: 16px; line-height: 1; display: flex; align-items: center; justify-content: center; }
     .pw-toggle:hover { color: var(--navy); }
+
+    /* ===== WELCOME SCREEN ===== */
+    #welcome-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #0A1628;
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 28px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    #welcome-screen.visible {
+      display: flex;
+    }
+    #welcome-screen.faded-in {
+      opacity: 1;
+    }
+    #welcome-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .welcome-inner {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 480px;
+      width: 100%;
+    }
+    .welcome-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      color: #B87333;
+      opacity: 0;
+      transform: scale(0.7);
+      transition: opacity 0.8s ease 0.4s, transform 0.8s ease 0.4s;
+      display: block;
+      margin-bottom: 8px;
+    }
+    #welcome-screen.faded-in .welcome-mark {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .welcome-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(38px, 8vw, 58px);
+      font-weight: 600;
+      color: #FAF8F5;
+      line-height: 1.1;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease 0.9s, transform 0.8s ease 0.9s;
+      margin-bottom: 12px;
+    }
+    #welcome-screen.faded-in .welcome-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .welcome-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      color: #FAF8F5;
+      opacity: 0;
+      transition: opacity 0.8s ease 1.5s;
+      margin-bottom: 48px;
+      line-height: 1.6;
+    }
+    #welcome-screen.faded-in .welcome-sub {
+      opacity: 0.72;
+    }
+    .welcome-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.8s ease 2.1s, transform 0.8s ease 2.1s;
+    }
+    #welcome-screen.faded-in .welcome-steps {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .welcome-step-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: #101e33;
+      border: 1px solid rgba(184,115,51,0.35);
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-decoration: none;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .welcome-step-card:hover {
+      border-color: #B87333;
+      transform: translateY(-2px);
+    }
+    .welcome-step-card.recommended {
+      border-color: #B87333;
+      background: rgba(184,115,51,0.08);
+    }
+    .welcome-step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(184,115,51,0.15);
+      border: 1px solid rgba(184,115,51,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      color: #B87333;
+      flex-shrink: 0;
+    }
+    .welcome-step-body { flex: 1; text-align: left; }
+    .welcome-step-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: #FAF8F5;
+      margin-bottom: 3px;
+    }
+    .welcome-step-sub {
+      font-size: 12px;
+      color: #FAF8F5;
+      opacity: 0.6;
+    }
+    .welcome-step-badge {
+      font-size: 10px;
+      font-weight: 500;
+      color: #B87333;
+      background: rgba(184,115,51,0.15);
+      border: 1px solid rgba(184,115,51,0.4);
+      border-radius: 20px;
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+    .welcome-arrow {
+      font-size: 18px;
+      color: #B87333;
+      opacity: 0.7;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .welcome-mark, .welcome-title, .welcome-sub, .welcome-steps {
+        transition: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
   </style>
 </head>
 <body>
 
 <div id="toast-container" class="toast-container"></div>
 
-<div class="signup-page">
+<!-- ===== WELCOME SCREEN ===== -->
+<div id="welcome-screen" role="main" aria-label="Welcome to Kyzmyt">
+  <canvas id="welcome-canvas" aria-hidden="true"></canvas>
+  <div class="welcome-inner">
+    <span class="welcome-mark" aria-hidden="true">&#10054;</span>
+    <h1 class="welcome-title" id="welcome-title">Welcome to Kyzmyt.</h1>
+    <p class="welcome-sub">You just did something most people won't.<br>You chose real.</p>
+    <div class="welcome-steps">
+      <a class="welcome-step-card recommended" href="/pages/favorites.html">
+        <div class="welcome-step-num">1</div>
+        <div class="welcome-step-body">
+          <div class="welcome-step-title">Strengthen your matches</div>
+          <div class="welcome-step-sub">Compatibility questions, favorites, dealbreakers.</div>
+        </div>
+        <span class="welcome-step-badge">Start here</span>
+      </a>
+      <a class="welcome-step-card" href="/pages/verify.html">
+        <div class="welcome-step-num">2</div>
+        <div class="welcome-step-body">
+          <div class="welcome-step-title">Get verified</div>
+          <div class="welcome-step-sub">ID + background check + human review. Required to connect.</div>
+        </div>
+        <span class="welcome-arrow">›</span>
+      </a>
+      <a class="welcome-step-card" href="/pages/discover.html">
+        <div class="welcome-step-num">3</div>
+        <div class="welcome-step-body">
+          <div class="welcome-step-title">See who's waiting</div>
+          <div class="welcome-step-sub">Browse matches with real compatibility scores.</div>
+        </div>
+        <span class="welcome-arrow">›</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="signup-page" id="signup-page">
   <div class="signup-header">
     <a href="/" class="signup-logo">Kyzm<span>yt</span></a>
     <div class="step-indicator">
@@ -255,7 +451,7 @@
       <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="prevStep()">Back</button>
     </div>
 
-    <!-- Step 4: Personality quiz — multi-select -->
+    <!-- Step 4: Personality quiz -->
     <div class="step-panel" id="step-4">
       <h1 class="step-title">The real you</h1>
       <p class="step-subtitle">Select all answers that apply. Honest answers = better matches.</p>
@@ -321,7 +517,9 @@
         <input type="text" class="form-input" id="current-obsession" placeholder="What are you into right now? Show, hobby, food..." />
         <div class="form-hint">Updates any time. Keeps your profile alive.</div>
       </div>
-      <button class="btn btn-copper btn-full btn-lg" id="finish-btn" onclick="saveProfile()">Explore Kyzmyt →</button>
+      <button class="btn btn-copper btn-full btn-lg" id="finish-btn" onclick="saveProfile()">
+        <span id="finish-btn-text">Complete my profile</span>
+      </button>
       <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="prevStep()">Back</button>
     </div>
 
@@ -335,7 +533,6 @@ let currentStep = 0;
 let formData = {};
 let currentPhotoSlot = 0;
 let uploadedPhotos = [];
-// quiz answers stored as arrays per question id
 const quizAnswers = {};
 
 const quizQuestions = [
@@ -360,7 +557,6 @@ function renderQuiz() {
   const container = document.getElementById('quiz-container');
   container.innerHTML = '';
   quizQuestions.forEach((q, i) => {
-    // init answer array
     if (!quizAnswers[q.id]) quizAnswers[q.id] = [];
     const block = document.createElement('div');
     block.className = 'form-group';
@@ -375,17 +571,96 @@ function renderQuiz() {
       row.innerHTML = `<span class="quiz-option-label">${opt}</span><span class="multi-check"></span>`;
       row.addEventListener('click', () => {
         const idx = quizAnswers[q.id].indexOf(opt);
-        if (idx === -1) {
-          quizAnswers[q.id].push(opt);
-          row.classList.add('selected');
-        } else {
-          quizAnswers[q.id].splice(idx, 1);
-          row.classList.remove('selected');
-        }
+        if (idx === -1) { quizAnswers[q.id].push(opt); row.classList.add('selected'); }
+        else { quizAnswers[q.id].splice(idx, 1); row.classList.remove('selected'); }
       });
       block.appendChild(row);
     });
     container.appendChild(block);
+  });
+}
+
+/* ===== WELCOME SCREEN ===== */
+function playWelcomeChime() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const frequencies = [523.25, 659.25, 783.99, 1046.50];
+    frequencies.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.18);
+      gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.18);
+      gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + i * 0.18 + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.18 + 3.2);
+      osc.start(ctx.currentTime + i * 0.18);
+      osc.stop(ctx.currentTime + i * 0.18 + 3.5);
+    });
+  } catch(e) { /* audio unavailable — silent fail */ }
+}
+
+function startWelcomeCanvas() {
+  const canvas = document.getElementById('welcome-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let stars = [];
+  let w, h;
+
+  function resize() {
+    w = canvas.width = canvas.offsetWidth;
+    h = canvas.height = canvas.offsetHeight;
+    stars = [];
+    const count = Math.floor((w * h) / 8000);
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * w, y: Math.random() * h,
+        r: Math.random() * 1.4 + 0.4,
+        copper: Math.random() < 0.22,
+        baseA: Math.random() * 0.35 + 0.15,
+        phase: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.0006 + 0.0002,
+        drift: Math.random() * 0.04 + 0.01
+      });
+    }
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, w, h);
+    stars.forEach(s => {
+      const a = reduced ? s.baseA : s.baseA + Math.sin(t * s.speed * 1000 + s.phase) * 0.15;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.copper ? `rgba(184,115,51,${Math.max(a,0.05)})` : `rgba(250,248,245,${Math.max(a,0.05)})`;
+      ctx.fill();
+      if (!reduced) { s.y -= s.drift; if (s.y < -2) { s.y = h + 2; s.x = Math.random() * w; } }
+    });
+    if (!reduced) requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  if (reduced) draw(0); else requestAnimationFrame(draw);
+}
+
+function showWelcomeScreen(firstName) {
+  const screen = document.getElementById('welcome-screen');
+  const title = document.getElementById('welcome-title');
+  const name = (firstName || '').trim();
+  title.textContent = name ? `Welcome to Kyzmyt, ${name}.` : 'Welcome to Kyzmyt.';
+
+  screen.style.display = 'flex';
+  startWelcomeCanvas();
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      screen.classList.add('faded-in');
+      playWelcomeChime();
+    });
   });
 }
 
@@ -467,7 +742,6 @@ function validateStep(step) {
   return true;
 }
 
-// Step 0 no longer creates account — just validates and moves on
 window.handleNextFromAccount = function() {
   if (validateStep(0)) { currentStep = 1; showStep(1); }
 };
@@ -507,20 +781,22 @@ window.handlePhotoUpload = async function(e) {
 
 window.saveProfile = async function() {
   const btn = document.getElementById('finish-btn');
-  btn.textContent = 'Creating account...';
+  const btnText = document.getElementById('finish-btn-text');
+  btnText.textContent = 'Creating your account...';
   btn.disabled = true;
 
-  // Create account now (at the very end — no session timeout risk)
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email: formData.email,
     password: formData.password
   });
+
   if (authError) {
     showToast(authError.message, 'error');
-    btn.textContent = 'Explore Kyzmyt →';
+    btnText.textContent = 'Complete my profile';
     btn.disabled = false;
     return;
   }
+
   const user = authData.user;
 
   const hot_takes = [
@@ -556,7 +832,7 @@ window.saveProfile = async function() {
 
   if (error) {
     showToast('Error saving profile: ' + error.message, 'error');
-    btn.textContent = 'Explore Kyzmyt →';
+    btnText.textContent = 'Complete my profile';
     btn.disabled = false;
     return;
   }
@@ -564,13 +840,19 @@ window.saveProfile = async function() {
   if (uploadedPhotos.length > 0) {
     await supabase.from('profile_photos').insert(
       uploadedPhotos.sort((a,b) => a.slot - b.slot).map((p, idx) => ({
-        user_id: user.id, url: p.url, storage_path: p.path, display_order: idx, is_primary: p.slot === 0
+        user_id: user.id, url: p.url, storage_path: p.path,
+        display_order: idx, is_primary: p.slot === 0
       }))
     );
   }
 
-  showToast('Welcome to Kyzmyt! ✶', 'success');
-  setTimeout(() => { window.location.href = '/pages/discover.html'; }, 1000);
+  // Fire GA4 event
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'sign_up', { method: 'email' });
+  }
+
+  // Show the celebration screen
+  showWelcomeScreen(formData.first_name);
 };
 
 document.getElementById('bio').addEventListener('input', function() {
