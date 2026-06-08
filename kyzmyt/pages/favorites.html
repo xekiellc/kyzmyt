@@ -243,6 +243,12 @@
       <input class="form-input-dark" id="current-obsession" type="text" placeholder="What are you into right now? Show, hobby, food...">
       <div style="font-size:.75rem;color:var(--cream-faint);margin-top:4px">Updates any time. Keeps your profile alive.</div>
     </div>
+
+    <div class="trait" style="margin-top:20px">
+      <div class="trait-label">Goodreads profile (optional)</div>
+      <input class="form-input-dark" id="goodreadsUrl" type="url" placeholder="https://www.goodreads.com/user/show/...">
+      <div style="font-size:.75rem;color:var(--cream-faint);margin-top:4px">Shared reading taste boosts your compatibility score.</div>
+    </div>
   </section>
 
   <!-- SECTION C: Dealbreakers + Hot Takes + Bucket List -->
@@ -316,10 +322,6 @@
     <h2><span class="num">VI.</span>Your Favorites</h2>
     <p class="hint">Type one and press Enter or +. Up to 10 per category. Shared favorites boost compatibility scores.</p>
     <div id="favorites"></div>
-    <div class="fav">
-      <div class="trait-label">Goodreads Profile (optional)</div>
-      <input class="url-input" id="goodreadsUrl" type="url" placeholder="https://www.goodreads.com/user/show/...">
-    </div>
   </section>
 
   <!-- SECTION G: Match Filters (existing) -->
@@ -381,7 +383,6 @@ const PRIORITIES=[["off","Off","on-off"],["nice_to_have","Nice-to-have","on-nice
 const state={
   traits:{},goodreads_url:"",
   favorites:{},traitFilters:{},favFilters:{},
-  // New fields
   politics:null,religion:null,love_language:null,attachment:null,
   dealbreakers:[],hot_takes:[],bucket_list:"",bio:"",current_obsession:"",
   quizAnswers:{},uploadedPhotos:[]
@@ -401,23 +402,18 @@ function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").repl
 /* ---- Progress meter ---- */
 function updateProgress(){
   let filled=0,total=0;
-  // Values (4 fields)
   total+=4;
   if(state.politics)filled++;
   if(state.religion)filled++;
   if(state.love_language)filled++;
   if(state.attachment)filled++;
-  // Photo (1 = at least one photo)
   total+=1;
   if(state.uploadedPhotos.length>0)filled++;
-  // Bio
   total+=1;
   const bioVal=document.getElementById('bio')?.value||'';
   if(bioVal.trim().length>10)filled++;
-  // Quiz (15 questions, each answered = 1 point, partial credit)
   total+=15;
   QUIZ_QUESTIONS.forEach(q=>{if(state.quizAnswers[q.id]?.length>0)filled++});
-  // Traits (11)
   total+=11;
   TRAITS.forEach(t=>{if(state.traits[t.key])filled++});
   const pct=Math.round((filled/total)*100);
@@ -498,7 +494,7 @@ function renderQuiz(){
   });
 }
 
-/* ---- Existing trait/fav/filter renderers (unchanged) ---- */
+/* ---- Trait/fav/filter renderers ---- */
 function renderTraits(){
   const el=document.getElementById("traits");el.innerHTML="";
   TRAITS.forEach(t=>{
@@ -599,7 +595,6 @@ async function init(){
   if(!session){window.location.href="login.html";return}
   token=session.access_token;
 
-  // Load profile data (bio, obsession, quiz, dealbreakers, hot takes, bucket list)
   const {data:{user}}=await sb.auth.getUser();
   if(user){
     const {data:profile}=await sb.from('profiles').select('*').eq('user_id',user.id).single();
@@ -624,7 +619,6 @@ async function init(){
       if(profile.love_language){state.love_language=profile.love_language;document.querySelectorAll('.option-row-dark').forEach(r=>{if(r.getAttribute('onclick')?.includes(`'${profile.love_language}'`))r.classList.add('selected')})}
       if(profile.attachment){state.attachment=profile.attachment;document.querySelectorAll('.option-row-dark').forEach(r=>{if(r.getAttribute('onclick')?.includes(`'${profile.attachment}'`))r.classList.add('selected')})}
       if(profile.quiz_responses){try{const qr=JSON.parse(profile.quiz_responses);Object.assign(state.quizAnswers,qr)}catch(e){}}
-      // Load existing photos
       const {data:photos}=await sb.from('profile_photos').select('*').eq('user_id',user.id).order('display_order');
       if(photos?.length){
         photos.forEach(p=>{
@@ -639,7 +633,11 @@ async function init(){
     const res=await fetch(FN,{headers:{Authorization:"Bearer "+token}});
     if(res.ok){
       const data=await res.json();
-      if(data.traits){TRAITS.forEach(t=>{if(data.traits[t.key])state.traits[t.key]=data.traits[t.key]});state.goodreads_url=data.traits.goodreads_url||"";document.getElementById("goodreadsUrl").value=state.goodreads_url}
+      if(data.traits){
+        TRAITS.forEach(t=>{if(data.traits[t.key])state.traits[t.key]=data.traits[t.key]});
+        state.goodreads_url=data.traits.goodreads_url||"";
+        document.getElementById("goodreadsUrl").value=state.goodreads_url;
+      }
       if(data.favorites){CATEGORIES.forEach(([k])=>{if(Array.isArray(data.favorites[k]))state.favorites[k]=data.favorites[k]})}
       if(Array.isArray(data.filters)){
         data.filters.forEach(fl=>{
@@ -676,7 +674,6 @@ async function save(){
     document.getElementById('hot-take-3').value
   ].filter(Boolean);
 
-  // Save extended profile data
   const {error:profileError}=await sb.from('profiles').upsert({
     user_id:user.id,
     politics:state.politics,
@@ -694,7 +691,6 @@ async function save(){
 
   if(profileError){msg.className="savemsg err";msg.textContent="Error saving profile";btn.disabled=false;return}
 
-  // Save photos
   if(state.uploadedPhotos.length>0){
     await sb.from('profile_photos').delete().eq('user_id',user.id);
     await sb.from('profile_photos').insert(
@@ -704,7 +700,6 @@ async function save(){
     );
   }
 
-  // Save traits/favorites/filters via existing function
   const filters=[];
   TRAITS.forEach(t=>{const f=state.traitFilters[t.key];if(f.priority!=="off"){filters.push({filter_type:"trait",trait_key:t.key,accepted_values:[...f.accepted],priority:f.priority})}});
   CATEGORIES.forEach(([k])=>{if(state.favFilters[k]!=="off"){filters.push({filter_type:"favorite_category",favorite_category:k,priority:state.favFilters[k]})}});
