@@ -1,8 +1,39 @@
 // netlify/functions/user-preferences.js
-const { createClient } = require('@supabase/supabase-js');
+// Uses plain fetch() against Supabase's REST API instead of @supabase/supabase-js,
+// to avoid that package's realtime-js module crashing on Netlify's Node runtime.
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://gnknifxhzriqwugmvoxf.supabase.co';
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+async function sbFetch(path, options = {}) {
+  const res = await fetch(`${SUPABASE_URL}${path}`, {
+    ...options,
+    headers: {
+      'apikey': SERVICE_KEY,
+      'Authorization': `Bearer ${SERVICE_KEY}`,
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    }
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`Supabase ${options.method || 'GET'} ${path} failed: ${res.status} ${text}`);
+  }
+  const contentType = res.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) return res.json();
+  return null;
+}
+
+async function getUserFromToken(token) {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+    headers: {
+      'apikey': SERVICE_KEY,
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
 
 exports.handler = async (event) => {
   const headers = {
@@ -22,39 +53,19 @@ exports.handler = async (event) => {
   }
   const token = authHeader.replace('Bearer ', '');
 
-  // realtime disabled — this function only does plain DB reads/writes and
-  // never needs a WebSocket connection. Netlify's Node runtime doesn't
-  // support the native WebSocket the realtime module tries to open, which
-  // was crashing the function with a 502 before this was added.
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
-    realtime: { params: { eventsPerSecond: 0 } },
-    auth: { persistSession: false }
-  });
-
-  // Verify the token and get the user
-  const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-  if (userError || !user) {
+  const user = await getUserFromToken(token);
+  if (!user || !user.id) {
     return { statusCode: 401, headers, body: JSON.stringify({ error: 'Invalid or expired token' }) };
   }
 
   try {
     if (event.httpMethod === 'GET') {
       // --- Load traits ---
-      const { data: traitsRow, error: traitsError } = await supabase
-        .from('user_traits')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      if (traitsError) throw traitsError;
+      const traitsRows = await sbFetch(`/rest/v1/user_traits?user_id=eq.${user.id}&select=*`);
+      const traitsRow = (traitsRows && traitsRows[0]) || {};
 
       // --- Load favorites (row-per-item) ---
-      const { data: favRows, error: favError } = await supabase
-        .from('user_favorites')
-        .select('category, value, position')
-        .eq('user_id', user.id)
-        .order('position');
-      if (favError) throw favError;
-
+      const favRows = await sbFetch(`/rest/v1/user_favorites?user_id=eq.${user.id}&select=category,value,position&order=position`);
       const favorites = {};
       (favRows || []).forEach(r => {
         if (!favorites[r.category]) favorites[r.category] = [];
@@ -62,17 +73,13 @@ exports.handler = async (event) => {
       });
 
       // --- Load filters ---
-      const { data: filters, error: filtersError } = await supabase
-        .from('match_filters')
-        .select('filter_type, trait_key, accepted_values, favorite_category, priority')
-        .eq('user_id', user.id);
-      if (filtersError) throw filtersError;
+      const filters = await sbFetch(`/rest/v1/match_filters?user_id=eq.${user.id}&select=filter_type,trait_key,accepted_values,favorite_category,priority`);
 
       return {
         statusCode: 200,
         headers,
         body: JSON.stringify({
-          traits: traitsRow || {},
+          traits: traitsRow,
           favorites,
           filters: filters || []
         })
@@ -85,19 +92,16 @@ exports.handler = async (event) => {
 
       // --- Upsert traits (single row per user) ---
       if (traits) {
-        const { error: traitsUpsertError } = await supabase
-          .from('user_traits')
-          .upsert({ user_id: user.id, ...traits, updated_at: new Date().toISOString() });
-        if (traitsUpsertError) throw traitsUpsertError;
+        await sbFetch(`/rest/v1/user_traits`, {
+          method: 'POST',
+          headers: { 'Prefer': 'resolution=merge-duplicates' },
+          body: JSON.stringify({ user_id: user.id, ...traits, updated_at: new Date().toISOString() })
+        });
       }
 
       // --- Replace favorites (delete then bulk insert) ---
       if (favorites) {
-        const { error: delFavError } = await supabase
-          .from('user_favorites')
-          .delete()
-          .eq('user_id', user.id);
-        if (delFavError) throw delFavError;
+        await sbFetch(`/rest/v1/user_favorites?user_id=eq.${user.id}`, { method: 'DELETE' });
 
         const favRows = [];
         Object.entries(favorites).forEach(([category, values]) => {
@@ -113,18 +117,16 @@ exports.handler = async (event) => {
         });
 
         if (favRows.length > 0) {
-          const { error: insFavError } = await supabase.from('user_favorites').insert(favRows);
-          if (insFavError) throw insFavError;
+          await sbFetch(`/rest/v1/user_favorites`, {
+            method: 'POST',
+            body: JSON.stringify(favRows)
+          });
         }
       }
 
       // --- Replace filters (delete then bulk insert) ---
       if (filters) {
-        const { error: delFilterError } = await supabase
-          .from('match_filters')
-          .delete()
-          .eq('user_id', user.id);
-        if (delFilterError) throw delFilterError;
+        await sbFetch(`/rest/v1/match_filters?user_id=eq.${user.id}`, { method: 'DELETE' });
 
         if (filters.length > 0) {
           const filterRows = filters.map(f => ({
@@ -135,8 +137,10 @@ exports.handler = async (event) => {
             favorite_category: f.favorite_category || null,
             priority: f.priority
           }));
-          const { error: insFilterError } = await supabase.from('match_filters').insert(filterRows);
-          if (insFilterError) throw insFilterError;
+          await sbFetch(`/rest/v1/match_filters`, {
+            method: 'POST',
+            body: JSON.stringify(filterRows)
+          });
         }
       }
 
