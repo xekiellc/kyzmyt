@@ -687,7 +687,7 @@ async function save(){
     bucket_list:document.getElementById('bucket-list').value,
     quiz_responses:JSON.stringify(state.quizAnswers),
     avatar_url:state.uploadedPhotos.find(p=>p.slot===0)?.url||null
-  });
+  }, { onConflict: 'user_id' });
 
   if(profileError){msg.className="savemsg err";msg.textContent="Error saving profile";btn.disabled=false;return}
 
