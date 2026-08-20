@@ -22,7 +22,14 @@ exports.handler = async (event) => {
   }
   const token = authHeader.replace('Bearer ', '');
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+  // realtime disabled — this function only does plain DB reads/writes and
+  // never needs a WebSocket connection. Netlify's Node runtime doesn't
+  // support the native WebSocket the realtime module tries to open, which
+  // was crashing the function with a 502 before this was added.
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+    realtime: { params: { eventsPerSecond: 0 } },
+    auth: { persistSession: false }
+  });
 
   // Verify the token and get the user
   const { data: { user }, error: userError } = await supabase.auth.getUser(token);
