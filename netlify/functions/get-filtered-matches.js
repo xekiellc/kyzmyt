@@ -1,18 +1,24 @@
-// ============================================================
-// KYZMYT — get-filtered-matches.js
-// GET → returns verified candidates for the logged-in user,
+// netlify/functions/get-filtered-matches.js
+// GET → returns visible candidates for the logged-in user,
 //       filtered by dealbreakers (mutual) and scored 0–100
 //
 // Rules:
-//   - Candidates MUST be overall_verified = true (triple-verified)
+//   - Candidates must have a visible profile (is_visible = true)
+//     — verification/payment gates DETAIL shown, not whether a
+//     candidate appears at all (free tier = locked cards, still searchable)
 //   - Caller's dealbreakers exclude candidates
 //   - Candidates' dealbreakers exclude the caller (mutual respect)
 //   - must_have match  = +15, nice_to_have match = +5
 //   - shared favorites = +3 each (max +15 total)
 //   - Free (unpaid) callers: names + photos stripped server-side
+//
+// Uses plain fetch() against Supabase's REST API instead of
+// @supabase/supabase-js — that package's realtime-js module crashes
+// on Netlify's Node runtime (same issue fixed in user-preferences.js).
 // ============================================================
 
-const { createClient } = require("@supabase/supabase-js");
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://gnknifxhzriqwugmvoxf.supabase.co';
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const SHARED_FAV_POINTS = 3;
 const SHARED_FAV_CAP = 15;
@@ -20,83 +26,92 @@ const MUST_HAVE_POINTS = 15;
 const NICE_TO_HAVE_POINTS = 5;
 const MAX_RESULTS = 50;
 
+async function sbFetch(path, options = {}) {
+  const res = await fetch(`${SUPABASE_URL}${path}`, {
+    ...options,
+    headers: {
+      'apikey': SERVICE_KEY,
+      'Authorization': `Bearer ${SERVICE_KEY}`,
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    }
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`Supabase ${options.method || 'GET'} ${path} failed: ${res.status} ${text}`);
+  }
+  const contentType = res.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) return res.json();
+  return null;
+}
+
+async function getUserFromToken(token) {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+    headers: { 'apikey': SERVICE_KEY, 'Authorization': `Bearer ${token}` }
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
+
 exports.handler = async (event) => {
-  const headers = { "Content-Type": "application/json", "Cache-Control": "no-store" };
+  const headers = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' };
 
   try {
-    if (event.httpMethod !== "GET") {
-      return { statusCode: 405, headers, body: JSON.stringify({ error: "Method not allowed" }) };
+    if (event.httpMethod !== 'GET') {
+      return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
     }
-
-    const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
 
     // ---- authenticate caller ----
-    const authHeader = event.headers.authorization || event.headers.Authorization || "";
-    const token = authHeader.replace(/^Bearer\s+/i, "");
+    const authHeader = event.headers.authorization || event.headers.Authorization || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '');
     if (!token) {
-      return { statusCode: 401, headers, body: JSON.stringify({ error: "Not signed in" }) };
+      return { statusCode: 401, headers, body: JSON.stringify({ error: 'Not signed in' }) };
     }
-    const { data: userData, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !userData || !userData.user) {
-      return { statusCode: 401, headers, body: JSON.stringify({ error: "Invalid session" }) };
+    const authUser = await getUserFromToken(token);
+    if (!authUser || !authUser.id) {
+      return { statusCode: 401, headers, body: JSON.stringify({ error: 'Invalid session' }) };
     }
-    const callerId = userData.user.id;
+    const callerId = authUser.id;
 
     // ---- caller's verification / payment status ----
-    const { data: callerVerif } = await supabase
-      .from("verifications")
-      .select("overall_verified, has_paid")
-      .eq("user_id", callerId)
-      .maybeSingle();
+    const callerVerifRows = await sbFetch(`/rest/v1/verifications?user_id=eq.${callerId}&select=overall_verified,has_paid`);
+    const callerVerif = (callerVerifRows && callerVerifRows[0]) || null;
     const callerVerified = !!(callerVerif && callerVerif.overall_verified && callerVerif.has_paid);
 
-    // ---- verified candidate pool ----
-    const { data: verifiedRows, error: verifErr } = await supabase
-      .from("verifications")
-      .select("user_id")
-      .eq("overall_verified", true)
-      .eq("has_paid", true)
-      .neq("user_id", callerId);
-    if (verifErr) throw verifErr;
-
-    const candidateIds = (verifiedRows || []).map((r) => r.user_id);
+    // ---- visible candidate pool (verification/payment gates DETAIL, not eligibility) ----
+    const visibleProfiles = await sbFetch(`/rest/v1/profiles?is_visible=eq.true&user_id=neq.${callerId}&select=user_id`);
+    const candidateIds = (visibleProfiles || []).map(r => r.user_id);
     if (candidateIds.length === 0) {
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({ caller_verified: callerVerified, matches: [] })
-      };
+      return { statusCode: 200, headers, body: JSON.stringify({ caller_verified: callerVerified, matches: [] }) };
     }
 
-    // ---- bulk-load everything in parallel ----
-    const allIds = [callerId, ...candidateIds];
-    const [traitsRes, favsRes, filtersRes] = await Promise.all([
-      supabase.from("user_traits").select("*").in("user_id", allIds),
-      supabase.from("user_favorites").select("user_id, category, value_normalized").in("user_id", allIds),
-      supabase.from("match_filters")
-        .select("user_id, filter_type, trait_key, accepted_values, favorite_category, priority")
-        .in("user_id", allIds)
-    ]);
-    if (traitsRes.error) throw traitsRes.error;
-    if (favsRes.error) throw favsRes.error;
-    if (filtersRes.error) throw filtersRes.error;
+    // ---- candidates' verification status (for display only, not eligibility) ----
+    const candVerifRows = await sbFetch(`/rest/v1/verifications?user_id=in.(${candidateIds.join(',')})&select=user_id,overall_verified`);
+    const verifiedByUser = {};
+    (candVerifRows || []).forEach(v => { verifiedByUser[v.user_id] = !!v.overall_verified; });
 
-    // index by user
+    // ---- bulk-load everything ----
+    const allIds = [callerId, ...candidateIds];
+    const idList = allIds.join(',');
+
+    const [traitRows, favRows, filterRows] = await Promise.all([
+      sbFetch(`/rest/v1/user_traits?user_id=in.(${idList})&select=*`),
+      sbFetch(`/rest/v1/user_favorites?user_id=in.(${idList})&select=user_id,category,value_normalized`),
+      sbFetch(`/rest/v1/match_filters?user_id=in.(${idList})&select=user_id,filter_type,trait_key,accepted_values,favorite_category,priority`)
+    ]);
+
     const traitsByUser = {};
-    (traitsRes.data || []).forEach((t) => (traitsByUser[t.user_id] = t));
+    (traitRows || []).forEach(t => { traitsByUser[t.user_id] = t; });
 
     const favsByUser = {}; // user_id -> { category -> Set(normalized values) }
-    (favsRes.data || []).forEach((f) => {
+    (favRows || []).forEach(f => {
       if (!favsByUser[f.user_id]) favsByUser[f.user_id] = {};
       if (!favsByUser[f.user_id][f.category]) favsByUser[f.user_id][f.category] = new Set();
       favsByUser[f.user_id][f.category].add(f.value_normalized);
     });
 
     const filtersByUser = {};
-    (filtersRes.data || []).forEach((fl) => {
+    (filterRows || []).forEach(fl => {
       if (!filtersByUser[fl.user_id]) filtersByUser[fl.user_id] = [];
       filtersByUser[fl.user_id].push(fl);
     });
@@ -112,18 +127,18 @@ exports.handler = async (event) => {
       const b = favsB[category];
       if (!a || !b) return 0;
       let n = 0;
-      a.forEach((v) => { if (b.has(v)) n++; });
+      a.forEach(v => { if (b.has(v)) n++; });
       return n;
     };
 
     const passesDealbreakers = (filters, subjectTraits, subjectFavs, ownerFavs) => {
       for (const fl of filters) {
-        if (fl.priority !== "dealbreaker") continue;
-        if (fl.filter_type === "trait") {
+        if (fl.priority !== 'dealbreaker') continue;
+        if (fl.filter_type === 'trait') {
           const val = subjectTraits ? subjectTraits[fl.trait_key] : null;
           // unanswered trait cannot be confirmed → fails a dealbreaker
           if (!val || !(fl.accepted_values || []).includes(val)) return false;
-        } else if (fl.filter_type === "favorite_category") {
+        } else if (fl.filter_type === 'favorite_category') {
           if (sharedCount(ownerFavs, subjectFavs, fl.favorite_category) === 0) return false;
         }
       }
@@ -147,13 +162,13 @@ exports.handler = async (event) => {
       let max = 0;
 
       for (const fl of callerFilters) {
-        if (fl.priority === "dealbreaker") continue;
-        const pts = fl.priority === "must_have" ? MUST_HAVE_POINTS : NICE_TO_HAVE_POINTS;
+        if (fl.priority === 'dealbreaker') continue;
+        const pts = fl.priority === 'must_have' ? MUST_HAVE_POINTS : NICE_TO_HAVE_POINTS;
         max += pts;
-        if (fl.filter_type === "trait") {
+        if (fl.filter_type === 'trait') {
           const val = candTraits ? candTraits[fl.trait_key] : null;
           if (val && (fl.accepted_values || []).includes(val)) raw += pts;
-        } else if (fl.filter_type === "favorite_category") {
+        } else if (fl.filter_type === 'favorite_category') {
           if (sharedCount(callerFavs, candFavs, fl.favorite_category) > 0) raw += pts;
         }
       }
@@ -169,11 +184,7 @@ exports.handler = async (event) => {
 
       const score = max > 0 ? Math.round((raw / max) * 100) : null;
 
-      results.push({
-        user_id: candId,
-        compatibility: score,
-        verified: true
-      });
+      results.push({ user_id: candId, compatibility: score, verified: !!verifiedByUser[candId] });
     }
 
     // sort: scored first (high→low), unscored last
@@ -183,21 +194,16 @@ exports.handler = async (event) => {
     // ---- attach display data (best-effort from profiles table) ----
     let profilesById = {};
     try {
-      const topIds = top.map((r) => r.user_id);
+      const topIds = top.map(r => r.user_id);
       if (topIds.length > 0) {
-        const { data: profRows, error: profErr } = await supabase
-          .from("profiles")
-          .select("*")
-          .in("user_id", topIds);
-        if (!profErr && profRows) {
-          profRows.forEach((p) => (profilesById[p.user_id] = p));
-        }
+        const profRows = await sbFetch(`/rest/v1/profiles?user_id=in.(${topIds.join(',')})&select=*`);
+        (profRows || []).forEach(p => { profilesById[p.user_id] = p; });
       }
     } catch (e) {
-      console.warn("profiles lookup skipped:", e.message);
+      console.warn('profiles lookup skipped:', e.message);
     }
 
-    const matches = top.map((r) => {
+    const matches = top.map(r => {
       const p = profilesById[r.user_id] || {};
       const name = p.display_name || p.first_name || p.name || null;
       const photo = p.photo_url || p.avatar_url ||
@@ -209,13 +215,9 @@ exports.handler = async (event) => {
       return { ...r, name: null, photo: null, age: p.age || null, city: p.city || null, locked: true };
     });
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ caller_verified: callerVerified, matches })
-    };
+    return { statusCode: 200, headers, body: JSON.stringify({ caller_verified: callerVerified, matches }) };
   } catch (err) {
-    console.error("get-filtered-matches error:", err);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: "Server error" }) };
+    console.error('get-filtered-matches error:', err);
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Server error' }) };
   }
 };
