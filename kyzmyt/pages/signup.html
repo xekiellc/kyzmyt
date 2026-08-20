@@ -115,6 +115,13 @@
     @media(prefers-reduced-motion:reduce){
       .welcome-mark,.welcome-title,.welcome-sub,.welcome-steps{transition:none!important;opacity:1!important;transform:none!important}
     }
+
+    /* ===== TOAST (inline, no module import) ===== */
+    .toast-container{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:8px;align-items:center;width:100%;padding:0 16px;pointer-events:none}
+    .toast{background:#0A1628;color:#FAF8F5;font-family:'DM Sans',sans-serif;font-size:13px;padding:12px 18px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.18);opacity:0;transform:translateY(-8px);transition:opacity 0.25s ease,transform 0.25s ease;max-width:420px;text-align:center}
+    .toast.toast-visible{opacity:1;transform:translateY(0)}
+    .toast.toast-error{background:#7a2323}
+    .toast.toast-success{background:#1f5c3a}
   </style>
 </head>
 <body>
@@ -269,218 +276,25 @@
   </div>
 </div>
 
-<script type="module">
-import { supabase, showToast } from '/js/supabase.js';
-
-let currentStep = 0;
-let formData = {};
-
-function playWelcomeChime() {
-  try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    const frequencies = [523.25, 659.25, 783.99, 1046.50];
-    frequencies.forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.18);
-      gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.18);
-      gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + i * 0.18 + 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.18 + 3.2);
-      osc.start(ctx.currentTime + i * 0.18);
-      osc.stop(ctx.currentTime + i * 0.18 + 3.5);
-    });
-  } catch(e) {}
+<!-- ===== Supabase (CDN, non-module — Facebook in-app browser safe) ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Inline showToast — no ES module import, so this works in Facebook's in-app browser
+function showToast(message, type) {
+  const container = document.getElementById('toast-container');
+  if (!container) { console.log('[toast]', type || 'info', message); return; }
+  const el = document.createElement('div');
+  el.className = 'toast' + (type === 'error' ? ' toast-error' : type === 'success' ? ' toast-success' : '');
+  el.textContent = message;
+  container.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('toast-visible'));
+  setTimeout(() => {
+    el.classList.remove('toast-visible');
+    setTimeout(() => el.remove(), 300);
+  }, 3200);
 }
 
-function startWelcomeCanvas() {
-  const canvas = document.getElementById('welcome-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let stars = [];
-  let w, h;
-  function resize() {
-    w = canvas.width = canvas.offsetWidth;
-    h = canvas.height = canvas.offsetHeight;
-    stars = [];
-    const count = Math.floor((w * h) / 8000);
-    for (let i = 0; i < count; i++) {
-      stars.push({
-        x: Math.random()*w, y: Math.random()*h,
-        r: Math.random()*1.4+0.4,
-        copper: Math.random()<0.22,
-        baseA: Math.random()*0.35+0.15,
-        phase: Math.random()*Math.PI*2,
-        speed: Math.random()*0.0006+0.0002,
-        drift: Math.random()*0.04+0.01
-      });
-    }
-  }
-  function draw(t) {
-    ctx.clearRect(0,0,w,h);
-    stars.forEach(s => {
-      const a = reduced ? s.baseA : s.baseA + Math.sin(t*s.speed*1000+s.phase)*0.15;
-      ctx.beginPath();
-      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-      ctx.fillStyle = s.copper ? `rgba(184,115,51,${Math.max(a,0.05)})` : `rgba(250,248,245,${Math.max(a,0.05)})`;
-      ctx.fill();
-      if (!reduced) { s.y -= s.drift; if (s.y < -2) { s.y = h+2; s.x = Math.random()*w; } }
-    });
-    if (!reduced) requestAnimationFrame(draw);
-  }
-  resize();
-  window.addEventListener('resize', resize);
-  if (reduced) draw(0); else requestAnimationFrame(draw);
-}
-
-function showWelcomeScreen(firstName) {
-  const screen = document.getElementById('welcome-screen');
-  const title = document.getElementById('welcome-title');
-  const name = (firstName || '').trim();
-  title.textContent = name ? `Welcome to Kyzmyt, ${name}.` : 'Welcome to Kyzmyt.';
-  screen.style.display = 'flex';
-  startWelcomeCanvas();
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      screen.classList.add('faded-in');
-      playWelcomeChime();
-    });
-  });
-}
-
-window.togglePw = function(fieldId, btn) {
-  const input = document.getElementById(fieldId);
-  if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
-  else { input.type = 'password'; btn.textContent = '👁'; }
-};
-
-window.selectOption = function(el, key, value) {
-  el.closest('.option-grid').querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  formData[key] = value;
-};
-
-window.selectRow = function(el, key, value) {
-  el.closest('.option-list').querySelectorAll('.option-row').forEach(r => r.classList.remove('selected'));
-  el.classList.add('selected');
-  formData[key] = value;
-};
-
-window.nextStep = function() {
-  if (!validateStep(currentStep)) return;
-  if (currentStep < 2) { currentStep++; showStep(currentStep); }
-};
-
-window.prevStep = function() {
-  if (currentStep > 0) { currentStep--; showStep(currentStep); }
-};
-
-function showStep(n) {
-  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById(`step-${n}`).classList.add('active');
-  document.querySelectorAll('.step-dot').forEach((d, i) => {
-    d.classList.remove('active','done');
-    if (i < n) d.classList.add('done');
-    else if (i === n) d.classList.add('active');
-  });
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function validateStep(step) {
-  if (step === 0) {
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('password').value;
-    const confirm = document.getElementById('confirm-password').value;
-    const agreed = document.getElementById('agree-terms').checked;
-    if (!email || !pass) { showToast('Please fill in all fields','error'); return false; }
-    if (pass !== confirm) { showToast('Passwords do not match','error'); return false; }
-    if (pass.length < 8) { showToast('Password must be 8+ characters','error'); return false; }
-    if (!agreed) { showToast('Please agree to the terms','error'); return false; }
-    formData.email = email;
-    formData.password = pass;
-  }
-  if (step === 1) {
-    const name = document.getElementById('first-name').value.trim();
-    const dob = document.getElementById('dob').value;
-    if (!name || !dob) { showToast('Please fill in your name and date of birth','error'); return false; }
-    const age = Math.floor((Date.now() - new Date(dob)) / 31557600000);
-    if (age < 18) { showToast('You must be 18 or older to join','error'); return false; }
-    if (!formData.gender) { showToast('Please select your gender','error'); return false; }
-    formData.first_name = name;
-    formData.dob = dob;
-    formData.age = age;
-  }
-  return true;
-}
-
-window.handleNextFromAccount = function() {
-  if (validateStep(0)) { currentStep = 1; showStep(1); }
-};
-
-window.handleGoogleAuth = async function() {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo: window.location.origin + '/pages/signup.html?step=1' }
-  });
-  if (error) showToast(error.message, 'error');
-};
-
-window.saveProfile = async function() {
-  const btn = document.getElementById('finish-btn');
-  const btnText = document.getElementById('finish-btn-text');
-  btnText.textContent = 'Creating your account...';
-  btn.disabled = true;
-
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email: formData.email,
-    password: formData.password
-  });
-
-  if (authError) {
-    showToast(authError.message, 'error');
-    btnText.textContent = 'Create my account';
-    btn.disabled = false;
-    return;
-  }
-
-  const user = authData.user;
-
-  const { error } = await supabase.from('profiles').upsert({
-    user_id: user.id,
-    display_name: formData.first_name,
-    age: formData.age,
-    gender: formData.gender,
-    seeking: formData.seeking,
-    zipcode: document.getElementById('zipcode').value,
-    status_label: formData.status,
-    is_visible: false,
-    is_verified: false,
-    created_at: new Date().toISOString()
-  });
-
-  if (error) {
-    showToast('Error saving profile: ' + error.message, 'error');
-    btnText.textContent = 'Create my account';
-    btn.disabled = false;
-    return;
-  }
-
-  if (typeof gtag !== 'undefined') {
-    gtag('event', 'sign_up', { method: 'email' });
-  }
-
-  showWelcomeScreen(formData.first_name);
-};
-
-const urlParams = new URLSearchParams(window.location.search);
-const stepParam = parseInt(urlParams.get('step'));
-if (stepParam && stepParam > 0 && stepParam <= 2) { currentStep = stepParam; showStep(stepParam); }
-</script>
-
-</body>
-</html>
+// Supabase client — CDN UMD build exposes window.supabase (the SDK namespace),
+// so we build our own client and call it supabaseClient to avoid name collision.
+const SUPABASE_URL = 'https://gnknifxhzriqwugmvoxf.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
