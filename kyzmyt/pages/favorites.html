@@ -619,11 +619,11 @@ async function init(){
       if(profile.love_language){state.love_language=profile.love_language;document.querySelectorAll('.option-row-dark').forEach(r=>{if(r.getAttribute('onclick')?.includes(`'${profile.love_language}'`))r.classList.add('selected')})}
       if(profile.attachment){state.attachment=profile.attachment;document.querySelectorAll('.option-row-dark').forEach(r=>{if(r.getAttribute('onclick')?.includes(`'${profile.attachment}'`))r.classList.add('selected')})}
       if(profile.quiz_responses){try{const qr=JSON.parse(profile.quiz_responses);Object.assign(state.quizAnswers,qr)}catch(e){}}
-      const {data:photos}=await sb.from('profile_photos').select('*').eq('user_id',user.id).order('display_order');
+      const {data:photos}=await sb.from('profile_photos').select('*').eq('user_id',user.id).order('position');
       if(photos?.length){
         photos.forEach(p=>{
-          const slot=document.getElementById('photo-'+p.display_order);
-          if(slot){slot.innerHTML=`<img src="${p.url}" alt="Photo">${p.is_primary?'<div class="primary-badge">PRIMARY</div>':''}`;state.uploadedPhotos.push({slot:p.display_order,url:p.url,path:p.storage_path})}
+          const slot=document.getElementById('photo-'+p.position);
+          if(slot){slot.innerHTML=`<img src="${p.url}" alt="Photo">${p.is_primary?'<div class="primary-badge">PRIMARY</div>':''}`;state.uploadedPhotos.push({slot:p.position,url:p.url,path:p.storage_key})}
         });
       }
     }
@@ -695,7 +695,7 @@ async function save(){
     await sb.from('profile_photos').delete().eq('user_id',user.id);
     await sb.from('profile_photos').insert(
       state.uploadedPhotos.sort((a,b)=>a.slot-b.slot).map((p,idx)=>({
-        user_id:user.id,url:p.url,storage_path:p.path,display_order:idx,is_primary:p.slot===0
+        user_id:user.id,url:p.url,storage_key:p.path,position:idx,is_primary:p.slot===0
       }))
     );
   }
