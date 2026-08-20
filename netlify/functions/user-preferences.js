@@ -1,181 +1,155 @@
-// ============================================================
-// KYZMYT — user-preferences.js
-// GET  → returns the logged-in user's traits, favorites, filters
-// POST → saves traits, favorites, filters (full replace)
-// Auth: Supabase JWT in Authorization header
-// DB:   service role key (tables are RLS-locked to service role)
-// ============================================================
+// netlify/functions/user-preferences.js
+// Uses plain fetch() against Supabase's REST API instead of @supabase/supabase-js,
+// to avoid that package's realtime-js module crashing on Netlify's Node runtime.
 
-const { createClient } = require("@supabase/supabase-js");
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://gnknifxhzriqwugmvoxf.supabase.co';
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const TRAIT_KEYS = [
-  "religion", "chronotype", "social_energy", "pet_person",
-  "political_comfort", "kids_preference", "pineapple_pizza",
-  "beach_or_mountains", "coffee_or_tea", "texter_or_caller",
-  "planner_or_spontaneous", "goodreads_url"
-];
+async function sbFetch(path, options = {}) {
+  const res = await fetch(`${SUPABASE_URL}${path}`, {
+    ...options,
+    headers: {
+      'apikey': SERVICE_KEY,
+      'Authorization': `Bearer ${SERVICE_KEY}`,
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    }
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`Supabase ${options.method || 'GET'} ${path} failed: ${res.status} ${text}`);
+  }
+  const contentType = res.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) return res.json();
+  return null;
+}
 
-const CATEGORIES = [
-  "books", "movies", "tv_shows", "music_genres", "bands", "actors",
-  "sports_teams", "athletes", "foods", "restaurants", "vacation_spots"
-];
-
-const PRIORITIES = ["dealbreaker", "must_have", "nice_to_have"];
+async function getUserFromToken(token) {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+    headers: {
+      'apikey': SERVICE_KEY,
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
 
 exports.handler = async (event) => {
   const headers = {
-    "Content-Type": "application/json",
-    "Cache-Control": "no-store"
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
   };
 
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
+  }
+
+  const authHeader = event.headers.authorization || event.headers.Authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return { statusCode: 401, headers, body: JSON.stringify({ error: 'Missing or invalid Authorization header' }) };
+  }
+  const token = authHeader.replace('Bearer ', '');
+
+  const user = await getUserFromToken(token);
+  if (!user || !user.id) {
+    return { statusCode: 401, headers, body: JSON.stringify({ error: 'Invalid or expired token' }) };
+  }
+
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
+    if (event.httpMethod === 'GET') {
+      // --- Load traits ---
+      const traitsRows = await sbFetch(`/rest/v1/user_traits?user_id=eq.${user.id}&select=*`);
+      const traitsRow = (traitsRows && traitsRows[0]) || {};
 
-    // ---- authenticate the caller ----
-    const authHeader = event.headers.authorization || event.headers.Authorization || "";
-    const token = authHeader.replace(/^Bearer\s+/i, "");
-    if (!token) {
-      return { statusCode: 401, headers, body: JSON.stringify({ error: "Not signed in" }) };
-    }
-    const { data: userData, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !userData || !userData.user) {
-      return { statusCode: 401, headers, body: JSON.stringify({ error: "Invalid session" }) };
-    }
-    const userId = userData.user.id;
-
-    // ========================================================
-    // GET — load everything
-    // ========================================================
-    if (event.httpMethod === "GET") {
-      const [traitsRes, favsRes, filtersRes] = await Promise.all([
-        supabase.from("user_traits").select("*").eq("user_id", userId).maybeSingle(),
-        supabase.from("user_favorites").select("category, value, position")
-          .eq("user_id", userId).order("position", { ascending: true }),
-        supabase.from("match_filters")
-          .select("filter_type, trait_key, accepted_values, favorite_category, priority")
-          .eq("user_id", userId)
-      ]);
-
-      if (traitsRes.error) throw traitsRes.error;
-      if (favsRes.error) throw favsRes.error;
-      if (filtersRes.error) throw filtersRes.error;
-
+      // --- Load favorites (row-per-item) ---
+      const favRows = await sbFetch(`/rest/v1/user_favorites?user_id=eq.${user.id}&select=category,value,position&order=position`);
       const favorites = {};
-      CATEGORIES.forEach((c) => (favorites[c] = []));
-      (favsRes.data || []).forEach((row) => {
-        if (favorites[row.category]) favorites[row.category].push(row.value);
+      (favRows || []).forEach(r => {
+        if (!favorites[r.category]) favorites[r.category] = [];
+        favorites[r.category].push(r.value);
       });
+
+      // --- Load filters ---
+      const filters = await sbFetch(`/rest/v1/match_filters?user_id=eq.${user.id}&select=filter_type,trait_key,accepted_values,favorite_category,priority`);
 
       return {
         statusCode: 200,
         headers,
         body: JSON.stringify({
-          traits: traitsRes.data || {},
+          traits: traitsRow,
           favorites,
-          filters: filtersRes.data || []
+          filters: filters || []
         })
       };
     }
 
-    // ========================================================
-    // POST — save everything (full replace)
-    // ========================================================
-    if (event.httpMethod === "POST") {
-      let payload;
-      try {
-        payload = JSON.parse(event.body || "{}");
-      } catch (e) {
-        return { statusCode: 400, headers, body: JSON.stringify({ error: "Bad JSON" }) };
-      }
+    if (event.httpMethod === 'POST') {
+      const body = JSON.parse(event.body || '{}');
+      const { traits, favorites, filters } = body;
 
-      // ---- 1. traits (whitelisted keys only) ----
-      const traitsIn = payload.traits || {};
-      const traitsRow = { user_id: userId };
-      TRAIT_KEYS.forEach((k) => {
-        traitsRow[k] = traitsIn[k] === undefined || traitsIn[k] === "" ? null : traitsIn[k];
-      });
-      const { error: traitsErr } = await supabase
-        .from("user_traits")
-        .upsert(traitsRow, { onConflict: "user_id" });
-      if (traitsErr) {
-        return { statusCode: 400, headers, body: JSON.stringify({ error: "Trait save failed: " + traitsErr.message }) };
-      }
-
-      // ---- 2. favorites (delete then insert) ----
-      const favsIn = payload.favorites || {};
-      const favRows = [];
-      CATEGORIES.forEach((cat) => {
-        const list = Array.isArray(favsIn[cat]) ? favsIn[cat] : [];
-        const seen = new Set();
-        list.slice(0, 10).forEach((val, i) => {
-          if (typeof val !== "string") return;
-          const clean = val.trim().slice(0, 80);
-          const norm = clean.toLowerCase();
-          if (!clean || seen.has(norm)) return;
-          seen.add(norm);
-          favRows.push({ user_id: userId, category: cat, value: clean, position: i });
+      // --- Upsert traits (single row per user) ---
+      if (traits) {
+        await sbFetch(`/rest/v1/user_traits`, {
+          method: 'POST',
+          headers: { 'Prefer': 'resolution=merge-duplicates' },
+          body: JSON.stringify({ user_id: user.id, ...traits, updated_at: new Date().toISOString() })
         });
-      });
-      const { error: delFavErr } = await supabase
-        .from("user_favorites").delete().eq("user_id", userId);
-      if (delFavErr) throw delFavErr;
-      if (favRows.length > 0) {
-        const { error: insFavErr } = await supabase.from("user_favorites").insert(favRows);
-        if (insFavErr) {
-          return { statusCode: 400, headers, body: JSON.stringify({ error: "Favorites save failed: " + insFavErr.message }) };
+      }
+
+      // --- Replace favorites (delete then bulk insert) ---
+      if (favorites) {
+        await sbFetch(`/rest/v1/user_favorites?user_id=eq.${user.id}`, { method: 'DELETE' });
+
+        const favRows = [];
+        Object.entries(favorites).forEach(([category, values]) => {
+          (values || []).forEach((value, idx) => {
+            favRows.push({
+              user_id: user.id,
+              category,
+              value,
+              position: idx
+              // Note: value_normalized is a DB-generated column — never send it.
+            });
+          });
+        });
+
+        if (favRows.length > 0) {
+          await sbFetch(`/rest/v1/user_favorites`, {
+            method: 'POST',
+            body: JSON.stringify(favRows)
+          });
         }
       }
 
-      // ---- 3. match filters (delete then insert) ----
-      const filtersIn = Array.isArray(payload.filters) ? payload.filters : [];
-      const filterRows = [];
-      filtersIn.forEach((f) => {
-        if (!PRIORITIES.includes(f.priority)) return;
-        if (f.filter_type === "trait") {
-          if (!TRAIT_KEYS.includes(f.trait_key) || f.trait_key === "goodreads_url") return;
-          const accepted = Array.isArray(f.accepted_values)
-            ? f.accepted_values.filter((v) => typeof v === "string").slice(0, 20)
-            : [];
-          if (accepted.length === 0) return;
-          filterRows.push({
-            user_id: userId,
-            filter_type: "trait",
-            trait_key: f.trait_key,
-            accepted_values: accepted,
-            favorite_category: null,
+      // --- Replace filters (delete then bulk insert) ---
+      if (filters) {
+        await sbFetch(`/rest/v1/match_filters?user_id=eq.${user.id}`, { method: 'DELETE' });
+
+        if (filters.length > 0) {
+          const filterRows = filters.map(f => ({
+            user_id: user.id,
+            filter_type: f.filter_type,
+            trait_key: f.trait_key || null,
+            accepted_values: f.accepted_values || null,
+            favorite_category: f.favorite_category || null,
             priority: f.priority
+          }));
+          await sbFetch(`/rest/v1/match_filters`, {
+            method: 'POST',
+            body: JSON.stringify(filterRows)
           });
-        } else if (f.filter_type === "favorite_category") {
-          if (!CATEGORIES.includes(f.favorite_category)) return;
-          filterRows.push({
-            user_id: userId,
-            filter_type: "favorite_category",
-            trait_key: null,
-            accepted_values: null,
-            favorite_category: f.favorite_category,
-            priority: f.priority
-          });
-        }
-      });
-      const { error: delFilErr } = await supabase
-        .from("match_filters").delete().eq("user_id", userId);
-      if (delFilErr) throw delFilErr;
-      if (filterRows.length > 0) {
-        const { error: insFilErr } = await supabase.from("match_filters").insert(filterRows);
-        if (insFilErr) {
-          return { statusCode: 400, headers, body: JSON.stringify({ error: "Filter save failed: " + insFilErr.message }) };
         }
       }
 
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
     }
 
-    return { statusCode: 405, headers, body: JSON.stringify({ error: "Method not allowed" }) };
+    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   } catch (err) {
-    console.error("user-preferences error:", err);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: "Server error" }) };
+    console.error('user-preferences error:', err);
+    return { statusCode: 500, headers, body: JSON.stringify({ error: err.message || 'Internal server error' }) };
   }
 };
