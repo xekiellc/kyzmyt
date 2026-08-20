@@ -110,8 +110,8 @@ exports.handler = async (event) => {
               user_id: user.id,
               category,
               value,
-              value_normalized: String(value).toLowerCase().trim(),
               position: idx
+              // Note: value_normalized is a DB-generated column — never send it.
             });
           });
         });
