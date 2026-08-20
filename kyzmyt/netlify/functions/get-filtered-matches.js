@@ -1,10 +1,28 @@
 // netlify/functions/get-filtered-matches.js
-// Returns a scored, filtered list of verified candidates for the caller's discover feed.
-// Uses plain fetch() against Supabase's REST API (same pattern as user-preferences.js —
-// avoids @supabase/supabase-js's realtime-js crash on Netlify's Node runtime).
+// GET → returns verified candidates for the logged-in user,
+//       filtered by dealbreakers (mutual) and scored 0–100
+//
+// Rules:
+//   - Candidates MUST be overall_verified = true (triple-verified)
+//   - Caller's dealbreakers exclude candidates
+//   - Candidates' dealbreakers exclude the caller (mutual respect)
+//   - must_have match  = +15, nice_to_have match = +5
+//   - shared favorites = +3 each (max +15 total)
+//   - Free (unpaid) callers: names + photos stripped server-side
+//
+// Uses plain fetch() against Supabase's REST API instead of
+// @supabase/supabase-js — that package's realtime-js module crashes
+// on Netlify's Node runtime (same issue fixed in user-preferences.js).
+// ============================================================
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://gnknifxhzriqwugmvoxf.supabase.co';
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+const SHARED_FAV_POINTS = 3;
+const SHARED_FAV_CAP = 15;
+const MUST_HAVE_POINTS = 15;
+const NICE_TO_HAVE_POINTS = 5;
+const MAX_RESULTS = 50;
 
 async function sbFetch(path, options = {}) {
   const res = await fetch(`${SUPABASE_URL}${path}`, {
@@ -33,186 +51,166 @@ async function getUserFromToken(token) {
   return res.json();
 }
 
-// Trait keys that live in user_traits and are eligible for trait-type match_filters.
-const TRAIT_KEYS = new Set([
-  'religion', 'chronotype', 'social_energy', 'pet_person', 'political_comfort',
-  'kids_preference', 'pineapple_pizza', 'beach_or_mountains', 'coffee_or_tea',
-  'texter_or_caller', 'planner_or_spontaneous'
-]);
-
-// Dealbreaker keys with a real data source. Four dealbreaker options in the UI
-// (long_distance, no_reading, bad_tipper, talks_movies) have no backing column
-// anywhere in the schema and are intentionally NOT enforced here — they're
-// no-ops rather than guessed logic. Revisit if that data gets added later.
-function candidateFailsDealbreaker(key, caller, candidate, candidateTraits) {
-  switch (key) {
-    case 'smoker': return candidate.smoker === true;
-    case 'heavy_drinker': return candidate.heavy_drinker === true;
-    case 'has_kids': return candidate.has_kids === true;
-    case 'wants_kids': return candidate.wants_kids === true;
-    case 'diff_religion': return !!caller.religion && !!candidate.religion && caller.religion !== candidate.religion;
-    case 'diff_politics': return !!caller.politics && !!candidate.politics && caller.politics !== candidate.politics;
-    case 'no_pets': return candidateTraits?.pet_person === 'neither';
-    case 'pineapple_pizza': return candidateTraits?.pineapple_pizza === 'yes';
-    default: return false; // unsupported dealbreaker key — no-op
-  }
-}
-
 exports.handler = async (event) => {
-  const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS'
-  };
-
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
-  }
-  if (event.httpMethod !== 'GET') {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
-  }
-
-  const authHeader = event.headers.authorization || event.headers.Authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return { statusCode: 401, headers, body: JSON.stringify({ error: 'Missing or invalid Authorization header' }) };
-  }
-  const token = authHeader.replace('Bearer ', '');
-
-  const authUser = await getUserFromToken(token);
-  if (!authUser || !authUser.id) {
-    return { statusCode: 401, headers, body: JSON.stringify({ error: 'Invalid or expired token' }) };
-  }
-  const callerId = authUser.id;
+  const headers = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' };
 
   try {
-    // --- Caller's own profile, filters, traits, favorites ---
-    const callerRows = await sbFetch(`/rest/v1/profiles?user_id=eq.${callerId}&select=*`);
-    const caller = (callerRows && callerRows[0]) || null;
-    if (!caller) {
-      return { statusCode: 200, headers, body: JSON.stringify({ caller_verified: false, matches: [] }) };
+    if (event.httpMethod !== 'GET') {
+      return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
     }
-    const callerVerified = caller.is_verified === true;
 
-    const callerFilters = await sbFetch(`/rest/v1/match_filters?user_id=eq.${callerId}&select=*`);
-    const callerTraitRows = await sbFetch(`/rest/v1/user_traits?user_id=eq.${callerId}&select=*`);
-    const callerTraits = (callerTraitRows && callerTraitRows[0]) || {};
-    const callerFavRows = await sbFetch(`/rest/v1/user_favorites?user_id=eq.${callerId}&select=category,value_normalized`);
-    const callerFavByCategory = {};
-    (callerFavRows || []).forEach(r => {
-      if (!callerFavByCategory[r.category]) callerFavByCategory[r.category] = new Set();
-      callerFavByCategory[r.category].add(r.value_normalized);
-    });
-
-    const callerDealbreakers = Array.isArray(caller.dealbreakers) ? caller.dealbreakers : [];
-
-    // --- Candidate pool: visible, not banned, not self, opposite of caller's "seeking" ---
-    const genderMap = { men: 'man', women: 'woman' };
-    let candidateQuery = `/rest/v1/profiles?select=*&is_visible=eq.true&is_verified=eq.true&banned_at=is.null&user_id=neq.${callerId}`;
-    if (caller.seeking && genderMap[caller.seeking]) {
-      candidateQuery += `&gender=eq.${genderMap[caller.seeking]}`;
+    // ---- authenticate caller ----
+    const authHeader = event.headers.authorization || event.headers.Authorization || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '');
+    if (!token) {
+      return { statusCode: 401, headers, body: JSON.stringify({ error: 'Not signed in' }) };
     }
-    candidateQuery += `&limit=100`;
+    const authUser = await getUserFromToken(token);
+    if (!authUser || !authUser.id) {
+      return { statusCode: 401, headers, body: JSON.stringify({ error: 'Invalid session' }) };
+    }
+    const callerId = authUser.id;
 
-    const candidates = await sbFetch(candidateQuery);
-    if (!candidates || candidates.length === 0) {
+    // ---- caller's verification / payment status ----
+    const callerVerifRows = await sbFetch(`/rest/v1/verifications?user_id=eq.${callerId}&select=overall_verified,has_paid`);
+    const callerVerif = (callerVerifRows && callerVerifRows[0]) || null;
+    const callerVerified = !!(callerVerif && callerVerif.overall_verified && callerVerif.has_paid);
+
+    // ---- verified candidate pool ----
+    const verifiedRows = await sbFetch(`/rest/v1/verifications?overall_verified=eq.true&has_paid=eq.true&user_id=neq.${callerId}&select=user_id`);
+    const candidateIds = (verifiedRows || []).map(r => r.user_id);
+    if (candidateIds.length === 0) {
       return { statusCode: 200, headers, body: JSON.stringify({ caller_verified: callerVerified, matches: [] }) };
     }
 
-    const candidateIds = candidates.map(c => c.user_id);
-    const idList = candidateIds.join(',');
+    // ---- bulk-load everything ----
+    const allIds = [callerId, ...candidateIds];
+    const idList = allIds.join(',');
 
-    // --- Batch-fetch traits, favorites, and primary photos for all candidates ---
-    const allTraitRows = await sbFetch(`/rest/v1/user_traits?user_id=in.(${idList})&select=*`);
+    const [traitRows, favRows, filterRows] = await Promise.all([
+      sbFetch(`/rest/v1/user_traits?user_id=in.(${idList})&select=*`),
+      sbFetch(`/rest/v1/user_favorites?user_id=in.(${idList})&select=user_id,category,value_normalized`),
+      sbFetch(`/rest/v1/match_filters?user_id=in.(${idList})&select=user_id,filter_type,trait_key,accepted_values,favorite_category,priority`)
+    ]);
+
     const traitsByUser = {};
-    (allTraitRows || []).forEach(r => { traitsByUser[r.user_id] = r; });
+    (traitRows || []).forEach(t => { traitsByUser[t.user_id] = t; });
 
-    const allFavRows = await sbFetch(`/rest/v1/user_favorites?user_id=in.(${idList})&select=user_id,category,value_normalized`);
-    const favByUser = {};
-    (allFavRows || []).forEach(r => {
-      if (!favByUser[r.user_id]) favByUser[r.user_id] = {};
-      if (!favByUser[r.user_id][r.category]) favByUser[r.user_id][r.category] = new Set();
-      favByUser[r.user_id][r.category].add(r.value_normalized);
+    const favsByUser = {}; // user_id -> { category -> Set(normalized values) }
+    (favRows || []).forEach(f => {
+      if (!favsByUser[f.user_id]) favsByUser[f.user_id] = {};
+      if (!favsByUser[f.user_id][f.category]) favsByUser[f.user_id][f.category] = new Set();
+      favsByUser[f.user_id][f.category].add(f.value_normalized);
     });
 
-    const photoRows = await sbFetch(`/rest/v1/profile_photos?user_id=in.(${idList})&is_primary=eq.true&select=user_id,url`);
-    const photoByUser = {};
-    (photoRows || []).forEach(r => { photoByUser[r.user_id] = r.url; });
+    const filtersByUser = {};
+    (filterRows || []).forEach(fl => {
+      if (!filtersByUser[fl.user_id]) filtersByUser[fl.user_id] = [];
+      filtersByUser[fl.user_id].push(fl);
+    });
 
-    // --- Score each candidate ---
-    const scored = [];
-    for (const candidate of candidates) {
-      const candidateTraits = traitsByUser[candidate.user_id] || {};
-      const candidateFavs = favByUser[candidate.user_id] || {};
+    const callerTraits = traitsByUser[callerId] || {};
+    const callerFavs = favsByUser[callerId] || {};
+    const callerFilters = filtersByUser[callerId] || [];
+    const callerHasFavorites = Object.keys(callerFavs).length > 0;
 
-      // Hard dealbreaker exclusion (caller's dealbreakers checked against candidate)
-      let excluded = callerDealbreakers.some(key =>
-        candidateFailsDealbreaker(key, caller, candidate, candidateTraits)
-      );
-      if (excluded) continue;
+    // ---- helpers ----
+    const sharedCount = (favsA, favsB, category) => {
+      const a = favsA[category];
+      const b = favsB[category];
+      if (!a || !b) return 0;
+      let n = 0;
+      a.forEach(v => { if (b.has(v)) n++; });
+      return n;
+    };
 
-      let score = 0;
-
-      // Trait-type and favorite_category-type filters
-      for (const f of (callerFilters || [])) {
-        if (f.priority === 'off') continue;
-
-        if (f.filter_type === 'trait' && TRAIT_KEYS.has(f.trait_key)) {
-          const candidateVal = candidateTraits[f.trait_key];
-          const accepted = Array.isArray(f.accepted_values) ? f.accepted_values : [];
-          const matches = candidateVal != null && accepted.includes(candidateVal);
-          if (f.priority === 'dealbreaker' && !matches) { excluded = true; break; }
-          if (f.priority === 'must_have' && matches) score += 15;
-          if (f.priority === 'nice_to_have' && matches) score += 5;
-        }
-
-        if (f.filter_type === 'favorite_category' && f.favorite_category) {
-          const callerSet = callerFavByCategory[f.favorite_category] || new Set();
-          const candidateSet = candidateFavs[f.favorite_category] || new Set();
-          const hasSharedFavorite = [...callerSet].some(v => candidateSet.has(v));
-          if (f.priority === 'dealbreaker' && !hasSharedFavorite) { excluded = true; break; }
-          if (f.priority === 'must_have' && hasSharedFavorite) score += 15;
-          if (f.priority === 'nice_to_have' && hasSharedFavorite) score += 5;
+    const passesDealbreakers = (filters, subjectTraits, subjectFavs, ownerFavs) => {
+      for (const fl of filters) {
+        if (fl.priority !== 'dealbreaker') continue;
+        if (fl.filter_type === 'trait') {
+          const val = subjectTraits ? subjectTraits[fl.trait_key] : null;
+          // unanswered trait cannot be confirmed → fails a dealbreaker
+          if (!val || !(fl.accepted_values || []).includes(val)) return false;
+        } else if (fl.filter_type === 'favorite_category') {
+          if (sharedCount(ownerFavs, subjectFavs, fl.favorite_category) === 0) return false;
         }
       }
-      if (excluded) continue;
+      return true;
+    };
 
-      // General shared-favorite bonus: +3 per shared favorite item across ALL
-      // categories (not just filtered ones), capped at +15 total.
-      let sharedCount = 0;
-      for (const category of Object.keys(callerFavByCategory)) {
-        const callerSet = callerFavByCategory[category];
-        const candidateSet = candidateFavs[category] || new Set();
-        for (const v of callerSet) {
-          if (candidateSet.has(v)) sharedCount++;
+    // ---- score each candidate ----
+    const results = [];
+    for (const candId of candidateIds) {
+      const candTraits = traitsByUser[candId] || null;
+      const candFavs = favsByUser[candId] || {};
+      const candFilters = filtersByUser[candId] || [];
+
+      // 1. caller's dealbreakers vs candidate
+      if (!passesDealbreakers(callerFilters, candTraits, candFavs, callerFavs)) continue;
+      // 2. candidate's dealbreakers vs caller (mutual)
+      if (!passesDealbreakers(candFilters, callerTraits, callerFavs, candFavs)) continue;
+
+      // 3. score
+      let raw = 0;
+      let max = 0;
+
+      for (const fl of callerFilters) {
+        if (fl.priority === 'dealbreaker') continue;
+        const pts = fl.priority === 'must_have' ? MUST_HAVE_POINTS : NICE_TO_HAVE_POINTS;
+        max += pts;
+        if (fl.filter_type === 'trait') {
+          const val = candTraits ? candTraits[fl.trait_key] : null;
+          if (val && (fl.accepted_values || []).includes(val)) raw += pts;
+        } else if (fl.filter_type === 'favorite_category') {
+          if (sharedCount(callerFavs, candFavs, fl.favorite_category) > 0) raw += pts;
         }
       }
-      score += Math.min(sharedCount * 3, 15);
 
-      score = Math.max(0, Math.min(100, Math.round(score)));
+      if (callerHasFavorites) {
+        max += SHARED_FAV_CAP;
+        let favPts = 0;
+        for (const cat of Object.keys(callerFavs)) {
+          favPts += sharedCount(callerFavs, candFavs, cat) * SHARED_FAV_POINTS;
+        }
+        raw += Math.min(favPts, SHARED_FAV_CAP);
+      }
 
-      const locked = !callerVerified;
-      scored.push({
-        user_id: candidate.user_id,
-        compatibility: score,
-        locked,
-        name: locked ? null : (candidate.display_name || null),
-        photo: locked ? null : (photoByUser[candidate.user_id] || candidate.avatar_url || null),
-        age: candidate.age || null,
-        city: candidate.city || null
-      });
+      const score = max > 0 ? Math.round((raw / max) * 100) : null;
+
+      results.push({ user_id: candId, compatibility: score, verified: true });
     }
 
-    scored.sort((a, b) => b.compatibility - a.compatibility);
-    const top = scored.slice(0, 30);
+    // sort: scored first (high→low), unscored last
+    results.sort((a, b) => (b.compatibility ?? -1) - (a.compatibility ?? -1));
+    const top = results.slice(0, MAX_RESULTS);
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ caller_verified: callerVerified, matches: top })
-    };
+    // ---- attach display data (best-effort from profiles table) ----
+    let profilesById = {};
+    try {
+      const topIds = top.map(r => r.user_id);
+      if (topIds.length > 0) {
+        const profRows = await sbFetch(`/rest/v1/profiles?user_id=in.(${topIds.join(',')})&select=*`);
+        (profRows || []).forEach(p => { profilesById[p.user_id] = p; });
+      }
+    } catch (e) {
+      console.warn('profiles lookup skipped:', e.message);
+    }
+
+    const matches = top.map(r => {
+      const p = profilesById[r.user_id] || {};
+      const name = p.display_name || p.first_name || p.name || null;
+      const photo = p.photo_url || p.avatar_url ||
+        (Array.isArray(p.photos) && p.photos.length > 0 ? p.photos[0] : null);
+      if (callerVerified) {
+        return { ...r, name, photo, age: p.age || null, city: p.city || null };
+      }
+      // FREE CALLER: real score, anonymous card — no name, no photo
+      return { ...r, name: null, photo: null, age: p.age || null, city: p.city || null, locked: true };
+    });
+
+    return { statusCode: 200, headers, body: JSON.stringify({ caller_verified: callerVerified, matches }) };
   } catch (err) {
     console.error('get-filtered-matches error:', err);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: err.message || 'Internal server error' }) };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Server error' }) };
   }
 };
