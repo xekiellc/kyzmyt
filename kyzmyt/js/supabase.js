@@ -61,7 +61,7 @@ export async function requireVerified() {
 export async function getProfile(userId) {
   const { data, error } = await supabase
     .from('profiles')
-    .select('*, verifications(*)')
+    .select('*, verifications!verifications_profile_fkey(*)')
     .eq('user_id', userId)
     .single();
   if (error) return null;
@@ -170,7 +170,7 @@ export async function getDiscoverFeed(userId, filters = {}) {
 
   let query = supabase
     .from('profiles')
-    .select('*, verifications(*), profile_photos(*)')
+    .select('*, verifications!verifications_profile_fkey(*), profile_photos!profile_photos_profile_fkey(*)')
     .eq('is_visible', true)
     .neq('user_id', userId)
     .limit(filters.limit || 20);
@@ -248,7 +248,7 @@ export async function likeProfile(fromUserId, toUserId) {
 export async function getMatches(userId) {
   const { data } = await supabase
     .from('matches')
-    .select('*, profiles!matches_user_a_fkey(*), profiles!matches_user_b_fkey(*)')
+    .select('*, profiles!matches_user_a_profile_fkey(*), profiles!matches_user_b_profile_fkey(*)')
     .or(`user_a.eq.${userId},user_b.eq.${userId}`)
     .is('unmatched_at', null)
     .order('matched_at', { ascending: false });
@@ -381,7 +381,7 @@ export function getActiveStatus(lastActive) {
 export async function getForumPosts(category = null) {
   let query = supabase
     .from('forum_posts')
-    .select('*, profiles(display_name, avatar_url, verifications(id_verified))')
+    .select('*, profiles!forum_posts_profile_fkey(display_name, avatar_url, verifications!verifications_profile_fkey(id_verified))')
     .order('created_at', { ascending: false })
     .limit(30);
   if (category) query = query.eq('category', category);
@@ -422,7 +422,7 @@ export async function getStories() {
   const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const { data } = await supabase
     .from('stories')
-    .select('*, profiles(display_name, avatar_url)')
+    .select('*, profiles!stories_profile_fkey(display_name, avatar_url)')
     .gt('created_at', cutoff)
     .order('created_at', { ascending: false });
   return data || [];
